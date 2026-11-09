@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tock · Founding document</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#141414;--volt:#C6F432;--bone:#F5F5F0;--pop:#FF5C8A;--graphite:#2A2A2A;--smoke:#6B6B66;--olive:#4F6600;--line:#DDDDD3;--tint:#EAEAE1}
+@page{size:A4;margin:16mm 16mm 18mm;background:var(--bone);
+  @bottom-left{content:"Tock · Founding document · November 2026";font:7.5pt Inter,sans-serif;color:#8A8A85}
+  @bottom-right{content:counter(page) " / " counter(pages);font:7.5pt Inter,sans-serif;color:#8A8A85}}
+@page cover{margin:0;background:var(--ink);@bottom-left{content:none}@bottom-right{content:none}}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{margin:0;background:var(--bone);color:var(--ink);font:9.6pt/1.55 Inter,sans-serif}
+h1,h2,h3,h4{font-family:"Space Grotesk",sans-serif;margin:0;letter-spacing:-.01em}
+.section{break-before:page}
+.eyebrow{font:600 7.5pt Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--olive);margin:0 0 4pt}
+h2{font-size:24pt;font-weight:700;line-height:1.1;margin:0 0 12pt}
+h3{font-size:13pt;font-weight:600;margin:16pt 0 5pt}
+h4{font-size:10.5pt;font-weight:600;margin:0 0 3pt}
+p{margin:0 0 7pt}
+ul,ol{margin:0 0 8pt;padding-left:14pt}li{margin:0 0 3pt}
+strong{font-weight:600}
+.lead{font-size:10.5pt;color:var(--graphite)}
+.muted{color:var(--smoke)}.small{font-size:8.2pt}
+table{width:100%;border-collapse:collapse;margin:4pt 0 10pt;font-size:8.6pt;break-inside:auto}
+th{background:var(--tint);text-align:left;font-weight:600;padding:5pt 6pt}
+td{padding:5pt 6pt;border-bottom:.6pt solid var(--line);vertical-align:top}
+tr{break-inside:avoid}
+.cards{display:grid;gap:8pt;margin:6pt 0 10pt}.c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:1fr 1fr 1fr}.c4{grid-template-columns:repeat(4,1fr)}
+.card{border:.6pt solid var(--line);background:#FBFBF7;padding:8pt 9pt;border-radius:3pt;font-size:8.6pt;break-inside:avoid}
+.step{background:var(--tint);border-top:2.5pt solid var(--ink);padding:8pt 9pt;font-size:8.4pt;break-inside:avoid}
+.step h4{font-size:10pt}
+.callout{background:var(--ink);color:var(--bone);padding:10pt 12pt;border-radius:3pt;margin:8pt 0 10pt;break-inside:avoid}
+.callout strong{color:var(--volt)}
+.note{border-left:2.5pt solid var(--pop);padding:4pt 0 4pt 9pt;margin:8pt 0;font-size:8.8pt}
+.swatch{height:26pt;border-radius:3pt;border:.6pt solid var(--line);margin-bottom:4pt}
+code{font:8pt "JetBrains Mono",monospace;background:var(--tint);padding:0 2pt;border-radius:2pt}
+pre{font:7.6pt/1.45 "JetBrains Mono",monospace;background:var(--ink);color:var(--bone);padding:9pt 10pt;border-radius:3pt;white-space:pre-wrap;margin:4pt 0 10pt}
+pre.light{background:var(--tint);color:var(--ink)}
+sup a{color:var(--olive);text-decoration:none;font-size:7pt}
+a{color:inherit}
+.badge{display:inline-block;font-size:7.5pt;font-weight:600;padding:1pt 5pt;border-radius:8pt;background:var(--tint)}
+.badge.next{background:var(--ink);color:var(--volt)}
+.toc{list-style:none;padding:0;margin:8pt 0}
+.toc li{display:flex;gap:14pt;padding:6pt 0;border-bottom:.6pt solid var(--line);font-size:10pt;margin:0}
+.toc .n{color:var(--olive);font-weight:600;width:20pt}
+.diagram{background:#FBFBF7;border:.6pt solid var(--line);padding:6pt;border-radius:3pt;text-align:center;break-inside:avoid}
+.diagram pre.mermaid{background:none;color:var(--ink);padding:0;margin:0}
+.diagram svg{width:100%!important;max-width:100%!important;height:auto!important;max-height:228mm}
+.cover{page:cover;height:297mm;padding:22mm 20mm;color:var(--bone);display:flex;flex-direction:column;background:var(--ink)}
+.wordmark{font:700 15pt "Space Grotesk",sans-serif;color:var(--volt);letter-spacing:.02em;display:flex;align-items:center;gap:7pt}
+.dot{width:11pt;height:11pt;border-radius:50%;border:2pt solid var(--volt);position:relative}
+.cover h1{font-size:46pt;line-height:1.02;margin:52mm 0 10pt;font-weight:700}
+.cover h1 span{color:var(--volt)}
+.cover .sub{font-size:11pt;color:#C9C9C2;max-width:120mm}
+.quote{margin-top:auto;border:1pt solid var(--volt);padding:12pt 14pt;font:500 13pt "Space Grotesk",sans-serif;color:var(--bone)}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10pt;margin-top:14pt}
+.meta div{font-size:9pt;color:#C9C9C2}.meta b{display:block;font:600 7pt Inter;letter-spacing:.18em;text-transform:uppercase;color:var(--volt);margin-bottom:3pt}
+.sources li{font-size:8pt;word-break:break-all}
+.keep{break-inside:avoid}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="wordmark"><span class="dot"></span>tock</div>
+  <h1>Scan, tap,<br><span>you're in.</span></h1>
+  <p class="sub">Founding document: what Tock is, who it serves, what it does today, and how it grows into a business.</p>
+  <div class="quote">"A time clock your team doesn't hate, and hours your owner can trust."</div>
+  <div class="meta">
+    <div><b>Document</b>Founding document, version 0.2</div>
+    <div><b>Date</b>November 2026</div>
+    <div><b>Product status</b>UI prototype. No saved data, logins or on-site checks yet</div>
+  </div>
+</section>
+
+<!-- CONTENTS -->
+<section class="section">
+  <p class="eyebrow">Contents</p>
+  <h2>In this document</h2>
+  <ol class="toc">
+    <li><span class="n">00</span>Tock at a glance</li>
+    <li><span class="n">01</span>System vision and product overview</li>
+    <li><span class="n">02</span>Market opportunity</li>
+    <li><span class="n">03</span>Commercial pitch and value matrix</li>
+    <li><span class="n">04</span>Competitive advantages</li>
+    <li><span class="n">05</span>Ideal customer profile and target audience</li>
+    <li><span class="n">06</span>Go-to-market strategy</li>
+    <li><span class="n">07</span>Brand identity and design guidelines</li>
+    <li><span class="n">08</span>Technical architecture</li>
+    <li><span class="n">09</span>Key implementation steps</li>
+    <li><span class="n">10</span>Development prompt and instructions for Claude</li>
+    <li><span class="n">A</span>Appendix: pages and glossary</li>
+    <li><span class="n">S</span>Sources</li>
+  </ol>
+</section>
+
+<!-- 00 GLANCE -->
+<section class="section">
+  <p class="eyebrow">00 · Summary</p>
+  <h2>Tock at a glance</h2>
+  <p class="lead">Tock is a time clock that lives on the wall as a QR code and in every employee's pocket as their phone. Employees scan the code, Tock checks they're really on-site, and one tap clocks them in or out. Managers see who's in the building right now, and payroll gets hours they can trust.</p>
+  <div class="cards c3">
+    <div class="card"><h4>For owners</h4>Set up a location and print its poster in about 5 minutes. No keycards, no hardware, no installation project.</div>
+    <div class="card"><h4>For employees</h4>Scan with the phone camera and tap once. No app to install, no badge to lose. They can see their own hours.</div>
+    <div class="card"><h4>For managers and payroll</h4>A live headcount, alerts for late arrivals and missed clock-outs, and timesheets ready to export.</div>
+  </div>
+  <h3>Where we start</h3>
+  <p>Small businesses with <strong>10–200 hourly employees on 1–5 sites</strong> (cafés and restaurants, retail, small warehouses, clinics, gyms) that use keycards, paper or a wall clock today.</p>
+  <h3>What makes it different</h3>
+  <ul>
+    <li><strong>Proven on-site.</strong> A location check plus a QR code that changes over time, so a photo of the poster doesn't work from home.</li>
+    <li><strong>Three seconds, no install.</strong> It runs in the phone's browser.</li>
+    <li><strong>A personality.</strong> Bold, quick and a little cheeky, so employees actually like using it.</li>
+    <li><strong>Fair to both sides.</strong> Employees see their own hours, and every timesheet edit is recorded.</li>
+  </ul>
+  <h3>Status today</h3>
+  <p>A clickable UI prototype with a sign-in screen (still in its original visitor style), an admin dashboard with sample data, and a QR poster generator. Saving data, logins and on-site checks come next (see section 09).</p>
+</section>
+
+<!-- 01 VISION -->
+<section class="section">
+  <p class="eyebrow">01 · System vision and product overview</p>
+  <h2>Why Tock exists</h2>
+  <h3>Mission</h3>
+  <p>Give every small business a time clock its team doesn't hate, and hours its owner can trust.</p>
+  <h3>Vision</h3>
+  <p>Clocking in should take three seconds and feel good. Tock replaces keycard swipes and beige wall-mounted time clocks with a QR code on the wall and the phone already in every employee's pocket. Managers can see who's in the building right now and trust that the hours they pay for were actually worked.</p>
+  <h3>Values</h3>
+  <p class="muted small">Each value is also a product rule.</p>
+  <div class="cards c2">
+    <div class="card"><h4>Proven, not assumed</h4>Every clock-in is checked on-site by the server. Anything that fails a check is blocked or flagged, never silently accepted.</div>
+    <div class="card"><h4>Location at the moment, never all day</h4>Tock checks where an employee is only when they clock in or out. It never tracks them during a shift or after they leave.</div>
+    <div class="card"><h4>Three seconds or it's broken</h4>The path from scan to "You're in" has no extra screens, forms or loading spinners. If it takes longer, that's a bug.</div>
+    <div class="card"><h4>Fair to both sides</h4>Employees can see their own hours. Timesheet edits never overwrite the original. Each edit records who made it and why.</div>
+  </div>
+</section>
+
+<section class="section">
+  <p class="eyebrow">01 · System vision and product overview</p>
+  <h2>The problem and the product</h2>
+  <h3>The problem</h3>
+  <ul>
+    <li><strong>Keycards and hardware clocks are a hassle.</strong> They cost money, get lost, break, and need someone to manage them.</li>
+    <li><strong>Hours are hard to trust.</strong> "Buddy punching" (one employee clocking in for another) and padded shifts are common. In one vendor-commissioned survey, 16% of workers admitted to buddy punching, most often adding about 15 minutes.<sup><a href="#s5">5</a></sup></li>
+    <li><strong>"Who's in the building?" is hard to answer.</strong> That matters for safety (fire roll calls) and for day-to-day operations.</li>
+  </ul>
+  <h3>The product</h3>
+  <table>
+    <tr><th style="width:24%">Surface</th><th style="width:24%">Who</th><th>What it does</th></tr>
+    <tr><td><strong>Wall QR poster</strong></td><td>Admin prints, everyone scans</td><td>One per location or entrance. Opens Tock's clock-in screen</td></tr>
+    <tr><td><strong>Clock-in screen</strong> (mobile web)</td><td>Employees</td><td>Recognizes the employee, checks they're on-site, then one big button: <strong>Clock in</strong> or <strong>Clock out</strong></td></tr>
+    <tr><td><strong>Admin dashboard</strong></td><td>Managers and owners</td><td>Live headcount, activity feed, timesheets, exceptions (late, missed clock-out), CSV and payroll export</td></tr>
+    <tr><td><strong>Location manager</strong></td><td>Admins</td><td>Create locations, set geofences, print QR posters</td></tr>
+  </table>
+  <h3>Core capabilities (final version)</h3>
+  <ol>
+    <li><strong>Saved clock-ins.</strong> Every clock event is stored and can be audited.</li>
+    <li><strong>Admin login</strong> and role-based access (owner, manager, employee).</li>
+    <li><strong>Employee identity:</strong> employees sign in once on their phone and stay signed in. They never retype their name.</li>
+    <li><strong>Proof of presence:</strong> a geofence check plus a rotating QR code, so a photo of the poster doesn't work from home.</li>
+    <li><strong>Proximity prompts:</strong> "You've arrived at Main office, clock in?" when the phone enters a location (planned for a later phase).</li>
+    <li><strong>Timesheets and exports:</strong> hours per employee per pay period, with exports to payroll.</li>
+  </ol>
+</section>
+
+<section class="section">
+  <p class="eyebrow">01 · How it works</p>
+  <h2>End to end</h2>
+  <h3>The owner's setup (once)</h3>
+  <div class="cards c4">
+    <div class="step"><h4>Sign up</h4>Create the organization and set the time zone.</div>
+    <div class="step"><h4>Add a location</h4>Name, address and a geofence radius.</div>
+    <div class="step"><h4>Print the poster</h4>Tape it by the staff door.</div>
+    <div class="step"><h4>Invite the team</h4>Employees get a one-time sign-in link.</div>
+  </div>
+  <h3>The employee's shift (every day)</h3>
+  <div class="cards c4">
+    <div class="step"><h4>Arrive</h4>Scan the wall QR, or tap a proximity prompt (later phase).</div>
+    <div class="step"><h4>Checked</h4>Tock confirms who they are and that they're on-site.</div>
+    <div class="step"><h4>Clock in</h4>One tap. "You're in at 8:57."</div>
+    <div class="step"><h4>Clock out</h4>Scan and tap again at the end of the shift.</div>
+  </div>
+  <h3>The manager's routine (ongoing)</h3>
+  <div class="cards c4">
+    <div class="step"><h4>Watch</h4>Live headcount and activity.</div>
+    <div class="step"><h4>Review</h4>Flagged clock-ins and missed clock-outs.</div>
+    <div class="step"><h4>Approve</h4>The week's timesheets.</div>
+    <div class="step"><h4>Export</h4>Hours to payroll.</div>
+  </div>
+</section>
+
+<section class="section">
+  <p class="eyebrow">01 · How it works</p>
+  <h2>User journey and workflow</h2>
+  <div class="diagram"><pre class="mermaid">
+flowchart TD
+    subgraph Admin["Admin setup (once)"]
+        direction LR
+        A1[Create organization] --> A2[Add location + geofence]
+        A2 --> A3[Print Tock QR poster]
+        A3 --> A4[Invite employees]
+    end
+    subgraph Employee["Employee, every shift"]
+        E1["Arrive: scan wall QR<br/>or tap proximity prompt (later)"] --> E4{Signed in on<br/>this phone?}
+        E4 -- No --> E5[One-time sign-in<br/>magic link] --> E6
+        E4 -- Yes --> E6{On-site?<br/>geofence + QR token}
+        E6 -- No --> E7["Blocked or flagged:<br/>'You're not at Main office'"]
+        E6 -- Yes --> E8["Tap Clock in<br/>'You're in at 8:57'"]
+        E8 --> E11[End of shift:<br/>scan, tap Clock out]
+    end
+    subgraph Manager["Manager, ongoing"]
+        direction LR
+        M1[Live headcount] --> M2[Review exceptions]
+        M2 --> M3[Approve timesheet]
+        M3 --> M4[Export to payroll]
+    end
+    Admin -. "employees invited" .-> Employee
+    Employee -. "clock events feed the dashboard" .-> Manager
+  </pre></div>
+</section>
+
+<section class="section">
+  <p class="eyebrow">01 · A worked example</p>
+  <h2>Daybreak Coffee</h2>
+  <p class="muted small">Daybreak Coffee is a made-up business. It will also be the demo account and the script for demo videos.</p>
+  <p>Daybreak Coffee runs three cafés with 24 hourly staff. Until now it used key fobs for the back door and a paper sign-in sheet for hours.</p>
+  <div class="cards c2">
+    <div class="card"><h4>Setup · Monday, 8 minutes</h4>Maya, the owner, signs up and adds the Main Street café with a 60 m geofence. She prints its Tock poster and tapes it by the staff door. Then she invites her staff by email.</div>
+    <div class="card"><h4>First shift · Tuesday, 6:52 am</h4>Sam, a barista, scans the poster. Because it's the first time, Tock sends a one-time sign-in link, and Sam stays signed in on that phone from then on. The location check passes (18 m from the café). Sam taps <strong>Clock in</strong> and sees "You're in at 6:52. Have a good one." Maya's dashboard updates to "7 in the building."</div>
+    <div class="card"><h4>A blocked punch · Tuesday, 7:10 am</h4>Leo is running late and scans a photo of the poster from the bus, 3 km away. Tock shows "Looks like you're not at Main Street. Get closer and try again." The attempt appears on Maya's exceptions list.</div>
+    <div class="card"><h4>A missed clock-out · Tuesday, 3:00 pm</h4>Sam forgets to clock out. At 3:30 Tock sends a reminder and flags the shift. The next morning Maya fixes the clock-out time and adds a reason. The original record and the edit are both kept.</div>
+  </div>
+  <div class="callout"><strong>Payday · Friday.</strong> Maya reviews the week's timesheets, approves them and exports a CSV for payroll. The whole process takes minutes, not an afternoon of reading paper sheets.</div>
+</section>
+
+<!-- 02 MARKET -->
+<section class="section">
+  <p class="eyebrow">02 · Market opportunity</p>
+  <h2>A proven, growing category</h2>
+  <div class="cards c3">
+    <div class="card"><h4 style="font-size:18pt">$3.7–4.0B</h4>Global time and attendance software market, 2025 estimates.<sup><a href="#s1">1</a> <a href="#s2">2</a> <a href="#s3">3</a></sup></div>
+    <div class="card"><h4 style="font-size:18pt">7–10%</h4>Estimated annual growth, reaching roughly $6B+ by 2030–2032.</div>
+    <div class="card"><h4 style="font-size:18pt">~38%</h4>Share held by North America, the largest region.<sup><a href="#s4">4</a></sup></div>
+  </div>
+  <p class="muted small">Estimates vary between research firms, so we treat these figures as a rough guide.</p>
+  <h3>Tailwinds</h3>
+  <ul>
+    <li>Businesses are switching from hardware to phone-based time clocks.</li>
+    <li>Small businesses are adopting SaaS for HR and payroll (Gusto, QuickBooks, etc.).</li>
+    <li>Wage-and-hour compliance is drawing more attention.</li>
+    <li>Nearly every hourly worker now has a smartphone.</li>
+  </ul>
+  <h3>The pain is real but poorly measured</h3>
+  <p>The often-cited "$373M a year lost to buddy punching" comes from a 2017 vendor survey.<sup><a href="#s5">5</a></sup> We use it as a sign the problem is real, not as a headline number.</p>
+  <div class="callout"><strong>Our bet:</strong> the category is proven and growing, and the tools that lead it are full-featured but generic. There's room for a focused, fast, likeable product aimed at small teams.</div>
+</section>
+
+<!-- 03 PITCH -->
+<section class="section">
+  <p class="eyebrow">03 · Commercial pitch and value matrix</p>
+  <h2>Hours you can trust</h2>
+  <div class="callout">Tock turns any wall into a time clock. Print a QR code, and your team clocks in from their phones in three seconds, verified on-site, with no keycards or hardware. You see who's in right now, and payroll gets <strong>hours you can trust.</strong></div>
+  <h3>Value matrix</h3>
+  <table>
+    <tr><th style="width:17%">Stakeholder</th><th style="width:27%">Pain today</th><th style="width:30%">What Tock gives them</th><th>Proof point</th></tr>
+    <tr><td><strong>Owner / buyer</strong></td><td>Paying for unworked time; keycard and hardware costs</td><td>Verified on-site clock-ins; no hardware to buy</td><td>Hours paid vs. hours verified</td></tr>
+    <tr><td><strong>Ops / shift manager</strong></td><td>"Who's here?"; chasing missed clock-outs</td><td>Live headcount, exception alerts</td><td>Minutes per week spent fixing timesheets</td></tr>
+    <tr><td><strong>Payroll / bookkeeper</strong></td><td>Messy paper or spreadsheet timesheets</td><td>Clean, approved exports</td><td>Time to run payroll</td></tr>
+    <tr><td><strong>Employee</strong></td><td>Lost badges, queues at the clock, disputed hours</td><td>3-second clock-in on their own phone; their hours are visible</td><td>Clock-in time; disputes per month</td></tr>
+    <tr><td><strong>Safety / facilities</strong></td><td>No reliable roll call in an emergency</td><td>Real-time list of who's on-site</td><td>Roll-call time in drills</td></tr>
+  </table>
+  <h3>Pricing hypothesis (to validate)</h3>
+  <p>Competitors land around <strong>$3–6 per user per month</strong>, often with a free tier.<sup><a href="#s6">6</a> <a href="#s7">7</a></sup></p>
+  <div class="cards c3">
+    <div class="card"><h4>Free</h4>Up to 5 employees, 1 location. Also helps spread the product through QR posters.</div>
+    <div class="card"><h4>Team · ~$3</h4>Per active employee per month. Unlimited locations, geofencing, exports.</div>
+    <div class="card"><h4>Pro · ~$5</h4>Per active employee per month. Payroll integrations, proximity prompts, scheduling, audit log.</div>
+  </div>
+</section>
+
+<!-- 04 COMPETITION -->
+<section class="section">
+  <p class="eyebrow">04 · Competitive advantages</p>
+  <h2>Where Tock fits</h2>
+  <div class="note"><strong>To be honest up front:</strong> QR clock-in and geofencing are not unique. Jibble, Connecteam and Homebase all offer some version of them.<sup><a href="#s6">6</a> <a href="#s7">7</a> <a href="#s8">8</a></sup> Tock wins on <strong>focus, speed and feel</strong>, not on a feature checklist.</div>
+  <h3>The alternatives a business has today</h3>
+  <table>
+    <tr><th style="width:22%">Alternative</th><th style="width:26%">What it does well</th><th>Where it falls short for a small team</th></tr>
+    <tr><td><strong>Keycards and fobs</strong></td><td>Familiar; also open doors</td><td>Cards cost money and get lost. Lending a card is buddy punching. They don't give a clear view of hours</td></tr>
+    <tr><td><strong>Wall time clocks</strong> (punch, PIN or biometric)</td><td>On-site by design</td><td>Hardware to buy and maintain, queues at shift change. Fingerprint and face scanning bring extra privacy rules in some places</td></tr>
+    <tr><td><strong>Paper sheets and spreadsheets</strong></td><td>Free and flexible</td><td>Easy to fake, slow to total for payroll, no live headcount</td></tr>
+    <tr><td><strong>A shared tablet time clock</strong></td><td>Cheap, on-site</td><td>One device for everyone means queues. PINs get shared</td></tr>
+    <tr><td><strong>All-in-one workforce apps</strong> (Jibble, Connecteam, Homebase and similar)</td><td>Full-featured; QR, geofencing and free tiers</td><td>Broad suites with more to set up and learn. They often push a native app install, and they look generic</td></tr>
+  </table>
+  <h3>Tock's edge</h3>
+  <table>
+    <tr><th style="width:27%">Advantage</th><th style="width:43%">Why it matters</th><th>Defensibility</th></tr>
+    <tr><td><strong>No hardware, no app install</strong></td><td>Mobile web: scan and go. Lowest friction for new hires and seasonal staff</td><td>Medium. Others could copy it, but most push their native apps</td></tr>
+    <tr><td><strong>Two-factor presence check</strong> (geofence + rotating QR)</td><td>Stops "photo of the poster" and remote buddy punching</td><td>Medium. It's in how we build the product, not a patent</td></tr>
+    <tr><td><strong>Distinctive brand and personality</strong></td><td>Employees actually like using it; the posters on the wall advertise Tock</td><td>High. Brand is hard to copy</td></tr>
+    <tr><td><strong>Setup in minutes</strong></td><td>Owner creates location → prints poster → done</td><td>Medium</td></tr>
+    <tr><td><strong>Does one thing well</strong></td><td>No sprawling HR suite; easier to sell and support</td><td>Strategic choice</td></tr>
+    <tr><td><strong>Live headcount as a safety feature</strong></td><td>Opens up sales to facilities and safety buyers, not just payroll</td><td>Medium</td></tr>
+  </table>
+  <p class="small muted"><strong>Main competitors to watch:</strong> Jibble, Connecteam, Homebase, QuickBooks Time, Deputy, When I Work, plus legacy hardware clocks and keycard systems.</p>
+</section>
+
+<!-- 05 ICP -->
+<section class="section">
+  <p class="eyebrow">05 · Ideal customer profile and target audience</p>
+  <h2>Who Tock is for</h2>
+  <table>
+    <tr><th style="width:24%">Primary ICP</th><th></th></tr>
+    <tr><td><strong>Business size</strong></td><td>10–200 hourly employees, 1–5 physical sites</td></tr>
+    <tr><td><strong>Industries</strong></td><td>Restaurants and cafés, retail, light manufacturing and warehouses, clinics and dental offices, gyms, cleaning and facilities firms, coworking spaces</td></tr>
+    <tr><td><strong>Current setup</strong></td><td>Keycards or fobs, a paper sign-in book, a wall clock, or a shared tablet</td></tr>
+    <tr><td><strong>Trigger events</strong></td><td>Opening a new location, a hardware clock dying, a payroll dispute, a failed fire drill, an audit</td></tr>
+    <tr><td><strong>Buyer</strong></td><td>Owner/operator or operations manager (and often also the admin)</td></tr>
+    <tr><td><strong>Users</strong></td><td>Hourly staff, often young and mobile-first. Tock's bold look is aimed at them</td></tr>
+  </table>
+  <h3>Not a fit (for now)</h3>
+  <ul>
+    <li>Fully remote or desk-based teams (they need activity trackers, not presence checks)</li>
+    <li>Enterprises needing union rules, complex shift differentials, or biometric hardware</li>
+    <li>Field crews with no fixed site (possible later with per-job geofences)</li>
+  </ul>
+</section>
+
+<!-- 06 GTM -->
+<section class="section">
+  <p class="eyebrow">06 · Go-to-market strategy</p>
+  <h2>Start local, then spread</h2>
+  <ol>
+    <li><strong>Founder-led pilots (months 0–3):</strong> 5–10 local businesses from our own networks. Free in exchange for feedback and a testimonial.</li>
+    <li><strong>Free tier funnel:</strong> self-serve signup, first poster printed in under 5 minutes.</li>
+    <li><strong>Content and SEO:</strong> "replace keycards," "stop buddy punching," "free QR time clock," fire roll-call templates.</li>
+    <li><strong>Marketplaces and listings:</strong> Capterra, G2, GetApp; the Gusto and QuickBooks app stores once integrations exist.</li>
+    <li><strong>Vertical playbooks:</strong> pick one beachhead industry (e.g., cafés/restaurants or small warehouses), build case studies there, then expand.</li>
+    <li><strong>Partners (later):</strong> bookkeepers and payroll providers who recommend Tock to their clients.</li>
+  </ol>
+  <h3>Built-in growth</h3>
+  <div class="cards c3">
+    <div class="card"><h4>The poster is the ad</h4>Every QR poster says "Clock in with Tock" with a small "get Tock for your team" link. Every customer's staff door advertises Tock to everyone who walks past it.</div>
+    <div class="card"><h4>Employees carry it to their next job</h4>Hourly workers change jobs often. Someone who liked clocking in with Tock is likely to suggest it at their next workplace, sometimes as the manager.</div>
+    <div class="card"><h4>Bookkeepers multiply</h4>One bookkeeper or payroll firm serves dozens of small businesses. If Tock's exports save them time, they'll recommend it to all of their clients.</div>
+  </div>
+  <p><strong>Early metrics:</strong> time to first clock-in after signup, weekly active locations, clock-ins per employee per week, free → paid conversion, retention at 90 days.</p>
+</section>
+
+<!-- 07 BRAND -->
+<section class="section">
+  <p class="eyebrow">07 · Brand identity and design guidelines</p>
+  <h2>Bold, quick, a little cheeky</h2>
+  <h3>Name</h3>
+  <p><strong>Tock</strong>, the second half of <em>tick-tock</em>. Short, easy to say, and it works as a verb ("did you tock in?"). <span class="muted">Trademark and domain availability not yet checked.</span></p>
+  <h3>Personality</h3>
+  <p>Bold, quick, confident, a little cheeky. Streetwear energy, not office software. Tock respects your time: nothing on screen that doesn't need to be there.</p>
+  <h3>Color: "Electric"</h3>
+  <div class="cards" style="grid-template-columns:repeat(6,1fr)">
+    <div><div class="swatch" style="background:#141414"></div><strong>ink</strong><br><span class="small muted">#141414</span></div>
+    <div><div class="swatch" style="background:#C6F432"></div><strong>volt</strong><br><span class="small muted">#C6F432</span></div>
+    <div><div class="swatch" style="background:#F5F5F0"></div><strong>bone</strong><br><span class="small muted">#F5F5F0</span></div>
+    <div><div class="swatch" style="background:#FF5C8A"></div><strong>pop</strong><br><span class="small muted">#FF5C8A</span></div>
+    <div><div class="swatch" style="background:#2A2A2A"></div><strong>graphite</strong><br><span class="small muted">#2A2A2A</span></div>
+    <div><div class="swatch" style="background:#8A8A85"></div><strong>smoke</strong><br><span class="small muted">#8A8A85</span></div>
+  </div>
+  <table>
+    <tr><th style="width:16%">Token</th><th>Use</th></tr>
+    <tr><td><strong>ink</strong></td><td>Primary background (dark-first UI), primary text on light surfaces</td></tr>
+    <tr><td><strong>volt</strong></td><td>Brand accent, primary action (Clock in), highlights. Text on volt is always ink</td></tr>
+    <tr><td><strong>bone</strong></td><td>Text on ink; light-mode background; print posters</td></tr>
+    <tr><td><strong>pop</strong></td><td>Secondary accent: Clock out, alerts, exceptions</td></tr>
+    <tr><td><strong>graphite</strong></td><td>Raised surfaces, chips, cards on ink</td></tr>
+    <tr><td><strong>smoke</strong></td><td>Secondary text, captions</td></tr>
+  </table>
+  <h3>Rules</h3>
+  <ul>
+    <li>Dark (ink) is the default for the employee clock-in screen; the admin dashboard may offer light mode using bone.</li>
+    <li>Volt is precious: <strong>one</strong> volt element per screen, the main action.</li>
+    <li>Never put volt text on bone. The contrast is too low. Use ink on volt, or volt on ink.</li>
+    <li>Status: clocked in = volt, clocked out = bone/smoke, exception = pop.</li>
+  </ul>
+</section>
+
+<section class="section">
+  <p class="eyebrow">07 · Brand identity and design guidelines</p>
+  <h2>Type, voice and feel</h2>
+  <h3>Typography (proposal)</h3>
+  <div class="cards c2">
+    <div class="card"><h4 style="font-size:16pt">Space Grotesk</h4>Display and numbers: the big clock "8:57", headings. This document uses it for its headlines.</div>
+    <div class="card"><h4 style="font-family:Inter;font-size:16pt">Inter</h4>UI and body text, for readability (or the existing Geist). Big, confident numerals: the time is the star of the clock-in screen.</div>
+  </div>
+  <h3>Voice and copy</h3>
+  <table>
+    <tr><th style="width:40%">Instead of</th><th>Tock says</th></tr>
+    <tr><td>"Submit"</td><td>"Clock in" / "Clock out"</td></tr>
+    <tr><td>"Sign-in successful"</td><td>"You're in at 8:57. Have a good one."</td></tr>
+    <tr><td>"Headcount: 12"</td><td>"12 in the building"</td></tr>
+    <tr><td>"Error: location invalid"</td><td>"Looks like you're not at Main office. Get closer and try again."</td></tr>
+    <tr><td>"Good morning" (always)</td><td>Changes with the time of day: "Morning, Jordan" / "Late one tonight?"</td></tr>
+  </table>
+  <h3>Motion and feel</h3>
+  <ul>
+    <li>Clock-in confirmation: quick scale + volt pulse, plus a vibration on supported phones.</li>
+    <li>Big tap targets (the round clock button is at least 96px), fast transitions (under 200ms), no loading screens on the happy path.</li>
+  </ul>
+  <h3>QR poster</h3>
+  <p>Ink background, a large QR code on a bone tile, location name, the wordmark "tock" in volt, and "Scan to clock in." Must also print well in black and white.</p>
+</section>
+
+<!-- 08 TECH -->
+<section class="section">
+  <p class="eyebrow">08 · Technical architecture</p>
+  <h2>A small, modern stack</h2>
+  <table>
+    <tr><th style="width:17%">Layer</th><th style="width:33%">Choice</th><th>Notes</th></tr>
+    <tr><td>Frontend</td><td><strong>Next.js 16</strong> (App Router) + React 19 + Tailwind 4</td><td>Already in the repo</td></tr>
+    <tr><td>Hosting</td><td><strong>Vercel</strong></td><td>Preview deployment for every PR</td></tr>
+    <tr><td>Database</td><td><strong>Supabase Postgres</strong></td><td>Row-level security (RLS) gives each org access only to its own data</td></tr>
+    <tr><td>Auth</td><td><strong>Supabase Auth</strong></td><td>Magic link / OTP for employees; email + password or SSO for admins</td></tr>
+    <tr><td>Realtime</td><td><strong>Supabase Realtime</strong></td><td>Live headcount and activity feed on the dashboard</td></tr>
+    <tr><td>QR rendering</td><td><code>qrcode.react</code></td><td>Already in the repo</td></tr>
+    <tr><td>Proximity (later)</td><td>PWA with push notifications, or a thin native wrapper (Expo/Capacitor)</td><td>Browsers can't run background geofences, so arrival prompts need a native wrapper or app</td></tr>
+  </table>
+  <h3>Data model (initial)</h3>
+<pre class="light">organizations (id, name, timezone, plan, created_at)
+locations     (id, org_id, name, slug, lat, lng, radius_m, qr_secret, active)
+members       (id, org_id, user_id, display_name, role: owner|manager|employee, active)
+clock_events  (id, org_id, member_id, location_id, type: in|out, at,
+               lat, lng, accuracy_m, distance_m, qr_token_ok, flagged, flag_reason,
+               source: qr|prompt|manual, edited_by, edit_reason)
+shifts        (id, org_id, member_id, location_id, starts_at, ends_at)   -- later
+timesheets    (view: pairs in/out events per member per pay period)</pre>
+  <h3>Proof of presence</h3>
+  <div class="cards c3">
+    <div class="step"><h4>1. Rotating QR token</h4>The QR code includes a signed, time-limited token: a static poster plus a server-checked code, or a rotating code on a cheap tablet display for high-security sites.</div>
+    <div class="step"><h4>2. Geofence</h4>At clock-in, the browser shares the phone's location. The server checks the distance from the location's center against <code>radius_m</code>, allowing for GPS accuracy.</div>
+    <div class="step"><h4>3. Policy per location</h4><em>Block</em> or <em>allow but flag</em>. Flagged events show up as exceptions for the manager.</div>
+  </div>
+  <h3>Key routes (target)</h3>
+  <ul class="small">
+    <li><code>/scan/[locationSlug]</code>: employee clock-in (public URL, requires the employee to be signed in)</li>
+    <li><code>/admin</code>: dashboard (live headcount, feed, exceptions)</li>
+    <li><code>/admin/locations</code>: location CRUD, geofence map, poster printing</li>
+    <li><code>/admin/people</code>: invites and roles · <code>/admin/timesheets</code>: review, approve, export</li>
+    <li>Server actions or route handlers for clock events. <strong>All validation happens on the server.</strong></li>
+  </ul>
+</section>
+
+<section class="section">
+  <p class="eyebrow">08 · Trust, privacy and security</p>
+  <h2>Built to be believed</h2>
+  <p class="muted small">These are design rules, decided now because they shape the database and code. The legal side (consent wording, how long data is kept, which laws apply) is a separate decision, listed in section 09.</p>
+  <div class="cards c2">
+    <div class="card"><h4>Clock-ins can be believed</h4><ul style="margin:0">
+      <li>The server decides whether a clock-in is valid. The phone only sends evidence (location, QR token).</li>
+      <li>Failed checks are recorded as flagged events. They're never silently dropped or silently accepted.</li>
+      <li>Timesheet edits never overwrite the original record. Each edit stores who made it, when and why.</li></ul></div>
+    <div class="card"><h4>Each company's data is walled off</h4><ul style="margin:0">
+      <li>Every table is scoped by <code>org_id</code>, with row-level security in the database itself, not only in the app's code. A bug in the app still can't show one company's records to another.</li>
+      <li>The app connects to the database with a restricted account that can't bypass those rules.</li>
+      <li>Automated tests prove that company A can never read company B's data, and that an employee can see only their own records.</li></ul></div>
+    <div class="card"><h4>Employees' location is respected</h4><ul style="margin:0">
+      <li>Location is read only at the moment of clocking in or out. There's no background tracking.</li>
+      <li><em>Leaning towards:</em> storing only the distance from the location and the GPS accuracy, not the exact coordinates. If so, <code>lat</code> and <code>lng</code> would be dropped from <code>clock_events</code>. To be decided along with the privacy decision.</li>
+      <li>The clock-in screen says in plain words what is checked and why.</li></ul></div>
+    <div class="card"><h4>Reliability</h4><ul style="margin:0">
+      <li>Every request carries a reference code that's shown on any error, so a problem can be found in the logs quickly.</li>
+      <li>Errors go to an error tracker (e.g. Sentry). A health-check endpoint reports the database and email status.</li>
+      <li>Tests cover the rules (unit tests), database security (RLS tests) and full journeys in a browser (Playwright).</li></ul></div>
+  </div>
+  <h3>Operating cost</h3>
+  <p>At pilot scale, Tock runs on the free or entry tiers of Vercel and Supabase. Costs grow mainly with the number of clock events, live dashboard connections (Supabase Realtime) and emails. All three grow with paying customers.</p>
+  <p class="small muted">One known limit: Supabase's built-in email service is heavily rate-limited, so sign-in links need a proper email provider (e.g. Resend) before real teams use Tock.</p>
+  <h3>Known technical debt in the prototype</h3>
+  <ul class="small">
+    <li>Sample data in <code>app/admin/page.tsx</code>; the form in <code>components/SignForm.tsx</code> doesn't save anything.</li>
+    <li>The scan page triggers a Next.js <code>cacheComponents</code> warning (<code>params</code> read outside <code>&lt;Suspense&gt;</code>).</li>
+    <li>The generic "Create Next App" title, indigo theme, and visitor-style form (name + contact) need to become Tock's employee flow.</li>
+  </ul>
+</section>
+
+<!-- 09 IMPLEMENTATION -->
+<section class="section">
+  <p class="eyebrow">09 · Key implementation steps</p>
+  <h2>What's built and what's next</h2>
+  <p class="muted small">Phases are ordered by UI first, then the minimum backend to make it real.</p>
+  <table>
+    <tr><th style="width:19%">Phase</th><th style="width:17%">Goal</th><th>Deliverables</th><th style="width:13%">Status</th></tr>
+    <tr><td><strong>Prototype</strong></td><td>Click through the idea</td><td>Sign-in screen, admin dashboard with sample data, QR poster generator</td><td><span class="badge">Done (inherited)</span></td></tr>
+    <tr><td><strong>0. Rebrand the prototype</strong></td><td>Make it look and feel like Tock</td><td>Electric color tokens and fonts in Tailwind; new clock-in screen (big clock, round button, greeting); restyled admin dashboard and QR poster; fix the Suspense warning; update the README</td><td><span class="badge next">Next</span></td></tr>
+    <tr><td><strong>1. Make it real</strong></td><td>Saved clock-ins + login</td><td>Supabase project; schema + RLS + isolation tests; admin login; employee magic-link sign-in; clock events saved; dashboard reads real data</td><td><span class="badge">Later</span></td></tr>
+    <tr><td><strong>2. Locations</strong></td><td>Admin-managed sites</td><td>Location CRUD, slugs, printable posters, invite employees</td><td><span class="badge">Later</span></td></tr>
+    <tr><td><strong>3. Trust</strong></td><td>Stop buddy punching</td><td>Geofence check, signed QR tokens, flagged events, exception view</td><td><span class="badge">Later</span></td></tr>
+    <tr><td><strong>4. Payroll-ready</strong></td><td>Hours you can pay from</td><td>Timesheets, edits with audit trail, approvals, CSV export, auto clock-out reminders</td><td><span class="badge">Later</span></td></tr>
+    <tr><td><strong>5. Proximity prompts</strong></td><td>"You've arrived, clock in?"</td><td>PWA push or native wrapper with background geofencing</td><td><span class="badge">Later</span></td></tr>
+    <tr><td><strong>6. Business</strong></td><td>Get paid</td><td>Self-serve signup, Stripe billing, free tier limits, marketing site</td><td><span class="badge">Later</span></td></tr>
+  </table>
+  <div class="note"><strong>Deferred decision: privacy and compliance.</strong> Tock collects names, contact details and location data. Before any real customer data (end of Phase 1 at the latest) we need to decide what location data is stored and for how long, how employees consent, and which regulations apply (e.g., GDPR, US state privacy laws, labor record-keeping rules). The design principles in section 08 already apply.</div>
+  <div class="cards c2">
+    <div class="card"><h4>Deliberately not in the first version</h4><p class="small muted" style="margin:0 0 3pt">Each can be reconsidered once pilots show demand.</p><ul style="margin:0">
+      <li>Native phone apps (until Phase 5 needs one)</li><li>Shift scheduling and rotas</li><li>Fingerprint or face scanning</li>
+      <li>Running payroll itself (Tock exports hours; payroll tools pay people)</li><li>Paid time off and leave tracking</li><li>AI features</li><li>Hardware kiosks</li></ul></div>
+    <div class="card"><h4>Before a paid launch</h4><ul style="margin:0">
+      <li>A separate production Supabase project (not shared with development)</li><li>A proper email provider for sign-in links and reminders</li>
+      <li>Trademark and domain check for "Tock", then a custom domain</li><li>Privacy policy and terms of service reviewed by a lawyer</li>
+      <li>Stripe billing and plans, priced from pilot feedback</li><li>Help pages for owners and employees</li><li>Error tracking and a health check in production</li></ul></div>
+  </div>
+</section>
+
+<section class="section">
+  <p class="eyebrow">09 · Risks</p>
+  <h2>Risks and how we handle them</h2>
+  <table>
+    <tr><th style="width:21%">Risk</th><th style="width:27%">What could happen</th><th>How we handle it</th></tr>
+    <tr><td><strong>GPS is inaccurate indoors</strong></td><td>Honest employees get blocked at the door</td><td>Allow for the phone's reported accuracy; default new locations to "allow but flag" rather than "block"; managers approve flagged events in one tap</td></tr>
+    <tr><td><strong>Staff without a smartphone or data</strong></td><td>Some employees can't clock in</td><td>A shared-tablet mode with a personal PIN, and audited manual punches by a manager</td></tr>
+    <tr><td><strong>Employees push back on location checks</strong></td><td>Low adoption, morale issues</td><td>Location only at the clock moment, explained on screen; employees can see what was stored about them</td></tr>
+    <tr><td><strong>Wage and hour law</strong></td><td>Disputes over hours, or businesses relying on Tock for legal compliance</td><td>Tock records hours, and the employer stays responsible for paying them correctly. Edits are audited. Terms say this clearly. Legal review before a paid launch</td></tr>
+    <tr><td><strong>Forgotten clock-outs</strong></td><td>Inflated or broken timesheets</td><td>Reminders, automatic flags and, later, proximity prompts</td></tr>
+    <tr><td><strong>Browsers can't run background geofences</strong></td><td>Proximity prompts aren't possible on the web</td><td>Planned as Phase 5 with an installable web app or a thin native wrapper</td></tr>
+    <tr><td><strong>Competitors with free tiers</strong></td><td>Hard to win on price</td><td>Compete on speed, focus and design, and offer our own free tier for small teams</td></tr>
+    <tr><td><strong>Dependence on Vercel or Supabase</strong></td><td>Price or service changes</td><td>Standard technology (PostgreSQL, Next.js) that can move to other hosts</td></tr>
+  </table>
+  <h3>Open questions</h3>
+  <ul>
+    <li>Trademark and domain check for "Tock"</li>
+    <li>Privacy and compliance approach for location data</li>
+    <li>Beachhead industry for the first pilots</li>
+    <li>Static vs. rotating QR codes as the default (security vs. cost and simplicity)</li>
+    <li>Which payroll integration to build first (Gusto, QuickBooks, ADP?)</li>
+  </ul>
+</section>
+
+<!-- 10 CLAUDE -->
+<section class="section">
+  <p class="eyebrow">10 · Development prompt and instructions for Claude</p>
+  <h2>Instructions for Claude</h2>
+  <p>Paste this into a Claude Code session (or keep it as <code>CLAUDE.md</code>) when working on Tock.</p>
+<pre>You are working on Tock, a QR-based employee time clock (repo: qr-signin-admin).
+Read the founding document first (docs/founding/founding-document.html). It is the source
+of truth for vision, brand, and architecture.
+
+Context
+- Stack: Next.js 16 App Router, React 19, Tailwind 4, TypeScript. Deploy: Vercel.
+  Backend: Supabase (Postgres + Auth + Realtime + RLS).
+- Current focus: UI/UX and brand personality (section 07). Base features must work end-to-end.
+- Work phase by phase (section 09). Don't start a later phase's features unless asked.
+
+Brand rules (enforce in every UI change)
+- Colors: ink #141414, volt #C6F432, bone #F5F5F0, pop #FF5C8A, graphite #2A2A2A, smoke #8A8A85.
+  Define them as Tailwind theme tokens. Never hard-code hex in components.
+- One volt element per screen (the primary action). Text on volt is ink. Never volt on bone.
+- Dark-first employee screens. Big numerals. Round 96px+ clock button. Transitions under 200ms.
+- Copy is short, warm, a little cheeky, in sentence case. Use "Clock in", not "Submit".
+  Use the voice table in section 07.
+
+Engineering rules
+- Validate every clock event on the server (identity, geofence, QR token). Never trust the client.
+- Every table is scoped by org_id with RLS policies. Write migrations as SQL files in
+  supabase/migrations.
+- Keep components small and in /components. Use server components by default and add
+  "use client" only where needed. Wrap dynamic params/searchParams in &lt;Suspense&gt;
+  (cacheComponents is on).
+- Work on a feature branch per change. Run `npm run lint` and `npm run build` before saying
+  a change is done.
+- Never put passwords, API keys or demo logins in docs or committed files. Keep them in
+  .env.local (git-ignored) and use clearly fake seed data for demos (e.g. the Daybreak
+  Coffee demo account).
+- After any UI change, run the dev server, check the page in the browser at mobile (375px)
+  and desktop widths, and show a screenshot.
+
+Demo videos
+- When asked for a demo, script the flow (e.g., admin creates location → prints poster →
+  employee scans → clocks in → dashboard headcount updates), automate it with Playwright
+  against the local dev server at a mobile viewport, and record the video. Save it to
+  /docs/demos/ with a short caption file.
+
+When unsure about product decisions, check the founding document. If it doesn't answer the
+question, ask instead of guessing.</pre>
+</section>
+
+<!-- APPENDIX -->
+<section class="section">
+  <p class="eyebrow">Appendix</p>
+  <h2>Pages and glossary</h2>
+  <h3>Pages in the product</h3>
+  <table>
+    <tr><th style="width:14%">Who</th><th style="width:40%">Today (prototype)</th><th>Target</th></tr>
+    <tr><td><strong>Public</strong></td><td><code>/</code> landing page with links to the admin pages</td><td>Marketing site, sign-up, log in</td></tr>
+    <tr><td><strong>Employee</strong></td><td><code>/scan/[locationId]</code> sign-in form (name, contact, in/out)</td><td><code>/scan/[locationSlug]</code> clock-in screen; "My hours"</td></tr>
+    <tr><td><strong>Admin</strong></td><td><code>/admin</code> dashboard (sample data), <code>/admin/qr</code> poster generator</td><td>Dashboard, Locations, People, Timesheets, Exceptions, Settings and billing</td></tr>
+    <tr><td><strong>Downloads</strong></td><td>CSV of sample log, printable QR poster</td><td>Timesheet CSV and payroll exports, printable posters</td></tr>
+  </table>
+  <h3>Glossary</h3>
+  <table>
+    <tr><th style="width:22%">Term</th><th>Meaning</th></tr>
+    <tr><td><strong>Clock event</strong></td><td>One clock-in or clock-out, with time, location check results and whether it was flagged</td></tr>
+    <tr><td><strong>Shift</strong></td><td>A clock-in and its matching clock-out (or a planned block of work, once scheduling exists)</td></tr>
+    <tr><td><strong>Exception</strong></td><td>Anything a manager should look at: a flagged clock-in, a missed clock-out, a late arrival</td></tr>
+    <tr><td><strong>Flagged</strong></td><td>Accepted but marked for review because a check didn't fully pass</td></tr>
+    <tr><td><strong>Geofence</strong></td><td>The circle around a location (center point + radius) where clocking in is allowed</td></tr>
+    <tr><td><strong>QR token</strong></td><td>A short-lived signed code in the QR link that proves the scan happened recently</td></tr>
+    <tr><td><strong>Buddy punching</strong></td><td>One employee clocking in or out for another</td></tr>
+    <tr><td><strong>Headcount</strong></td><td>The people whose most recent clock event is a clock-in</td></tr>
+    <tr><td><strong>Pay period</strong></td><td>The date range a timesheet covers (e.g. weekly or every two weeks)</td></tr>
+    <tr><td><strong>Timesheet</strong></td><td>An employee's shifts and total hours for a pay period, ready for approval</td></tr>
+    <tr><td><strong>Proximity prompt</strong></td><td>A phone notification offering to clock in when the employee arrives at a location</td></tr>
+    <tr><td><strong>Org</strong></td><td>One customer company in Tock, with its own locations, people and data</td></tr>
+  </table>
+</section>
+
+<!-- SOURCES -->
+<section class="section">
+  <p class="eyebrow">Sources</p>
+  <h2>References</h2>
+  <ol class="sources">
+    <li id="s1">The Business Research Company, <em>Time &amp; Attendance Software Global Market Report</em>. https://www.giiresearch.com/report/tbrc1977515-time-attendance-software-global-market-report.html</li>
+    <li id="s2">Mordor Intelligence, <em>Time &amp; Attendance Software Market Share Analysis</em>. https://www.giiresearch.com/report/moi2125434-time-attendance-software-market-share-analysis.html</li>
+    <li id="s3">MarkNtel Advisors, <em>Global Time and Attendance Software Market (2026–2032)</em>. https://www.marknteladvisors.com/query/request-sample/time-attendance-software-market.html</li>
+    <li id="s4">IMARC Group, <em>Time &amp; Attendance Software Market Size, Share &amp; Trends</em>. https://www.giiresearch.com/report/imarc2024903-time-attendance-software-market-size-share-trends.html</li>
+    <li id="s5">Biometric Update, <em>U.S. economy loses $373 million to time theft</em> (TSheets/Pollfish survey, 2017). https://www.biometricupdate.com/201706/u-s-economy-loses-373-million-to-time-theft. See also Synerion, <em>Buddy Punching and Employee Time Theft Statistics</em>. https://blog.synerion.com/buddy-punching-and-employee-time-theft-statistics</li>
+    <li id="s6">Rework, <em>Connecteam vs QuickBooks Time vs Jibble: pricing (2026)</em>. https://resources.rework.com/tools/time-attendance/connecteam-vs-quickbooks-time-vs-jibble</li>
+    <li id="s7">Capterra, <em>Jibble pricing and reviews</em>. https://www.capterra.com/p/156992/Jibble/reviews/4350309</li>
+    <li id="s8">Homebase, <em>Best geofencing time clock</em>. https://www.joinhomebase.com/blog/best-geofencing-time-clock</li>
+  </ol>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({startOnLoad:false,theme:"base",themeVariables:{fontFamily:"Inter",primaryColor:"#FBFBF7",primaryBorderColor:"#141414",primaryTextColor:"#141414",lineColor:"#6B6B66",clusterBkg:"#EAEAE1",clusterBorder:"#DDDDD3",fontSize:"16px"},flowchart:{nodeSpacing:30,rankSpacing:40}});
+mermaid.run({querySelector:".mermaid"}).then(()=>{document.body.dataset.ready="1"});
+</script>
+</body>
+</html>
