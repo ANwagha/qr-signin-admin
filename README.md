@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tock
 
-## Getting Started
+**Scan, tap, you're in.** Tock is a QR-based time clock for teams. Employees scan a poster with their phone, Tock checks they're on-site, and one tap clocks them in or out. Managers see who's in the building and get timesheets they can trust.
 
-First, run the development server:
+The product vision, brand and roadmap live in the founding document: [`docs/Tock-Founding-Document.pdf`](docs/Tock-Founding-Document.pdf) (source: [`docs/founding/`](docs/founding/)).
+
+## Status: Phase 0 (UI prototype)
+
+This build is the rebranded UI prototype. Everything runs in the browser with demo data:
+
+| Page | What it does |
+|---|---|
+| `/` | Landing page |
+| `/scan/[location]` | Employee clock-in screen. Asks for a name once, then shows a live clock and a Clock in / Clock out button |
+| `/admin` | Dashboard for the made-up Daybreak Coffee: headcount, flagged clock-ins, activity, CSV export |
+| `/admin/qr` | Makes a printable Tock poster for a location |
+
+**Demo only:** the employee's name and clock events are kept in that browser's `localStorage` (`lib/demo-store.ts`), and the dashboard mixes them with sample data. Nothing is shared between devices, and there are no logins or location checks yet. Those come with Supabase in Phase 1 (see section 09 of the founding document).
+
+## Run it locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open http://localhost:3000. Try `/scan/main-street` on your phone (same Wi-Fi, using your computer's IP address) to see the clock-in screen at real size.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Next.js 16 (App Router, `cacheComponents` on), React 19, Tailwind CSS 4, TypeScript, `qrcode.react`. Fonts: Space Grotesk (display) and Inter (UI).
 
-## Learn More
+## Brand tokens
 
-To learn more about Next.js, take a look at the following resources:
+Defined in `app/globals.css` and available as Tailwind classes (`bg-ink`, `text-volt`, …):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Token | Hex | Use |
+|---|---|---|
+| `ink` | `#141414` | Dark background, text on light surfaces |
+| `volt` | `#C6F432` | The one primary action per screen. Text on volt is always ink |
+| `bone` | `#F5F5F0` | Text on ink, light backgrounds |
+| `pop` | `#FF5C8A` | Clock out, alerts, flags |
+| `pop-deep` | `#B8154F` | Pop-coloured text on light backgrounds |
+| `graphite` | `#2A2A2A` | Raised surfaces on ink |
+| `smoke` | `#8A8A85` | Secondary text |
+| `line` | `#DDDCD3` | Hairlines on light backgrounds |

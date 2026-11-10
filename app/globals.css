@@ -1,33 +1,56 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Tock "Electric" palette — see docs/Tock-Founding-Document.pdf, section 07.
+   Rules: one volt element per screen; text on volt is ink; never volt on bone. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: #141414;
+  --color-volt: #c6f432;
+  --color-bone: #f5f5f0;
+  --color-pop: #ff5c8a;
+  --color-pop-deep: #b8154f; /* pop for text on bone/white, where pop itself is too light to read */
+  --color-graphite: #2a2a2a;
+  --color-smoke: #8a8a85;
+  --color-line: #dddcd3;
+
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-space-grotesk);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--color-ink);
+  color: var(--color-bone);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes tock-pulse {
+  0% { box-shadow: 0 0 0 0 rgb(198 244 50 / 0.55); transform: scale(1); }
+  40% { transform: scale(1.06); }
+  100% { box-shadow: 0 0 0 28px rgb(198 244 50 / 0); transform: scale(1); }
+}
+.animate-tock-pulse { animation: tock-pulse 600ms ease-out; }
+
+@keyframes tock-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-tock-in { animation: tock-in 180ms ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-tock-pulse, .animate-tock-in { animation: none; }
 }
 
 @media print {
+  @page { margin: 12mm; }
+  html, body { background: #fff; }
   .no-print { display: none !important; }
   body * { visibility: hidden; }
   .print-area, .print-area * { visibility: visible; }
-  .print-area { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; }
+  .print-area {
+    position: absolute; left: 0; top: 0; width: 100%;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
 }
