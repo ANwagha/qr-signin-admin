@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Tock · Founding document</title>
+<title>Musterpass · Founding document v0.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#141414;--volt:#C6F432;--bone:#F5F5F0;--pop:#FF5C8A;--graphite:#2A2A2A;--smoke:#6B6B66;--olive:#4F6600;--line:#DDDDD3;--tint:#EAEAE1}
 @page{size:A4;margin:16mm 16mm 18mm;background:var(--bone);
-  @bottom-left{content:"Tock · Founding document · November 2026";font:7.5pt Inter,sans-serif;color:#8A8A85}
+  @bottom-left{content:"Musterpass · Founding document v0.3 · November 2026";font:7.5pt Inter,sans-serif;color:#8A8A85}
   @bottom-right{content:counter(page) " / " counter(pages);font:7.5pt Inter,sans-serif;color:#8A8A85}}
 @page cover{margin:0;background:var(--ink);@bottom-left{content:none}@bottom-right{content:none}}
 *{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -30,50 +30,57 @@ td{padding:5pt 6pt;border-bottom:.6pt solid var(--line);vertical-align:top}
 tr{break-inside:avoid}
 .cards{display:grid;gap:8pt;margin:6pt 0 10pt}.c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:1fr 1fr 1fr}.c4{grid-template-columns:repeat(4,1fr)}
 .card{border:.6pt solid var(--line);background:#FBFBF7;padding:8pt 9pt;border-radius:3pt;font-size:8.6pt;break-inside:avoid}
+.card ul{margin:0}
 .step{background:var(--tint);border-top:2.5pt solid var(--ink);padding:8pt 9pt;font-size:8.4pt;break-inside:avoid}
 .step h4{font-size:10pt}
 .callout{background:var(--ink);color:var(--bone);padding:10pt 12pt;border-radius:3pt;margin:8pt 0 10pt;break-inside:avoid}
 .callout strong{color:var(--volt)}
-.note{border-left:2.5pt solid var(--pop);padding:4pt 0 4pt 9pt;margin:8pt 0;font-size:8.8pt}
+.note{border-left:2.5pt solid var(--pop);padding:4pt 0 4pt 9pt;margin:8pt 0;font-size:8.8pt;break-inside:avoid}
 .swatch{height:26pt;border-radius:3pt;border:.6pt solid var(--line);margin-bottom:4pt}
 code{font:8pt "JetBrains Mono",monospace;background:var(--tint);padding:0 2pt;border-radius:2pt}
 pre{font:7.6pt/1.45 "JetBrains Mono",monospace;background:var(--ink);color:var(--bone);padding:9pt 10pt;border-radius:3pt;white-space:pre-wrap;margin:4pt 0 10pt}
 pre.light{background:var(--tint);color:var(--ink)}
 sup a{color:var(--olive);text-decoration:none;font-size:7pt}
 a{color:inherit}
-.badge{display:inline-block;font-size:7.5pt;font-weight:600;padding:1pt 5pt;border-radius:8pt;background:var(--tint)}
+.badge{display:inline-block;font-size:7.5pt;font-weight:600;padding:1pt 5pt;border-radius:8pt;background:var(--tint);white-space:nowrap}
 .badge.next{background:var(--ink);color:var(--volt)}
+.badge.done{background:var(--volt);color:var(--ink)}
 .toc{list-style:none;padding:0;margin:8pt 0}
 .toc li{display:flex;gap:14pt;padding:6pt 0;border-bottom:.6pt solid var(--line);font-size:10pt;margin:0}
 .toc .n{color:var(--olive);font-weight:600;width:20pt}
 .diagram{background:#FBFBF7;border:.6pt solid var(--line);padding:6pt;border-radius:3pt;text-align:center;break-inside:avoid}
 .diagram pre.mermaid{background:none;color:var(--ink);padding:0;margin:0}
-.diagram svg{width:100%!important;max-width:100%!important;height:auto!important;max-height:228mm}
+.diagram svg{width:100%!important;max-width:100%!important;height:auto!important;max-height:225mm}
 .cover{page:cover;height:297mm;padding:22mm 20mm;color:var(--bone);display:flex;flex-direction:column;background:var(--ink)}
 .wordmark{font:700 15pt "Space Grotesk",sans-serif;color:var(--volt);letter-spacing:.02em;display:flex;align-items:center;gap:7pt}
+.wordmark small{font:500 8pt Inter;color:#8A8A85;letter-spacing:0;margin-left:4pt}
 .dot{width:11pt;height:11pt;border-radius:50%;border:2pt solid var(--volt);position:relative}
-.cover h1{font-size:46pt;line-height:1.02;margin:52mm 0 10pt;font-weight:700}
+.cover h1{font-size:44pt;line-height:1.02;margin:48mm 0 10pt;font-weight:700}
 .cover h1 span{color:var(--volt)}
-.cover .sub{font-size:11pt;color:#C9C9C2;max-width:120mm}
+.cover .sub{font-size:11pt;color:#C9C9C2;max-width:125mm}
 .quote{margin-top:auto;border:1pt solid var(--volt);padding:12pt 14pt;font:500 13pt "Space Grotesk",sans-serif;color:var(--bone)}
 .meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10pt;margin-top:14pt}
 .meta div{font-size:9pt;color:#C9C9C2}.meta b{display:block;font:600 7pt Inter;letter-spacing:.18em;text-transform:uppercase;color:var(--volt);margin-bottom:3pt}
 .sources li{font-size:8pt;word-break:break-all}
-.keep{break-inside:avoid}
+.pivot{border:1.2pt solid var(--ink);background:#FBFBF7;padding:9pt 11pt;border-radius:3pt;margin:6pt 0 10pt;break-inside:avoid}
+.pivot h4{margin-bottom:4pt}
+.photo{border:.6pt solid var(--line);background:#FBFBF7;border-radius:3pt;padding:9pt 10pt;break-inside:avoid;font-size:8.6pt}
+.photo .tag{display:inline-block;font:600 7pt Inter;letter-spacing:.14em;text-transform:uppercase;background:var(--ink);color:var(--volt);padding:2pt 6pt;border-radius:2pt;margin-bottom:5pt}
+.check{list-style:none;padding:0}.check li{padding-left:13pt;position:relative}.check li:before{content:"☐";position:absolute;left:0}
 </style>
 </head>
 <body>
 
 <!-- COVER -->
 <section class="cover">
-  <div class="wordmark"><span class="dot"></span>tock</div>
-  <h1>Scan, tap,<br><span>you're in.</span></h1>
-  <p class="sub">Founding document: what Tock is, who it serves, what it does today, and how it grows into a business.</p>
-  <div class="quote">"A time clock your team doesn't hate, and hours your owner can trust."</div>
+  <div class="wordmark"><span class="dot"></span>musterpass</div>
+  <h1>Scan in. Sign off.<br><span>Proven on site.</span></h1>
+  <p class="sub">Founding document: how one QR scan at the site entrance replaces paper safety forms, keycards and time clocks, and how that becomes a SaaS business.</p>
+  <div class="quote">"Every person on site: checked in, verified and signed off, with proof, the moment they arrive."</div>
   <div class="meta">
-    <div><b>Document</b>Founding document, version 0.2</div>
+    <div><b>Document</b>Founding document, version 0.3 (the site-safety pivot)</div>
     <div><b>Date</b>November 2026</div>
-    <div><b>Product status</b>UI prototype. No saved data, logins or on-site checks yet</div>
+    <div><b>Product status</b>UI prototype. No saved data, logins or photo capture yet</div>
   </div>
 </section>
 
@@ -82,16 +89,16 @@ a{color:inherit}
   <p class="eyebrow">Contents</p>
   <h2>In this document</h2>
   <ol class="toc">
-    <li><span class="n">00</span>Tock at a glance</li>
+    <li><span class="n">00</span>At a glance, and what changed in version 0.3</li>
     <li><span class="n">01</span>System vision and product overview</li>
     <li><span class="n">02</span>Market opportunity</li>
-    <li><span class="n">03</span>Commercial pitch and value matrix</li>
+    <li><span class="n">03</span>Commercial pitch, value matrix and pricing</li>
     <li><span class="n">04</span>Competitive advantages</li>
     <li><span class="n">05</span>Ideal customer profile and target audience</li>
     <li><span class="n">06</span>Go-to-market strategy</li>
-    <li><span class="n">07</span>Brand identity and design guidelines</li>
-    <li><span class="n">08</span>Technical architecture</li>
-    <li><span class="n">09</span>Key implementation steps</li>
+    <li><span class="n">07</span>Brand identity, design guidelines and naming</li>
+    <li><span class="n">08</span>Technical architecture, Supabase privacy plan and Vercel deployment</li>
+    <li><span class="n">09</span>Key implementation steps and risks</li>
     <li><span class="n">10</span>Development prompt and instructions for Claude</li>
     <li><span class="n">A</span>Appendix: pages and glossary</li>
     <li><span class="n">S</span>Sources</li>
@@ -101,95 +108,150 @@ a{color:inherit}
 <!-- 00 GLANCE -->
 <section class="section">
   <p class="eyebrow">00 · Summary</p>
-  <h2>Tock at a glance</h2>
-  <p class="lead">Tock is a time clock that lives on the wall as a QR code and in every employee's pocket as their phone. Employees scan the code, Tock checks they're really on-site, and one tap clocks them in or out. Managers see who's in the building right now, and payroll gets hours they can trust.</p>
+  <h2>At a glance</h2>
+  <p class="lead">Musterpass is a site check-in platform. Everyone who arrives at a work site scans a QR code, takes a selfie, completes the day's safety form with photo evidence, and signs off. That one scan clocks them in. Managers see who is on site, whether they are cleared to work, and have a timestamped, photo-backed record ready for any audit or incident.</p>
+  <div class="pivot">
+    <h4>What changed in version 0.3</h4>
+    <ul>
+      <li><strong>From time clock to site safety.</strong> Clocking in is now a by-product of checking in safely, not the product itself.</li>
+      <li><strong>Photo verification</strong> in three separate roles: identity, presence and compliance.</li>
+      <li><strong>The first form is the Field Level Hazard Assessment (FLHA),</strong> the daily pre-task hazard check used across Canadian construction.</li>
+      <li><strong>A full SaaS journey</strong> from company sign-up to daily use, with per-company pricing and a Billing page.</li>
+      <li><strong>Construction first, food service second.</strong> Everyone on site checks in: employees, subcontractors and visitors.</li>
+      <li><strong>Supabase and Vercel</strong> are now planned in detail, including how photos and personal data are protected.</li>
+      <li><strong>A new name: Musterpass.</strong> It replaces the working name "Tock" (see section 07).</li>
+    </ul>
+  </div>
   <div class="cards c3">
-    <div class="card"><h4>For owners</h4>Set up a location and print its poster in about 5 minutes. No keycards, no hardware, no installation project.</div>
-    <div class="card"><h4>For employees</h4>Scan with the phone camera and tap once. No app to install, no badge to lose. They can see their own hours.</div>
-    <div class="card"><h4>For managers and payroll</h4>A live headcount, alerts for late arrivals and missed clock-outs, and timesheets ready to export.</div>
+    <div class="card"><h4>For companies</h4>Sign up, choose "Construction", and get a ready-made FLHA, dashboard and site posters. One flat price per company, with no per-worker counting.</div>
+    <div class="card"><h4>For workers and visitors</h4>Scan with the phone camera. No app, no paper. About a minute to check in and sign the day's FLHA.</div>
+    <div class="card"><h4>For safety managers</h4>Live list of who is on site and cleared. Hazards flagged the moment they are reported. Records exported in one click.</div>
   </div>
   <h3>Where we start</h3>
-  <p>Small businesses with <strong>10–200 hourly employees on 1–5 sites</strong> (cafés and restaurants, retail, small warehouses, clinics, gyms) that use keycards, paper or a wall clock today.</p>
-  <h3>What makes it different</h3>
-  <ul>
-    <li><strong>Proven on-site.</strong> A location check plus a QR code that changes over time, so a photo of the poster doesn't work from home.</li>
-    <li><strong>Three seconds, no install.</strong> It runs in the phone's browser.</li>
-    <li><strong>A personality.</strong> Bold, quick and a little cheeky, so employees actually like using it.</li>
-    <li><strong>Fair to both sides.</strong> Employees see their own hours, and every timesheet edit is recorded.</li>
-  </ul>
-  <h3>Status today</h3>
-  <p>A clickable UI prototype with a sign-in screen (still in its original visitor style), an admin dashboard with sample data, and a QR poster generator. Saving data, logins and on-site checks come next (see section 09).</p>
+  <p><strong>Construction in British Columbia,</strong> then Alberta and the rest of Canada. <strong>Food service</strong> (commercial kitchens) is the second industry, using the same engine with its own forms.</p>
 </section>
 
 <!-- 01 VISION -->
 <section class="section">
   <p class="eyebrow">01 · System vision and product overview</p>
-  <h2>Why Tock exists</h2>
+  <h2>Why Musterpass exists</h2>
   <h3>Mission</h3>
-  <p>Give every small business a time clock its team doesn't hate, and hours its owner can trust.</p>
+  <p>Make it faster to do safety right than to skip it, and give every company proof that it did.</p>
   <h3>Vision</h3>
-  <p>Clocking in should take three seconds and feel good. Tock replaces keycard swipes and beige wall-mounted time clocks with a QR code on the wall and the phone already in every employee's pocket. Managers can see who's in the building right now and trust that the hours they pay for were actually worked.</p>
-  <h3>Values</h3>
-  <p class="muted small">Each value is also a product rule.</p>
+  <p>No more clipboards at the site trailer. Every worker, subcontractor and visitor checks in on their own phone, confirms the day's hazards and controls, and leaves a record that is complete, signed and photo-backed before they pick up a tool.</p>
+  <h3>The problem</h3>
+  <ul>
+    <li><strong>Paper safety forms arrive late.</strong> FLHAs and sign-in sheets are filled in on clipboards, then collected, scanned or typed up days later, if they are not lost.</li>
+    <li><strong>Paper proves little.</strong> After an incident it is hard to show who was on site, when, and whether they were briefed. Signatures can be added after the fact.</li>
+    <li><strong>Liability falls on the company.</strong> Missing or late records weaken its position with the regulator, insurers and in court.</li>
+    <li><strong>Nobody knows exactly who is on site.</strong> That matters for emergency roll calls (muster) and for paying people correctly.</li>
+  </ul>
+  <h3>Values (each one is a product rule)</h3>
   <div class="cards c2">
-    <div class="card"><h4>Proven, not assumed</h4>Every clock-in is checked on-site by the server. Anything that fails a check is blocked or flagged, never silently accepted.</div>
-    <div class="card"><h4>Location at the moment, never all day</h4>Tock checks where an employee is only when they clock in or out. It never tracks them during a shift or after they leave.</div>
-    <div class="card"><h4>Three seconds or it's broken</h4>The path from scan to "You're in" has no extra screens, forms or loading spinners. If it takes longer, that's a bug.</div>
-    <div class="card"><h4>Fair to both sides</h4>Employees can see their own hours. Timesheet edits never overwrite the original. Each edit records who made it and why.</div>
+    <div class="card"><h4>Proven, not claimed</h4>Every check-in and form carries server time, location and photos that cannot be edited afterwards.</div>
+    <div class="card"><h4>Evidence at the moment, never surveillance</h4>Photos and location are captured only at check-in, check-out and in forms. No tracking during the shift.</div>
+    <div class="card"><h4>Faster than paper</h4>A daily check-in with FLHA must take about a minute. If paper is faster, we've failed.</div>
+    <div class="card"><h4>Fair to everyone on site</h4>Workers can see their own records. Nothing is changed silently; every correction is logged with who and why.</div>
   </div>
 </section>
 
 <section class="section">
   <p class="eyebrow">01 · System vision and product overview</p>
-  <h2>The problem and the product</h2>
-  <h3>The problem</h3>
-  <ul>
-    <li><strong>Keycards and hardware clocks are a hassle.</strong> They cost money, get lost, break, and need someone to manage them.</li>
-    <li><strong>Hours are hard to trust.</strong> "Buddy punching" (one employee clocking in for another) and padded shifts are common. In one vendor-commissioned survey, 16% of workers admitted to buddy punching, most often adding about 15 minutes.<sup><a href="#s5">5</a></sup></li>
-    <li><strong>"Who's in the building?" is hard to answer.</strong> That matters for safety (fire roll calls) and for day-to-day operations.</li>
-  </ul>
-  <h3>The product</h3>
+  <h2>The product</h2>
   <table>
-    <tr><th style="width:24%">Surface</th><th style="width:24%">Who</th><th>What it does</th></tr>
-    <tr><td><strong>Wall QR poster</strong></td><td>Admin prints, everyone scans</td><td>One per location or entrance. Opens Tock's clock-in screen</td></tr>
-    <tr><td><strong>Clock-in screen</strong> (mobile web)</td><td>Employees</td><td>Recognizes the employee, checks they're on-site, then one big button: <strong>Clock in</strong> or <strong>Clock out</strong></td></tr>
-    <tr><td><strong>Admin dashboard</strong></td><td>Managers and owners</td><td>Live headcount, activity feed, timesheets, exceptions (late, missed clock-out), CSV and payroll export</td></tr>
-    <tr><td><strong>Location manager</strong></td><td>Admins</td><td>Create locations, set geofences, print QR posters</td></tr>
+    <tr><th style="width:22%">Surface</th><th style="width:22%">Who</th><th>What it does</th></tr>
+    <tr><td><strong>Site QR poster</strong></td><td>Printed by the company, scanned by everyone</td><td>One per site entrance. Opens the check-in flow for that site</td></tr>
+    <tr><td><strong>Check-in flow</strong> (mobile web)</td><td>Workers, subcontractors, visitors</td><td>Identify → selfie → site check → FLHA with compliance photos → sign → checked in (and clocked in)</td></tr>
+    <tr><td><strong>Check-out</strong></td><td>Everyone on site</td><td>Scan again at the end of the day; optional "any incidents?" question</td></tr>
+    <tr><td><strong>Safety dashboard</strong></td><td>Safety managers, supervisors</td><td>Who is on site now, FLHAs submitted, hazards flagged, selfies to review, muster list</td></tr>
+    <tr><td><strong>Forms</strong></td><td>Company admins</td><td>Industry templates (FLHA first), edited per company; later, upload an existing paper form to convert it</td></tr>
+    <tr><td><strong>Sites and people</strong></td><td>Company admins</td><td>Create sites and geofences, print posters, invite crews, manage subcontractor companies</td></tr>
+    <tr><td><strong>Records and exports</strong></td><td>Safety managers</td><td>Search any day, person or site; export a PDF or CSV for audits, COR, insurers or incident investigations</td></tr>
+    <tr><td><strong>Billing</strong></td><td>Company owner</td><td>One subscription per company: plan, invoices, payment method. Linked next to Admin in the top navigation</td></tr>
   </table>
-  <h3>Core capabilities (final version)</h3>
+  <h3>Core capabilities</h3>
   <ol>
-    <li><strong>Saved clock-ins.</strong> Every clock event is stored and can be audited.</li>
-    <li><strong>Admin login</strong> and role-based access (owner, manager, employee).</li>
-    <li><strong>Employee identity:</strong> employees sign in once on their phone and stay signed in. They never retype their name.</li>
-    <li><strong>Proof of presence:</strong> a geofence check plus a rotating QR code, so a photo of the poster doesn't work from home.</li>
-    <li><strong>Proximity prompts:</strong> "You've arrived at Main office, clock in?" when the phone enters a location (planned for a later phase).</li>
-    <li><strong>Timesheets and exports:</strong> hours per employee per pay period, with exports to payroll.</li>
+    <li><strong>One-scan check-in</strong> for everyone, including people the company never invited.</li>
+    <li><strong>Photo verification</strong> in three roles (next page).</li>
+    <li><strong>Digital FLHA</strong> signed before work starts, with hazards and controls, PPE photos and supervisor review.</li>
+    <li><strong>Live site roster and muster list</strong> for emergencies.</li>
+    <li><strong>Automatic time records</strong> from check-in and check-out, exportable for payroll.</li>
+    <li><strong>Industry-aware setup:</strong> choosing an industry sets up forms, dashboard cards and wording automatically.</li>
+    <li><strong>Evidence-grade records</strong>: server timestamps, location, hashed photos and an append-only audit trail.</li>
   </ol>
 </section>
 
 <section class="section">
+  <p class="eyebrow">01 · Photo verification</p>
+  <h2>Three kinds of photo, three jobs</h2>
+  <p>Photos are what make our records stronger than paper. They do three different jobs, and we keep them separate in the product, in storage and in how long we keep them.</p>
+  <div class="cards c3">
+    <div class="photo"><span class="tag">1 · Identity</span><h4>Is this the right person?</h4>
+      <ul><li>A selfie taken live in the check-in flow (camera only, no gallery uploads).</li>
+      <li>Shown next to the person's profile photo for a <strong>supervisor to review</strong>. Mismatches are flagged.</li>
+      <li>Stops buddy punching and borrowed accounts.</li>
+      <li><strong>No automatic face matching</strong> for now. That would be biometric processing with stricter legal rules; it is future scope.</li></ul></div>
+    <div class="photo"><span class="tag">2 · Presence</span><h4>Are they really on site?</h4>
+      <ul><li>The phone's location at the moment of check-in, compared with the site geofence on the server.</li>
+      <li>The QR code carries a short-lived token, so a photo of the poster doesn't work from home.</li>
+      <li>The selfie background adds visual proof of the site.</li>
+      <li>Optional per site: a photo of the entrance or posted site board.</li></ul></div>
+    <div class="photo"><span class="tag">3 · Compliance</span><h4>Is the work set up safely?</h4>
+      <ul><li>Photos attached to answers inside the FLHA: PPE worn, harness tie-off, barricades, housekeeping.</li>
+      <li>The form decides which answers require a photo.</li>
+      <li>This is the strongest evidence in an audit or after an incident.</li>
+      <li>Kept as long as the safety record itself.</li></ul></div>
+  </div>
+  <h3>Rules for every photo</h3>
+  <ul>
+    <li><strong>Captured live</strong> in the app with the camera, never picked from the photo gallery.</li>
+    <li><strong>Stamped by the server</strong> with time, site, person and location, and stored with a SHA-256 hash so any later change is detectable.</li>
+    <li><strong>Private by default.</strong> Viewable only by authorized people in that company, through links that expire in minutes.</li>
+    <li><strong>Separate retention.</strong> Identity selfies are kept for a short period (proposal: 90 days, unless attached to an incident); compliance photos are kept with the safety record. Final periods to be set with legal advice.</li>
+    <li><strong>Explained up front.</strong> The first check-in shows plain-language consent wording, and we store which version each person accepted.</li>
+  </ul>
+</section>
+
+<section class="section">
+  <p class="eyebrow">01 · The first form template</p>
+  <h2>Field Level Hazard Assessment</h2>
+  <p>The FLHA is a short pre-task check where each worker identifies the hazards of today's work and how they're controlled. It is widely used on Canadian construction sites as part of the hazard assessment that occupational safety rules require, and it must be redone when the task or conditions change.<sup><a href="#s6">6</a> <a href="#s7">7</a></sup> WorkSafeBC does not mandate one specific FLHA form, so ours is a strong default that each company can adapt.</p>
+  <div class="cards c2">
+    <div class="card"><h4>1 · Job details</h4>Site (from the QR), date and time (automatic), worker and employer company, supervisor, task description, work location on site.</div>
+    <div class="card"><h4>2 · Fit for work</h4>"Are you fit for duty today?" Have you reviewed the site orientation and know the muster point? Any "no" alerts the supervisor.</div>
+    <div class="card"><h4>3 · Hazards (tick all that apply)</h4>Working at heights · falling objects · mobile equipment · excavation or trenching · electrical · hot work · confined space · hazardous materials · noise · weather · slips, trips and housekeeping · manual lifting · other (describe).</div>
+    <div class="card"><h4>4 · Controls</h4>For each hazard ticked: how it's controlled (guardrail, tie-off, spotter, barricade, lockout, ventilation, permit…). Height, excavation and hot-work answers <strong>require a compliance photo</strong>.</div>
+    <div class="card"><h4>5 · PPE check</h4>Hard hat · hi-vis · safety boots · eye protection · gloves · hearing protection · fall protection. One PPE photo (compliance photo).</div>
+    <div class="card"><h4>6 · Sign-off</h4>Worker signs on screen. Supervisor reviews and countersigns from the dashboard. If conditions change, "Update my FLHA" creates a new version, never an overwrite.</div>
+  </div>
+  <div class="note"><strong>Food service (second industry)</strong> uses the same engine with different templates: opening checklist, fridge and cooler temperature log, food-handler hygiene check, and closing checklist.</div>
+</section>
+
+<section class="section">
   <p class="eyebrow">01 · How it works</p>
-  <h2>End to end</h2>
-  <h3>The owner's setup (once)</h3>
+  <h2>From sign-up to every day</h2>
+  <h3>The company's journey (SaaS onboarding)</h3>
   <div class="cards c4">
-    <div class="step"><h4>Sign up</h4>Create the organization and set the time zone.</div>
-    <div class="step"><h4>Add a location</h4>Name, address and a geofence radius.</div>
-    <div class="step"><h4>Print the poster</h4>Tape it by the staff door.</div>
-    <div class="step"><h4>Invite the team</h4>Employees get a one-time sign-in link.</div>
+    <div class="step"><h4>1 · Sign up</h4>Company name, owner account, and "What industry are you in?"</div>
+    <div class="step"><h4>2 · Auto-setup</h4>Construction loads the FLHA, dashboard cards and wording.</div>
+    <div class="step"><h4>3 · Add sites</h4>Address and geofence; print each site's QR poster.</div>
+    <div class="step"><h4>4 · Invite</h4>Supervisors and crews by email or SMS. Subcontractor companies by link.</div>
+    <div class="step"><h4>5 · Customize</h4>Adjust the FLHA, choose which answers need photos.</div>
+    <div class="step"><h4>6 · Go live</h4>Free trial ends; choose a plan on the Billing page.</div>
+    <div class="step"><h4>7 · Daily use</h4>Everyone checks in; supervisors review and countersign.</div>
+    <div class="step"><h4>8 · Prove it</h4>Export records for audits, COR, insurers or incidents.</div>
   </div>
-  <h3>The employee's shift (every day)</h3>
+  <h3>The worker's check-in (every day)</h3>
   <div class="cards c4">
-    <div class="step"><h4>Arrive</h4>Scan the wall QR, or tap a proximity prompt (later phase).</div>
-    <div class="step"><h4>Checked</h4>Tock confirms who they are and that they're on-site.</div>
-    <div class="step"><h4>Clock in</h4>One tap. "You're in at 8:57."</div>
-    <div class="step"><h4>Clock out</h4>Scan and tap again at the end of the shift.</div>
+    <div class="step"><h4>Scan</h4>Phone camera on the site poster.</div>
+    <div class="step"><h4>Who are you?</h4>Signed-in workers are recognized. New people enter name, company and phone once.</div>
+    <div class="step"><h4>Selfie + site check</h4>Identity photo and location, checked by the server.</div>
+    <div class="step"><h4>FLHA and sign</h4>Hazards, controls, PPE photo, signature. "You're checked in."</div>
   </div>
-  <h3>The manager's routine (ongoing)</h3>
-  <div class="cards c4">
-    <div class="step"><h4>Watch</h4>Live headcount and activity.</div>
-    <div class="step"><h4>Review</h4>Flagged clock-ins and missed clock-outs.</div>
-    <div class="step"><h4>Approve</h4>The week's timesheets.</div>
-    <div class="step"><h4>Export</h4>Hours to payroll.</div>
+  <h3>Everyone else</h3>
+  <div class="cards c2">
+    <div class="card"><h4>Subcontractors</h4>Scan the same poster. If their company is linked, their records are shared with it; if not, the general contractor still gets the full check-in and FLHA.</div>
+    <div class="card"><h4>Visitors and inspectors</h4>A shorter visitor form (who you're seeing, site rules acknowledged, selfie). They appear on the muster list until they check out.</div>
   </div>
 </section>
 
@@ -198,168 +260,173 @@ a{color:inherit}
   <h2>User journey and workflow</h2>
   <div class="diagram"><pre class="mermaid">
 flowchart TD
-    subgraph Admin["Admin setup (once)"]
+    subgraph Company["Company onboarding (once)"]
         direction LR
-        A1[Create organization] --> A2[Add location + geofence]
-        A2 --> A3[Print Tock QR poster]
-        A3 --> A4[Invite employees]
+        C1[Sign up + industry] --> C2[Auto-setup forms + dashboard]
+        C2 --> C3[Add sites + print QR]
+        C3 --> C4[Invite crews + subs]
+        C4 --> C5[Choose plan in Billing]
     end
-    subgraph Employee["Employee, every shift"]
-        E1["Arrive: scan wall QR<br/>or tap proximity prompt (later)"] --> E4{Signed in on<br/>this phone?}
-        E4 -- No --> E5[One-time sign-in<br/>magic link] --> E6
-        E4 -- Yes --> E6{On-site?<br/>geofence + QR token}
-        E6 -- No --> E7["Blocked or flagged:<br/>'You're not at Main office'"]
-        E6 -- Yes --> E8["Tap Clock in<br/>'You're in at 8:57'"]
-        E8 --> E11[End of shift:<br/>scan, tap Clock out]
+    subgraph Daily["Everyone on site, every day"]
+        D1[Scan site QR] --> D2{Known on<br/>this phone?}
+        D2 -- No --> D3[Name, company, phone<br/>+ consent] --> D4
+        D2 -- Yes --> D4["Selfie (identity)"]
+        D4 --> D5{On site?<br/>location + QR token}
+        D5 -- No --> D6[Flagged for supervisor]
+        D5 -- Yes --> D7["FLHA: hazards, controls,<br/>PPE + compliance photos"]
+        D7 --> D8["Sign: 'You're checked in'"]
+        D8 --> D9[End of day: scan to check out]
     end
-    subgraph Manager["Manager, ongoing"]
+    subgraph Manager["Safety manager, ongoing"]
         direction LR
-        M1[Live headcount] --> M2[Review exceptions]
-        M2 --> M3[Approve timesheet]
-        M3 --> M4[Export to payroll]
+        M1[Live roster + muster list] --> M2[Review selfies + hazards]
+        M2 --> M3[Countersign FLHAs]
+        M3 --> M4[Export records]
     end
-    Admin -. "employees invited" .-> Employee
-    Employee -. "clock events feed the dashboard" .-> Manager
+    Company -. "posters on site" .-> Daily
+    Daily -. "records arrive instantly" .-> Manager
   </pre></div>
 </section>
 
 <section class="section">
   <p class="eyebrow">01 · A worked example</p>
-  <h2>Daybreak Coffee</h2>
-  <p class="muted small">Daybreak Coffee is a made-up business. It will also be the demo account and the script for demo videos.</p>
-  <p>Daybreak Coffee runs three cafés with 24 hourly staff. Until now it used key fobs for the back door and a paper sign-in sheet for hours.</p>
+  <h2>Northshore Builders</h2>
+  <p class="muted small">Northshore Builders is a made-up company. It will be the demo account and the script for the demo video.</p>
+  <p>Northshore Builders is a general contractor in Burnaby with 60 workers across three sites and about a dozen subcontractor crews. Until now, FLHAs were done on clipboards and collected by the site supervisor at the end of the week.</p>
   <div class="cards c2">
-    <div class="card"><h4>Setup · Monday, 8 minutes</h4>Maya, the owner, signs up and adds the Main Street café with a 60 m geofence. She prints its Tock poster and tapes it by the staff door. Then she invites her staff by email.</div>
-    <div class="card"><h4>First shift · Tuesday, 6:52 am</h4>Sam, a barista, scans the poster. Because it's the first time, Tock sends a one-time sign-in link, and Sam stays signed in on that phone from then on. The location check passes (18 m from the café). Sam taps <strong>Clock in</strong> and sees "You're in at 6:52. Have a good one." Maya's dashboard updates to "7 in the building."</div>
-    <div class="card"><h4>A blocked punch · Tuesday, 7:10 am</h4>Leo is running late and scans a photo of the poster from the bus, 3 km away. Tock shows "Looks like you're not at Main Street. Get closer and try again." The attempt appears on Maya's exceptions list.</div>
-    <div class="card"><h4>A missed clock-out · Tuesday, 3:00 pm</h4>Sam forgets to clock out. At 3:30 Tock sends a reminder and flags the shift. The next morning Maya fixes the clock-out time and adds a reason. The original record and the edit are both kept.</div>
+    <div class="card"><h4>Setup · Monday, 15 minutes</h4>Priya, the safety manager, signs up and picks "Construction". The FLHA, dashboard and wording load automatically. She adds the Lonsdale Tower site, prints two posters for the gates and invites the supervisors.</div>
+    <div class="card"><h4>Check-in · Tuesday, 6:48 am</h4>Jas, a framer, scans the gate poster, takes a selfie and fills in the FLHA: working at heights, controlled by guardrails and tie-off. The form asks for a photo of the harness. Jas signs, and the dashboard shows 23 on site.</div>
+    <div class="card"><h4>A walk-on · 7:05 am</h4>An electrician from a subcontractor the company never invited scans the same poster, enters name, company and phone, does the selfie and FLHA, and appears on the roster like everyone else.</div>
+    <div class="card"><h4>A hazard · 9:30 am</h4>A labourer ticks "Excavation" with no barricade photo. The supervisor gets an alert, the area is barricaded, and the FLHA is updated as a new version with the photo.</div>
   </div>
-  <div class="callout"><strong>Payday · Friday.</strong> Maya reviews the week's timesheets, approves them and exports a CSV for payroll. The whole process takes minutes, not an afternoon of reading paper sheets.</div>
+  <div class="callout"><strong>Three weeks later,</strong> a worker is injured on site. Priya exports that day's records in one click: who was on site, each signed FLHA with timestamps, location and photos, and the supervisor's countersignature. With paper, this would have taken days and might not have existed.</div>
 </section>
 
 <!-- 02 MARKET -->
 <section class="section">
   <p class="eyebrow">02 · Market opportunity</p>
-  <h2>A proven, growing category</h2>
+  <h2>Safety is a must-have, not a nice-to-have</h2>
   <div class="cards c3">
-    <div class="card"><h4 style="font-size:18pt">$3.7–4.0B</h4>Global time and attendance software market, 2025 estimates.<sup><a href="#s1">1</a> <a href="#s2">2</a> <a href="#s3">3</a></sup></div>
-    <div class="card"><h4 style="font-size:18pt">7–10%</h4>Estimated annual growth, reaching roughly $6B+ by 2030–2032.</div>
-    <div class="card"><h4 style="font-size:18pt">~38%</h4>Share held by North America, the largest region.<sup><a href="#s4">4</a></sup></div>
+    <div class="card"><h4 style="font-size:18pt">~$2–3B</h4>Global construction safety and risk software market, 2025 estimates.<sup><a href="#s1">1</a> <a href="#s2">2</a></sup></div>
+    <div class="card"><h4 style="font-size:18pt">~11–12%</h4>Estimated annual growth for construction safety software through the early 2030s.</div>
+    <div class="card"><h4 style="font-size:18pt">$3.7–4.0B</h4>The adjacent time and attendance market we also replace.<sup><a href="#s3">3</a></sup></div>
   </div>
-  <p class="muted small">Estimates vary between research firms, so we treat these figures as a rough guide.</p>
-  <h3>Tailwinds</h3>
+  <p class="muted small">Research firms define these markets differently, so we treat the figures as a rough guide.</p>
+  <h3>Why now</h3>
   <ul>
-    <li>Businesses are switching from hardware to phone-based time clocks.</li>
-    <li>Small businesses are adopting SaaS for HR and payroll (Gusto, QuickBooks, etc.).</li>
-    <li>Wage-and-hour compliance is drawing more attention.</li>
-    <li>Nearly every hourly worker now has a smartphone.</li>
+    <li>Regulators, insurers and owners increasingly expect documented hazard assessments, and paper is the weak link.</li>
+    <li>Every worker has a smartphone, but most site paperwork is still on clipboards.</li>
+    <li>Certification programs such as COR reward companies with good records, which gives buyers a concrete reason to switch.</li>
+    <li>Existing safety platforms are built for large contractors, with per-user pricing and long rollouts. Small and mid-size contractors are underserved.</li>
   </ul>
-  <h3>The pain is real but poorly measured</h3>
-  <p>The often-cited "$373M a year lost to buddy punching" comes from a 2017 vendor survey.<sup><a href="#s5">5</a></sup> We use it as a sign the problem is real, not as a headline number.</p>
-  <div class="callout"><strong>Our bet:</strong> the category is proven and growing, and the tools that lead it are full-featured but generic. There's room for a focused, fast, likeable product aimed at small teams.</div>
+  <h3>Beyond construction</h3>
+  <p><strong>Food service</strong> (second): kitchens run daily checklists and temperature logs on paper for health inspections. <strong>Warehouses</strong> and <strong>public-sector field teams</strong> (for example police or municipal crews using site questionnaires) are later options; public-sector buyers will require Canadian data residency, which our Supabase plan already allows.</p>
 </section>
 
 <!-- 03 PITCH -->
 <section class="section">
   <p class="eyebrow">03 · Commercial pitch and value matrix</p>
-  <h2>Hours you can trust</h2>
-  <div class="callout">Tock turns any wall into a time clock. Print a QR code, and your team clocks in from their phones in three seconds, verified on-site, with no keycards or hardware. You see who's in right now, and payroll gets <strong>hours you can trust.</strong></div>
-  <h3>Value matrix</h3>
+  <h2>Proof, the moment they arrive</h2>
+  <div class="callout">Replace the clipboard at the gate with one QR code. Everyone on site checks in from their own phone, takes a selfie, signs today's FLHA with photo evidence, and is clocked in. You see who's on site and cleared to work, and you have <strong>proof that stands up</strong> when it matters.</div>
   <table>
-    <tr><th style="width:17%">Stakeholder</th><th style="width:27%">Pain today</th><th style="width:30%">What Tock gives them</th><th>Proof point</th></tr>
-    <tr><td><strong>Owner / buyer</strong></td><td>Paying for unworked time; keycard and hardware costs</td><td>Verified on-site clock-ins; no hardware to buy</td><td>Hours paid vs. hours verified</td></tr>
-    <tr><td><strong>Ops / shift manager</strong></td><td>"Who's here?"; chasing missed clock-outs</td><td>Live headcount, exception alerts</td><td>Minutes per week spent fixing timesheets</td></tr>
-    <tr><td><strong>Payroll / bookkeeper</strong></td><td>Messy paper or spreadsheet timesheets</td><td>Clean, approved exports</td><td>Time to run payroll</td></tr>
-    <tr><td><strong>Employee</strong></td><td>Lost badges, queues at the clock, disputed hours</td><td>3-second clock-in on their own phone; their hours are visible</td><td>Clock-in time; disputes per month</td></tr>
-    <tr><td><strong>Safety / facilities</strong></td><td>No reliable roll call in an emergency</td><td>Real-time list of who's on-site</td><td>Roll-call time in drills</td></tr>
+    <tr><th style="width:17%">Stakeholder</th><th style="width:27%">Pain today</th><th style="width:31%">What Musterpass gives them</th><th>Proof point</th></tr>
+    <tr><td><strong>Owner / buyer</strong></td><td>Liability and insurance exposure from missing records</td><td>Complete, signed, photo-backed records for every day on every site</td><td>Records available within minutes of an incident</td></tr>
+    <tr><td><strong>Safety manager</strong></td><td>Chasing clipboards; typing up forms; COR audit prep</td><td>Forms arrive instantly; one-click exports; flagged hazards</td><td>Hours per week saved; audit prep time</td></tr>
+    <tr><td><strong>Site supervisor</strong></td><td>Not knowing who's on site; collecting signatures</td><td>Live roster, muster list, alerts, countersign on phone</td><td>Time to account for everyone in a drill</td></tr>
+    <tr><td><strong>Worker / subcontractor</strong></td><td>Clipboard queues; paperwork before work</td><td>About a minute on their own phone; their records visible to them</td><td>Check-in time</td></tr>
+    <tr><td><strong>Payroll</strong></td><td>Hand-written hours</td><td>Check-in and check-out times as a timesheet export</td><td>Timesheet corrections per week</td></tr>
   </table>
-  <h3>Pricing hypothesis (to validate)</h3>
-  <p>Competitors land around <strong>$3–6 per user per month</strong>, often with a free tier.<sup><a href="#s6">6</a> <a href="#s7">7</a></sup></p>
+  <h3>Pricing: one price per company (hypothesis to validate)</h3>
+  <p>Competitors mostly charge per user (SafetyCulture lists $24 per user per month) or quote by company size (SiteDocs).<sup><a href="#s4">4</a> <a href="#s5">5</a></sup> On construction sites, the number of people changes daily and many are subcontractors, so <strong>per-user pricing punishes exactly the behaviour we want</strong>: everyone checking in. We charge one price per company, with tiers by number of active sites.</p>
   <div class="cards c3">
-    <div class="card"><h4>Free</h4>Up to 5 employees, 1 location. Also helps spread the product through QR posters.</div>
-    <div class="card"><h4>Team · ~$3</h4>Per active employee per month. Unlimited locations, geofencing, exports.</div>
-    <div class="card"><h4>Pro · ~$5</h4>Per active employee per month. Payroll integrations, proximity prompts, scheduling, audit log.</div>
+    <div class="card"><h4>Crew · ~$149/month</h4>1 active site. Unlimited workers, subcontractors and visitors. FLHA and visitor forms. 30-day free trial.</div>
+    <div class="card"><h4>Company · ~$399/month</h4>Up to 10 active sites. Form customization, exports, supervisor countersign, time records.</div>
+    <div class="card"><h4>Enterprise · custom</h4>Unlimited sites, SSO, longer retention, API access, dedicated onboarding.</div>
   </div>
+  <p class="muted small">Prices are placeholders to test in pilots. Annual billing at a discount; prices in CAD for Canadian customers.</p>
 </section>
 
 <!-- 04 COMPETITION -->
 <section class="section">
   <p class="eyebrow">04 · Competitive advantages</p>
-  <h2>Where Tock fits</h2>
-  <div class="note"><strong>To be honest up front:</strong> QR clock-in and geofencing are not unique. Jibble, Connecteam and Homebase all offer some version of them.<sup><a href="#s6">6</a> <a href="#s7">7</a> <a href="#s8">8</a></sup> Tock wins on <strong>focus, speed and feel</strong>, not on a feature checklist.</div>
-  <h3>The alternatives a business has today</h3>
+  <h2>Where Musterpass fits</h2>
+  <div class="note"><strong>Honest view:</strong> digital safety forms are not new. SiteDocs, SafetyCulture, HammerTech and others offer them. We win on speed at the gate, photo evidence by default, and pricing that welcomes subcontractors, not on having more features.</div>
   <table>
-    <tr><th style="width:22%">Alternative</th><th style="width:26%">What it does well</th><th>Where it falls short for a small team</th></tr>
-    <tr><td><strong>Keycards and fobs</strong></td><td>Familiar; also open doors</td><td>Cards cost money and get lost. Lending a card is buddy punching. They don't give a clear view of hours</td></tr>
-    <tr><td><strong>Wall time clocks</strong> (punch, PIN or biometric)</td><td>On-site by design</td><td>Hardware to buy and maintain, queues at shift change. Fingerprint and face scanning bring extra privacy rules in some places</td></tr>
-    <tr><td><strong>Paper sheets and spreadsheets</strong></td><td>Free and flexible</td><td>Easy to fake, slow to total for payroll, no live headcount</td></tr>
-    <tr><td><strong>A shared tablet time clock</strong></td><td>Cheap, on-site</td><td>One device for everyone means queues. PINs get shared</td></tr>
-    <tr><td><strong>All-in-one workforce apps</strong> (Jibble, Connecteam, Homebase and similar)</td><td>Full-featured; QR, geofencing and free tiers</td><td>Broad suites with more to set up and learn. They often push a native app install, and they look generic</td></tr>
+    <tr><th style="width:19%">Competitor</th><th style="width:33%">What it does well</th><th>Where we're different</th></tr>
+    <tr><td><strong>SiteDocs</strong></td><td>Construction safety compliance: digital hazard assessments and FLRAs, toolbox talks, custom forms, certifications, offline access. Popular with small construction teams; priced annually by company size.<sup><a href="#s4">4</a></sup></td><td>Our check-in, selfie, FLHA and clock-in happen in one scan with no app install; photo evidence is built into every record</td></tr>
+    <tr><td><strong>SafetyCulture</strong></td><td>Flexible inspections and checklists across industries; free for up to 10 users, Premium $24 per user per month.<sup><a href="#s5">5</a></sup></td><td>Built for construction sites and walk-on subcontractors; flat company price</td></tr>
+    <tr><td><strong>HammerTech</strong></td><td>Construction safety and site management for larger contractors; custom pricing.<sup><a href="#s5">5</a></sup></td><td>Simpler and faster to set up for small and mid-size contractors</td></tr>
+    <tr><td><strong>Salus, Raken, Procore forms</strong></td><td>Safety and daily reporting inside wider platforms</td><td>Focused on the gate moment rather than project management</td></tr>
+    <tr><td><strong>Time clocks</strong> (Jibble, Connecteam, Buddy Punch)</td><td>GPS and photo clock-in for hourly teams</td><td>We add the safety form and evidence, which is what construction buyers pay for</td></tr>
+    <tr><td><strong>Paper and clipboards</strong></td><td>Free and familiar</td><td>Late, lossy and weak as evidence</td></tr>
   </table>
-  <h3>Tock's edge</h3>
+  <h3>Musterpass's edge</h3>
   <table>
-    <tr><th style="width:27%">Advantage</th><th style="width:43%">Why it matters</th><th>Defensibility</th></tr>
-    <tr><td><strong>No hardware, no app install</strong></td><td>Mobile web: scan and go. Lowest friction for new hires and seasonal staff</td><td>Medium. Others could copy it, but most push their native apps</td></tr>
-    <tr><td><strong>Two-factor presence check</strong> (geofence + rotating QR)</td><td>Stops "photo of the poster" and remote buddy punching</td><td>Medium. It's in how we build the product, not a patent</td></tr>
-    <tr><td><strong>Distinctive brand and personality</strong></td><td>Employees actually like using it; the posters on the wall advertise Tock</td><td>High. Brand is hard to copy</td></tr>
-    <tr><td><strong>Setup in minutes</strong></td><td>Owner creates location → prints poster → done</td><td>Medium</td></tr>
-    <tr><td><strong>Does one thing well</strong></td><td>No sprawling HR suite; easier to sell and support</td><td>Strategic choice</td></tr>
-    <tr><td><strong>Live headcount as a safety feature</strong></td><td>Opens up sales to facilities and safety buyers, not just payroll</td><td>Medium</td></tr>
+    <tr><th style="width:30%">Advantage</th><th style="width:44%">Why it matters</th><th>Defensibility</th></tr>
+    <tr><td><strong>One scan does everything</strong></td><td>Check-in, identity, FLHA, sign-off and clock-in in about a minute</td><td>Medium; it's in the product design</td></tr>
+    <tr><td><strong>Evidence-grade photos</strong></td><td>Server-stamped, hashed, private; three clear roles</td><td>Medium–high; hard to bolt on later</td></tr>
+    <tr><td><strong>Flat per-company pricing</strong></td><td>No reason to keep subcontractors off the system</td><td>High against per-user competitors</td></tr>
+    <tr><td><strong>No app install</strong></td><td>Walk-on subs and visitors can check in on the spot</td><td>Medium</td></tr>
+    <tr><td><strong>Industry auto-setup</strong></td><td>Useful on day one for construction, then food</td><td>Medium</td></tr>
+    <tr><td><strong>Canadian data residency</strong></td><td>Matters to Canadian contractors and public-sector buyers</td><td>Medium</td></tr>
   </table>
-  <p class="small muted"><strong>Main competitors to watch:</strong> Jibble, Connecteam, Homebase, QuickBooks Time, Deputy, When I Work, plus legacy hardware clocks and keycard systems.</p>
 </section>
 
 <!-- 05 ICP -->
 <section class="section">
   <p class="eyebrow">05 · Ideal customer profile and target audience</p>
-  <h2>Who Tock is for</h2>
+  <h2>Who Musterpass is for</h2>
   <table>
-    <tr><th style="width:24%">Primary ICP</th><th></th></tr>
-    <tr><td><strong>Business size</strong></td><td>10–200 hourly employees, 1–5 physical sites</td></tr>
-    <tr><td><strong>Industries</strong></td><td>Restaurants and cafés, retail, light manufacturing and warehouses, clinics and dental offices, gyms, cleaning and facilities firms, coworking spaces</td></tr>
-    <tr><td><strong>Current setup</strong></td><td>Keycards or fobs, a paper sign-in book, a wall clock, or a shared tablet</td></tr>
-    <tr><td><strong>Trigger events</strong></td><td>Opening a new location, a hardware clock dying, a payroll dispute, a failed fire drill, an audit</td></tr>
-    <tr><td><strong>Buyer</strong></td><td>Owner/operator or operations manager (and often also the admin)</td></tr>
-    <tr><td><strong>Users</strong></td><td>Hourly staff, often young and mobile-first. Tock's bold look is aimed at them</td></tr>
+    <tr><th style="width:24%">Primary ICP</th><th>Construction, starting in BC</th></tr>
+    <tr><td><strong>Company</strong></td><td>General contractors and trade contractors with 10–250 workers and 1–10 active sites</td></tr>
+    <tr><td><strong>Current setup</strong></td><td>Paper FLHAs and sign-in sheets, or a safety app that crews avoid</td></tr>
+    <tr><td><strong>Buyer</strong></td><td>Safety manager or owner; operations manager in smaller firms</td></tr>
+    <tr><td><strong>Daily users</strong></td><td>Workers, foremen, subcontractor crews, visitors and inspectors</td></tr>
+    <tr><td><strong>Trigger events</strong></td><td>A COR audit, an incident or near miss, an insurer request, a new large site, a failed muster drill</td></tr>
+  </table>
+  <table>
+    <tr><th style="width:24%">Secondary ICP</th><th>Food service</th></tr>
+    <tr><td><strong>Company</strong></td><td>Restaurant groups, commercial kitchens, caterers with 2–20 locations</td></tr>
+    <tr><td><strong>Forms</strong></td><td>Opening and closing checklists, temperature logs, hygiene checks</td></tr>
+    <tr><td><strong>Buyer</strong></td><td>Operations manager or owner</td></tr>
   </table>
   <h3>Not a fit (for now)</h3>
   <ul>
-    <li>Fully remote or desk-based teams (they need activity trackers, not presence checks)</li>
-    <li>Enterprises needing union rules, complex shift differentials, or biometric hardware</li>
-    <li>Field crews with no fixed site (possible later with per-job geofences)</li>
+    <li>Large enterprises needing full project management or ERP integration on day one</li>
+    <li>Fully remote or office teams</li>
+    <li>Use cases that need automatic face recognition (future scope only)</li>
   </ul>
 </section>
 
 <!-- 06 GTM -->
 <section class="section">
   <p class="eyebrow">06 · Go-to-market strategy</p>
-  <h2>Start local, then spread</h2>
+  <h2>Start on BC sites, spread through subs</h2>
   <ol>
-    <li><strong>Founder-led pilots (months 0–3):</strong> 5–10 local businesses from our own networks. Free in exchange for feedback and a testimonial.</li>
-    <li><strong>Free tier funnel:</strong> self-serve signup, first poster printed in under 5 minutes.</li>
-    <li><strong>Content and SEO:</strong> "replace keycards," "stop buddy punching," "free QR time clock," fire roll-call templates.</li>
-    <li><strong>Marketplaces and listings:</strong> Capterra, G2, GetApp; the Gusto and QuickBooks app stores once integrations exist.</li>
-    <li><strong>Vertical playbooks:</strong> pick one beachhead industry (e.g., cafés/restaurants or small warehouses), build case studies there, then expand.</li>
-    <li><strong>Partners (later):</strong> bookkeepers and payroll providers who recommend Tock to their clients.</li>
+    <li><strong>Founder-led pilots (months 0–3):</strong> 5–10 BC contractors, one site each, free in exchange for feedback and a case study.</li>
+    <li><strong>Safety consultants and COR advisors:</strong> they set up safety programs for many contractors and can recommend us.</li>
+    <li><strong>Industry associations and events:</strong> construction safety associations, trade shows, toolbox-talk content.</li>
+    <li><strong>Self-serve trial:</strong> sign up, print a poster and run a first FLHA within 15 minutes.</li>
+    <li><strong>Our own demo video:</strong> scripted from the Northshore Builders example and recorded from the real app. We study how competitors present themselves, but never copy their videos or materials.</li>
+    <li><strong>Food service (later):</strong> once the forms engine is proven, launch restaurant templates with one restaurant group as a design partner.</li>
   </ol>
   <h3>Built-in growth</h3>
   <div class="cards c3">
-    <div class="card"><h4>The poster is the ad</h4>Every QR poster says "Clock in with Tock" with a small "get Tock for your team" link. Every customer's staff door advertises Tock to everyone who walks past it.</div>
-    <div class="card"><h4>Employees carry it to their next job</h4>Hourly workers change jobs often. Someone who liked clocking in with Tock is likely to suggest it at their next workplace, sometimes as the manager.</div>
-    <div class="card"><h4>Bookkeepers multiply</h4>One bookkeeper or payroll firm serves dozens of small businesses. If Tock's exports save them time, they'll recommend it to all of their clients.</div>
+    <div class="card"><h4>Subcontractors spread it</h4>A sub crew checks in on several general contractors' sites. Each one learns the product and can bring it to its own company.</div>
+    <div class="card"><h4>The poster is the ad</h4>Every gate poster carries the brand and a "get this for your company" link.</div>
+    <div class="card"><h4>Records sell the product</h4>Every clean export shown to an auditor or insurer demonstrates the value to people who influence buying decisions.</div>
   </div>
-  <p><strong>Early metrics:</strong> time to first clock-in after signup, weekly active locations, clock-ins per employee per week, free → paid conversion, retention at 90 days.</p>
+  <p><strong>Early metrics:</strong> time from sign-up to first FLHA, check-ins per site per day, share of check-ins with all required photos, subcontractor share of check-ins, trial-to-paid conversion.</p>
 </section>
 
 <!-- 07 BRAND -->
 <section class="section">
   <p class="eyebrow">07 · Brand identity and design guidelines</p>
-  <h2>Bold, quick, a little cheeky</h2>
-  <h3>Name</h3>
-  <p><strong>Tock</strong>, the second half of <em>tick-tock</em>. Short, easy to say, and it works as a verb ("did you tock in?"). <span class="muted">Trademark and domain availability not yet checked.</span></p>
+  <h2>Bold, quick, trusted on site</h2>
   <h3>Personality</h3>
-  <p>Bold, quick, confident, a little cheeky. Streetwear energy, not office software. Tock respects your time: nothing on screen that doesn't need to be there.</p>
-  <h3>Color: "Electric"</h3>
+  <p>Still bold and quick, but now also <strong>trustworthy</strong>: this product holds evidence. Plain words, big tap targets for gloved hands, and no jokes on safety screens. The cheeky voice stays for greetings and confirmations.</p>
+  <h3>Color: "Electric", now with a reason</h3>
+  <p>Volt lime is the colour of hi-vis vests, so the palette fits construction naturally. Pop pink marks hazards and flags.</p>
   <div class="cards" style="grid-template-columns:repeat(6,1fr)">
     <div><div class="swatch" style="background:#141414"></div><strong>ink</strong><br><span class="small muted">#141414</span></div>
     <div><div class="swatch" style="background:#C6F432"></div><strong>volt</strong><br><span class="small muted">#C6F432</span></div>
@@ -368,48 +435,36 @@ flowchart TD
     <div><div class="swatch" style="background:#2A2A2A"></div><strong>graphite</strong><br><span class="small muted">#2A2A2A</span></div>
     <div><div class="swatch" style="background:#8A8A85"></div><strong>smoke</strong><br><span class="small muted">#8A8A85</span></div>
   </div>
+  <p class="small">Rules from version 0.2 still apply: one volt element per screen, ink text on volt, never volt on bone. <code>pop-deep</code> (#B8154F) is used for pink text on light backgrounds.</p>
+  <h3>Voice on site</h3>
   <table>
-    <tr><th style="width:16%">Token</th><th>Use</th></tr>
-    <tr><td><strong>ink</strong></td><td>Primary background (dark-first UI), primary text on light surfaces</td></tr>
-    <tr><td><strong>volt</strong></td><td>Brand accent, primary action (Clock in), highlights. Text on volt is always ink</td></tr>
-    <tr><td><strong>bone</strong></td><td>Text on ink; light-mode background; print posters</td></tr>
-    <tr><td><strong>pop</strong></td><td>Secondary accent: Clock out, alerts, exceptions</td></tr>
-    <tr><td><strong>graphite</strong></td><td>Raised surfaces, chips, cards on ink</td></tr>
-    <tr><td><strong>smoke</strong></td><td>Secondary text, captions</td></tr>
+    <tr><th style="width:42%">Instead of</th><th>We say</th></tr>
+    <tr><td>"Submit form"</td><td>"Sign and check in"</td></tr>
+    <tr><td>"Upload image"</td><td>"Take a photo of your harness"</td></tr>
+    <tr><td>"Validation error: field required"</td><td>"Add a photo of the barricade to continue."</td></tr>
+    <tr><td>"Submission successful"</td><td>"You're checked in at Lonsdale Tower. Work safe."</td></tr>
+    <tr><td>"Active users: 23"</td><td>"23 on site · 2 waiting for review"</td></tr>
   </table>
-  <h3>Rules</h3>
-  <ul>
-    <li>Dark (ink) is the default for the employee clock-in screen; the admin dashboard may offer light mode using bone.</li>
-    <li>Volt is precious: <strong>one</strong> volt element per screen, the main action.</li>
-    <li>Never put volt text on bone. The contrast is too low. Use ink on volt, or volt on ink.</li>
-    <li>Status: clocked in = volt, clocked out = bone/smoke, exception = pop.</li>
-  </ul>
+  <h3>Usability on site</h3>
+  <ul><li>Works with gloves: tap targets at least 56px, no small checkboxes.</li><li>Readable in sunlight: high contrast, large type.</li><li>Works on weak signal: the form saves as you go and sends when it can.</li></ul>
 </section>
 
 <section class="section">
-  <p class="eyebrow">07 · Brand identity and design guidelines</p>
-  <h2>Type, voice and feel</h2>
-  <h3>Typography (proposal)</h3>
-  <div class="cards c2">
-    <div class="card"><h4 style="font-size:16pt">Space Grotesk</h4>Display and numbers: the big clock "8:57", headings. This document uses it for its headlines.</div>
-    <div class="card"><h4 style="font-family:Inter;font-size:16pt">Inter</h4>UI and body text, for readability (or the existing Geist). Big, confident numerals: the time is the star of the clock-in screen.</div>
-  </div>
-  <h3>Voice and copy</h3>
+  <p class="eyebrow">07 · Naming</p>
+  <h2>Our name: Musterpass</h2>
+  <p>"Tock" was a clock name, and it clashes with the Tock restaurant-reservation platform. The new name should say presence, safety or the site. The shortlist below was checked on 13 November 2026: the exact <strong>.com and .ca are both unregistered</strong>. Short words like site-, crew-, safe- and gate- names are all taken.</p>
   <table>
-    <tr><th style="width:40%">Instead of</th><th>Tock says</th></tr>
-    <tr><td>"Submit"</td><td>"Clock in" / "Clock out"</td></tr>
-    <tr><td>"Sign-in successful"</td><td>"You're in at 8:57. Have a good one."</td></tr>
-    <tr><td>"Headcount: 12"</td><td>"12 in the building"</td></tr>
-    <tr><td>"Error: location invalid"</td><td>"Looks like you're not at Main office. Get closer and try again."</td></tr>
-    <tr><td>"Good morning" (always)</td><td>Changes with the time of day: "Morning, Jordan" / "Late one tonight?"</td></tr>
+    <tr><th style="width:24%">Name</th><th>Idea</th><th style="width:22%">Works for food too?</th></tr>
+    <tr><td><strong>Musterpass</strong></td><td>"Muster" is the roll call at the emergency assembly point; a pass means you're cleared. Safety and presence in one word</td><td>Yes (fire musters everywhere)</td></tr>
+    <tr><td><strong>Mustercheck</strong></td><td>Same root, more literal: the check at the muster</td><td>Yes</td></tr>
+    <tr><td><strong>Hazardpass</strong></td><td>You've assessed the hazards and you're cleared to work</td><td>Yes</td></tr>
+    <tr><td><strong>Hardhatin</strong></td><td>"Hard hat in": checking in, construction-style. Friendly and memorable</td><td>Weak (construction-specific)</td></tr>
+    <tr><td><strong>Hivispass</strong></td><td>Hi-vis plus pass; ties directly to the volt colour</td><td>Weak</td></tr>
+    <tr><td><strong>Tailgatecheck</strong></td><td>A "tailgate meeting" is the daily safety talk at the truck</td><td>Weak</td></tr>
+    <tr><td><strong>Toolboxsign</strong></td><td>"Toolbox talks" are the short daily safety briefings crews sign</td><td>Weak</td></tr>
   </table>
-  <h3>Motion and feel</h3>
-  <ul>
-    <li>Clock-in confirmation: quick scale + volt pulse, plus a vibration on supported phones.</li>
-    <li>Big tap targets (the round clock button is at least 96px), fast transitions (under 200ms), no loading screens on the happy path.</li>
-  </ul>
-  <h3>QR poster</h3>
-  <p>Ink background, a large QR code on a bone tile, location name, the wordmark "tock" in volt, and "Scan to clock in." Must also print well in black and white.</p>
+  <div class="callout"><strong>Decision: Musterpass.</strong> It works for construction and food, it names the safety moment and the clearance, and both domains were free. Next steps: register musterpass.com and musterpass.ca, and run a trademark search (CIPO and USPTO) before using it publicly.</div>
+  <p class="small muted">Earlier, clock-focused shortlists (Qtock, Qtap, Klok, Presente) are retired because the product is no longer only a clock.</p>
 </section>
 
 <!-- 08 TECH -->
@@ -418,69 +473,94 @@ flowchart TD
   <h2>A small, modern stack</h2>
   <table>
     <tr><th style="width:17%">Layer</th><th style="width:33%">Choice</th><th>Notes</th></tr>
-    <tr><td>Frontend</td><td><strong>Next.js 16</strong> (App Router) + React 19 + Tailwind 4</td><td>Already in the repo</td></tr>
-    <tr><td>Hosting</td><td><strong>Vercel</strong></td><td>Preview deployment for every PR</td></tr>
-    <tr><td>Database</td><td><strong>Supabase Postgres</strong></td><td>Row-level security (RLS) gives each org access only to its own data</td></tr>
-    <tr><td>Auth</td><td><strong>Supabase Auth</strong></td><td>Magic link / OTP for employees; email + password or SSO for admins</td></tr>
-    <tr><td>Realtime</td><td><strong>Supabase Realtime</strong></td><td>Live headcount and activity feed on the dashboard</td></tr>
-    <tr><td>QR rendering</td><td><code>qrcode.react</code></td><td>Already in the repo</td></tr>
-    <tr><td>Proximity (later)</td><td>PWA with push notifications, or a thin native wrapper (Expo/Capacitor)</td><td>Browsers can't run background geofences, so arrival prompts need a native wrapper or app</td></tr>
+    <tr><td>Frontend</td><td><strong>Next.js 16</strong> + React 19 + Tailwind 4</td><td>Already built (Phase 0)</td></tr>
+    <tr><td>Hosting</td><td><strong>Vercel</strong></td><td>Preview deployment for every pull request; production from <code>main</code></td></tr>
+    <tr><td>Database</td><td><strong>Supabase Postgres</strong>, Canada (Central) region</td><td>Row-level security on every table</td></tr>
+    <tr><td>Auth</td><td><strong>Supabase Auth</strong></td><td>Admins: email + password with MFA. Workers: SMS or email one-time code. Walk-ons: anonymous session tied to the check-in</td></tr>
+    <tr><td>Files</td><td><strong>Supabase Storage</strong>, private buckets</td><td>Selfies and compliance photos; short-lived signed links only</td></tr>
+    <tr><td>Realtime</td><td><strong>Supabase Realtime</strong></td><td>Live roster and alerts on the dashboard</td></tr>
+    <tr><td>Billing</td><td><strong>Stripe</strong></td><td>One subscription per company; Billing page links to Stripe's customer portal</td></tr>
+    <tr><td>Email / SMS</td><td>Resend (email), Twilio or similar (SMS)</td><td>Sign-in codes, invites, hazard alerts</td></tr>
   </table>
   <h3>Data model (initial)</h3>
-<pre class="light">organizations (id, name, timezone, plan, created_at)
-locations     (id, org_id, name, slug, lat, lng, radius_m, qr_secret, active)
-members       (id, org_id, user_id, display_name, role: owner|manager|employee, active)
-clock_events  (id, org_id, member_id, location_id, type: in|out, at,
-               lat, lng, accuracy_m, distance_m, qr_token_ok, flagged, flag_reason,
-               source: qr|prompt|manual, edited_by, edit_reason)
-shifts        (id, org_id, member_id, location_id, starts_at, ends_at)   -- later
-timesheets    (view: pairs in/out events per member per pay period)</pre>
-  <h3>Proof of presence</h3>
-  <div class="cards c3">
-    <div class="step"><h4>1. Rotating QR token</h4>The QR code includes a signed, time-limited token: a static poster plus a server-checked code, or a rotating code on a cheap tablet display for high-security sites.</div>
-    <div class="step"><h4>2. Geofence</h4>At clock-in, the browser shares the phone's location. The server checks the distance from the location's center against <code>radius_m</code>, allowing for GPS accuracy.</div>
-    <div class="step"><h4>3. Policy per location</h4><em>Block</em> or <em>allow but flag</em>. Flagged events show up as exceptions for the manager.</div>
-  </div>
+<pre class="light">companies        (id, name, industry, plan, billing_customer_id, created_at)
+sites            (id, company_id, name, address, lat, lng, radius_m, qr_secret, active)
+people           (id, company_id, user_id?, name, phone?, employer_company, role:
+                  owner|safety_manager|supervisor|worker|subcontractor|visitor, profile_photo_id?)
+check_ins        (id, company_id, site_id, person_id, checked_in_at, checked_out_at,
+                  distance_m, accuracy_m, qr_token_ok, selfie_photo_id, status, review_status)
+form_templates   (id, company_id?, industry, key: 'flha', version, schema_json)
+form_submissions (id, company_id, check_in_id, template_id, version, answers_json,
+                  signed_at, supervisor_id?, countersigned_at?, supersedes_id?)
+photos           (id, company_id, kind: identity|presence|compliance, storage_path,
+                  sha256, captured_at_server, lat, lng, submission_id?, retain_until)
+consents         (id, person_id, wording_version, accepted_at)
+audit_log        (id, company_id, actor_id, action, target, at, details_json)  -- append-only</pre>
   <h3>Key routes (target)</h3>
-  <ul class="small">
-    <li><code>/scan/[locationSlug]</code>: employee clock-in (public URL, requires the employee to be signed in)</li>
-    <li><code>/admin</code>: dashboard (live headcount, feed, exceptions)</li>
-    <li><code>/admin/locations</code>: location CRUD, geofence map, poster printing</li>
-    <li><code>/admin/people</code>: invites and roles · <code>/admin/timesheets</code>: review, approve, export</li>
-    <li>Server actions or route handlers for clock events. <strong>All validation happens on the server.</strong></li>
-  </ul>
+  <p class="small"><code>/s/[siteSlug]</code> check-in · <code>/admin</code> dashboard · <code>/admin/sites</code> · <code>/admin/people</code> · <code>/admin/forms</code> · <code>/admin/records</code> · <code>/admin/billing</code> · <code>/signup</code>. All validation happens on the server.</p>
 </section>
 
 <section class="section">
-  <p class="eyebrow">08 · Trust, privacy and security</p>
-  <h2>Built to be believed</h2>
-  <p class="muted small">These are design rules, decided now because they shape the database and code. The legal side (consent wording, how long data is kept, which laws apply) is a separate decision, listed in section 09.</p>
+  <p class="eyebrow">08 · Supabase privacy plan</p>
+  <h2>Built to protect people and evidence</h2>
+  <p class="muted small">Photos of people plus their location are sensitive personal information under Canadian privacy law (PIPEDA, and BC and Alberta PIPA). These are the technical rules; the legal side (policy wording, retention periods) needs a lawyer before the first pilot.</p>
   <div class="cards c2">
-    <div class="card"><h4>Clock-ins can be believed</h4><ul style="margin:0">
-      <li>The server decides whether a clock-in is valid. The phone only sends evidence (location, QR token).</li>
-      <li>Failed checks are recorded as flagged events. They're never silently dropped or silently accepted.</li>
-      <li>Timesheet edits never overwrite the original record. Each edit stores who made it, when and why.</li></ul></div>
-    <div class="card"><h4>Each company's data is walled off</h4><ul style="margin:0">
-      <li>Every table is scoped by <code>org_id</code>, with row-level security in the database itself, not only in the app's code. A bug in the app still can't show one company's records to another.</li>
-      <li>The app connects to the database with a restricted account that can't bypass those rules.</li>
-      <li>Automated tests prove that company A can never read company B's data, and that an employee can see only their own records.</li></ul></div>
-    <div class="card"><h4>Employees' location is respected</h4><ul style="margin:0">
-      <li>Location is read only at the moment of clocking in or out. There's no background tracking.</li>
-      <li><em>Leaning towards:</em> storing only the distance from the location and the GPS accuracy, not the exact coordinates. If so, <code>lat</code> and <code>lng</code> would be dropped from <code>clock_events</code>. To be decided along with the privacy decision.</li>
-      <li>The clock-in screen says in plain words what is checked and why.</li></ul></div>
-    <div class="card"><h4>Reliability</h4><ul style="margin:0">
-      <li>Every request carries a reference code that's shown on any error, so a problem can be found in the logs quickly.</li>
-      <li>Errors go to an error tracker (e.g. Sentry). A health-check endpoint reports the database and email status.</li>
-      <li>Tests cover the rules (unit tests), database security (RLS tests) and full journeys in a browser (Playwright).</li></ul></div>
+    <div class="card"><h4>Where data lives</h4><ul>
+      <li>Supabase project in the <strong>Canada (Central)</strong> region.</li>
+      <li>Separate projects for development, staging and production. Real data only in production.</li>
+      <li>Point-in-time backups on the production project.</li></ul></div>
+    <div class="card"><h4>Who can see what</h4><ul>
+      <li><strong>Row-level security</strong> on every table, scoped by <code>company_id</code> and role.</li>
+      <li>Workers see only their own records; supervisors see their sites; safety managers see the company.</li>
+      <li>Automated tests prove company A can never read company B, and that public visitors can't read anything.</li></ul></div>
+    <div class="card"><h4>Photos</h4><ul>
+      <li><strong>Private storage buckets</strong> only; no public URLs ever.</li>
+      <li>Uploads use one-time signed upload URLs issued by the server after the check-in is validated.</li>
+      <li>The server records time, location and SHA-256 hash; photo rows can't be updated or deleted by users.</li>
+      <li>Viewing uses signed links that expire in a few minutes.</li>
+      <li>Hidden metadata (EXIF) is stripped from stored copies; the evidence fields live in the database.</li></ul></div>
+    <div class="card"><h4>Keys and access</h4><ul>
+      <li>The <strong>service-role key</strong> lives only in server environment variables on Vercel, never in the browser or the repo.</li>
+      <li>The browser uses the public anon key, which can do nothing without RLS permission.</li>
+      <li>Admin accounts require MFA. Staff access to production is limited and logged.</li></ul></div>
+    <div class="card"><h4>Retention and deletion</h4><ul>
+      <li>Each photo stores <code>retain_until</code>. A scheduled job (pg_cron) deletes expired identity selfies.</li>
+      <li>Safety records and compliance photos follow the company's retention setting, with a legal minimum we confirm with counsel.</li>
+      <li>Incident "legal hold" stops deletion for the affected records.</li></ul></div>
+    <div class="card"><h4>Consent and transparency</h4><ul>
+      <li>First check-in shows what is captured, why, and for how long. The accepted wording version is stored.</li>
+      <li>People can see their own records and request access or correction.</li>
+      <li>An append-only audit log records every view of photos and every change to records.</li></ul></div>
   </div>
-  <h3>Operating cost</h3>
-  <p>At pilot scale, Tock runs on the free or entry tiers of Vercel and Supabase. Costs grow mainly with the number of clock events, live dashboard connections (Supabase Realtime) and emails. All three grow with paying customers.</p>
-  <p class="small muted">One known limit: Supabase's built-in email service is heavily rate-limited, so sign-in links need a proper email provider (e.g. Resend) before real teams use Tock.</p>
-  <h3>Known technical debt in the prototype</h3>
-  <ul class="small">
-    <li>Sample data in <code>app/admin/page.tsx</code>; the form in <code>components/SignForm.tsx</code> doesn't save anything.</li>
-    <li>The scan page triggers a Next.js <code>cacheComponents</code> warning (<code>params</code> read outside <code>&lt;Suspense&gt;</code>).</li>
-    <li>The generic "Create Next App" title, indigo theme, and visitor-style form (name + contact) need to become Tock's employee flow.</li>
+  <div class="note"><strong>Future face matching</strong> (comparing selfies automatically) would be biometric processing. It needs explicit consent, a separate legal review, and is excluded until then.</div>
+</section>
+
+<section class="section">
+  <p class="eyebrow">08 · Vercel deployment</p>
+  <h2>Ready to ship</h2>
+  <h3>Setup</h3>
+  <ol>
+    <li><strong>Import the GitHub repository</strong> (<code>ANwagha/qr-signin-admin</code>) into Vercel. The framework is detected as Next.js; no extra build settings needed.</li>
+    <li><strong>Production branch: <code>main</code>.</strong> Every other branch and pull request gets its own preview URL to review before merging.</li>
+    <li><strong>Environment variables</strong>, set separately for Preview and Production:
+      <ul><li><code>NEXT_PUBLIC_SUPABASE_URL</code>, <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> (safe for the browser)</li>
+      <li><code>SUPABASE_SERVICE_ROLE_KEY</code>, <code>STRIPE_SECRET_KEY</code>, <code>STRIPE_WEBHOOK_SECRET</code>, <code>QR_TOKEN_SECRET</code> (server only)</li></ul></li>
+    <li><strong>Preview deployments use the staging Supabase project,</strong> never production data.</li>
+    <li><strong>Function region:</strong> choose the Vercel region closest to Supabase's Canada (Central) region. If a contract requires that data never leaves Canada, confirm whether that's possible on our Vercel plan before signing.</li>
+    <li><strong>Custom domain</strong> (musterpass.com, once registered) (<code>app.musterpass.com</code>); HTTPS is automatic.</li>
+  </ol>
+  <h3>Why it matters now</h3>
+  <ul>
+    <li><strong>The camera needs HTTPS.</strong> Live camera capture in the browser only works on secure (https) pages, so real phone testing of selfies and photos should happen on a Vercel preview URL, not on the local network address.</li>
+    <li>Preview links make it easy to show your boss and pilot customers each step.</li>
+  </ul>
+  <h3>Before the first production deploy</h3>
+  <ul class="check">
+    <li><code>npm run lint</code> and <code>npm run build</code> pass (they do today)</li>
+    <li>No secrets in the repository; <code>.env.local</code> is git-ignored</li>
+    <li>Remove the developer-only <code>allowedDevOrigins</code> IP (it has no effect in production, but should not drift)</li>
+    <li>Error tracking (e.g. Sentry) and a health-check route</li>
+    <li>Privacy policy and terms pages live</li>
   </ul>
 </section>
 
@@ -488,27 +568,25 @@ timesheets    (view: pairs in/out events per member per pay period)</pre>
 <section class="section">
   <p class="eyebrow">09 · Key implementation steps</p>
   <h2>What's built and what's next</h2>
-  <p class="muted small">Phases are ordered by UI first, then the minimum backend to make it real.</p>
+  <p class="muted small">We work one step at a time, each as its own prompt and branch.</p>
   <table>
-    <tr><th style="width:19%">Phase</th><th style="width:17%">Goal</th><th>Deliverables</th><th style="width:13%">Status</th></tr>
-    <tr><td><strong>Prototype</strong></td><td>Click through the idea</td><td>Sign-in screen, admin dashboard with sample data, QR poster generator</td><td><span class="badge">Done (inherited)</span></td></tr>
-    <tr><td><strong>0. Rebrand the prototype</strong></td><td>Make it look and feel like Tock</td><td>Electric color tokens and fonts in Tailwind; new clock-in screen (big clock, round button, greeting); restyled admin dashboard and QR poster; fix the Suspense warning; update the README</td><td><span class="badge next">Next</span></td></tr>
-    <tr><td><strong>1. Make it real</strong></td><td>Saved clock-ins + login</td><td>Supabase project; schema + RLS + isolation tests; admin login; employee magic-link sign-in; clock events saved; dashboard reads real data</td><td><span class="badge">Later</span></td></tr>
-    <tr><td><strong>2. Locations</strong></td><td>Admin-managed sites</td><td>Location CRUD, slugs, printable posters, invite employees</td><td><span class="badge">Later</span></td></tr>
-    <tr><td><strong>3. Trust</strong></td><td>Stop buddy punching</td><td>Geofence check, signed QR tokens, flagged events, exception view</td><td><span class="badge">Later</span></td></tr>
-    <tr><td><strong>4. Payroll-ready</strong></td><td>Hours you can pay from</td><td>Timesheets, edits with audit trail, approvals, CSV export, auto clock-out reminders</td><td><span class="badge">Later</span></td></tr>
-    <tr><td><strong>5. Proximity prompts</strong></td><td>"You've arrived, clock in?"</td><td>PWA push or native wrapper with background geofencing</td><td><span class="badge">Later</span></td></tr>
-    <tr><td><strong>6. Business</strong></td><td>Get paid</td><td>Self-serve signup, Stripe billing, free tier limits, marketing site</td><td><span class="badge">Later</span></td></tr>
+    <tr><th style="width:21%">Step</th><th>Deliverables</th><th style="width:12%">Status</th></tr>
+    <tr><td><strong>Prototype + Phase 0 rebrand</strong></td><td>Brand, clock-in screen, dashboard, QR posters (time-clock version)</td><td><span class="badge done">Done</span></td></tr>
+    <tr><td><strong>Founding document v0.3</strong></td><td>This document: the site-safety pivot</td><td><span class="badge done">Done</span></td></tr>
+    <tr><td><strong>1. Check-in prototype</strong></td><td>Clickable flow: scan → identify → selfie → site check → FLHA with compliance photos → sign. Dashboard with roster, FLHAs, hazards and selfie review. Billing page linked next to Admin. Visitor form. Demo data: Northshore Builders</td><td><span class="badge next">Next</span></td></tr>
+    <tr><td><strong>2. Supabase foundation</strong></td><td>Projects (dev, staging, prod) in Canada; schema, RLS and isolation tests; auth (admins, workers, walk-ons); private photo storage with hashing; audit log</td><td><span class="badge">Later</span></td></tr>
+    <tr><td><strong>3. Vercel deployment</strong></td><td>Connect repo, environment variables, preview + production, HTTPS camera testing on phones</td><td><span class="badge">Later</span></td></tr>
+    <tr><td><strong>4. SaaS onboarding</strong></td><td>Sign-up, industry auto-setup, sites, invites, subcontractor companies</td><td><span class="badge">Later</span></td></tr>
+    <tr><td><strong>5. Trust</strong></td><td>Geofence and QR tokens enforced server-side; supervisor countersign; exports (PDF, CSV)</td><td><span class="badge">Later</span></td></tr>
+    <tr><td><strong>6. Billing</strong></td><td>Stripe subscriptions per company, trial, plans, customer portal</td><td><span class="badge">Later</span></td></tr>
+    <tr><td><strong>7. Food service</strong></td><td>Templates and dashboard for kitchens</td><td><span class="badge">Later</span></td></tr>
+    <tr><td><strong>Future</strong></td><td>Upload a paper form to convert it (AI); face matching (after legal review); proximity prompts; offline-first native wrapper</td><td><span class="badge">Future</span></td></tr>
   </table>
-  <div class="note"><strong>Deferred decision: privacy and compliance.</strong> Tock collects names, contact details and location data. Before any real customer data (end of Phase 1 at the latest) we need to decide what location data is stored and for how long, how employees consent, and which regulations apply (e.g., GDPR, US state privacy laws, labor record-keeping rules). The design principles in section 08 already apply.</div>
   <div class="cards c2">
-    <div class="card"><h4>Deliberately not in the first version</h4><p class="small muted" style="margin:0 0 3pt">Each can be reconsidered once pilots show demand.</p><ul style="margin:0">
-      <li>Native phone apps (until Phase 5 needs one)</li><li>Shift scheduling and rotas</li><li>Fingerprint or face scanning</li>
-      <li>Running payroll itself (Tock exports hours; payroll tools pay people)</li><li>Paid time off and leave tracking</li><li>AI features</li><li>Hardware kiosks</li></ul></div>
-    <div class="card"><h4>Before a paid launch</h4><ul style="margin:0">
-      <li>A separate production Supabase project (not shared with development)</li><li>A proper email provider for sign-in links and reminders</li>
-      <li>Trademark and domain check for "Tock", then a custom domain</li><li>Privacy policy and terms of service reviewed by a lawyer</li>
-      <li>Stripe billing and plans, priced from pilot feedback</li><li>Help pages for owners and employees</li><li>Error tracking and a health check in production</li></ul></div>
+    <div class="card"><h4>Deliberately not in the first version</h4><ul>
+      <li>Automatic face matching</li><li>AI conversion of uploaded forms</li><li>Native phone apps</li><li>Scheduling and payroll processing</li><li>Project management features</li></ul></div>
+    <div class="card"><h4>Before the first paid customer</h4><ul>
+      <li>Privacy policy, terms and consent wording reviewed by a lawyer</li><li>Retention periods confirmed</li><li>Production Supabase in Canada with backups</li><li>musterpass.com and .ca registered, trademark search done</li><li>Stripe billing live</li></ul></div>
   </div>
 </section>
 
@@ -516,23 +594,23 @@ timesheets    (view: pairs in/out events per member per pay period)</pre>
   <p class="eyebrow">09 · Risks</p>
   <h2>Risks and how we handle them</h2>
   <table>
-    <tr><th style="width:21%">Risk</th><th style="width:27%">What could happen</th><th>How we handle it</th></tr>
-    <tr><td><strong>GPS is inaccurate indoors</strong></td><td>Honest employees get blocked at the door</td><td>Allow for the phone's reported accuracy; default new locations to "allow but flag" rather than "block"; managers approve flagged events in one tap</td></tr>
-    <tr><td><strong>Staff without a smartphone or data</strong></td><td>Some employees can't clock in</td><td>A shared-tablet mode with a personal PIN, and audited manual punches by a manager</td></tr>
-    <tr><td><strong>Employees push back on location checks</strong></td><td>Low adoption, morale issues</td><td>Location only at the clock moment, explained on screen; employees can see what was stored about them</td></tr>
-    <tr><td><strong>Wage and hour law</strong></td><td>Disputes over hours, or businesses relying on Tock for legal compliance</td><td>Tock records hours, and the employer stays responsible for paying them correctly. Edits are audited. Terms say this clearly. Legal review before a paid launch</td></tr>
-    <tr><td><strong>Forgotten clock-outs</strong></td><td>Inflated or broken timesheets</td><td>Reminders, automatic flags and, later, proximity prompts</td></tr>
-    <tr><td><strong>Browsers can't run background geofences</strong></td><td>Proximity prompts aren't possible on the web</td><td>Planned as Phase 5 with an installable web app or a thin native wrapper</td></tr>
-    <tr><td><strong>Competitors with free tiers</strong></td><td>Hard to win on price</td><td>Compete on speed, focus and design, and offer our own free tier for small teams</td></tr>
-    <tr><td><strong>Dependence on Vercel or Supabase</strong></td><td>Price or service changes</td><td>Standard technology (PostgreSQL, Next.js) that can move to other hosts</td></tr>
+    <tr><th style="width:22%">Risk</th><th style="width:26%">What could happen</th><th>How we handle it</th></tr>
+    <tr><td><strong>Privacy and photos</strong></td><td>A breach or misuse of selfies and locations</td><td>Canadian region, RLS, private buckets, expiring links, short selfie retention, audit log, legal review before pilots</td></tr>
+    <tr><td><strong>Workers resist selfies</strong></td><td>Low adoption, union concerns</td><td>Clear purpose and retention on screen; supervisor review only, no face matching; workers see their own records</td></tr>
+    <tr><td><strong>Weak signal on site</strong></td><td>Forms fail to send</td><td>Save progress locally and send when connected; the server still timestamps on arrival and keeps the phone's capture time</td></tr>
+    <tr><td><strong>Gloves, sun, noise</strong></td><td>The app is hard to use outdoors</td><td>Large targets, high contrast, minimal typing, photo prompts instead of text</td></tr>
+    <tr><td><strong>FLHA becomes tick-box theatre</strong></td><td>Records exist but nobody thinks</td><td>Required photos for high-risk answers; supervisor countersign; hazard alerts</td></tr>
+    <tr><td><strong>Relying on us for compliance</strong></td><td>A company assumes the app makes it compliant</td><td>The app records and supports; the employer stays responsible. Clear terms and onboarding</td></tr>
+    <tr><td><strong>GPS inaccuracy</strong></td><td>Honest workers flagged</td><td>Allow for reported accuracy; flag rather than block by default; supervisor approves in one tap</td></tr>
+    <tr><td><strong>Established competitors</strong></td><td>SiteDocs and others already sell to our buyers</td><td>Win on speed at the gate, evidence, and flat pricing; target firms still on paper</td></tr>
   </table>
   <h3>Open questions</h3>
   <ul>
-    <li>Trademark and domain check for "Tock"</li>
-    <li>Privacy and compliance approach for location data</li>
-    <li>Beachhead industry for the first pilots</li>
-    <li>Static vs. rotating QR codes as the default (security vs. cost and simplicity)</li>
-    <li>Which payroll integration to build first (Gusto, QuickBooks, ADP?)</li>
+    <li>Register musterpass.com and .ca, and run the trademark search</li>
+    <li>Retention periods for selfies and safety records (legal advice)</li>
+    <li>Pricing levels, tested with pilot customers</li>
+    <li>Which payroll export formats pilots need</li>
+    <li>Which BC contractors to approach for the first pilots</li>
   </ul>
 </section>
 
@@ -540,48 +618,47 @@ timesheets    (view: pairs in/out events per member per pay period)</pre>
 <section class="section">
   <p class="eyebrow">10 · Development prompt and instructions for Claude</p>
   <h2>Instructions for Claude</h2>
-  <p>Paste this into a Claude Code session (or keep it as <code>CLAUDE.md</code>) when working on Tock.</p>
-<pre>You are working on Tock, a QR-based employee time clock (repo: qr-signin-admin).
-Read the founding document first (docs/founding/founding-document.html). It is the source
-of truth for vision, brand, and architecture.
+  <p>Paste this into a Claude Code session (or keep it as <code>CLAUDE.md</code>) when working on the product.</p>
+<pre>You are working on Musterpass (formerly the working name Tock), a site check-in
+and safety compliance SaaS (repo: qr-signin-admin). Read docs/founding/founding-document.html
+first. It is the source of truth for vision, brand, privacy and architecture.
 
 Context
-- Stack: Next.js 16 App Router, React 19, Tailwind 4, TypeScript. Deploy: Vercel.
-  Backend: Supabase (Postgres + Auth + Realtime + RLS).
-- Current focus: UI/UX and brand personality (section 07). Base features must work end-to-end.
-- Work phase by phase (section 09). Don't start a later phase's features unless asked.
+- Product: one QR scan at a site entrance -> identify -> selfie -> site check -> FLHA with
+  compliance photos -> sign -> checked in (and clocked in). Construction first, food second.
+  Everyone on site checks in: employees, subcontractors and visitors.
+- Stack: Next.js 16 App Router, React 19, Tailwind 4, TypeScript. Vercel. Supabase (Canada
+  Central): Postgres + Auth + Storage + Realtime, with RLS on every table. Stripe for billing.
+- Work one step at a time (section 09), each on its own branch. Don't start later steps unless asked.
 
-Brand rules (enforce in every UI change)
-- Colors: ink #141414, volt #C6F432, bone #F5F5F0, pop #FF5C8A, graphite #2A2A2A, smoke #8A8A85.
-  Define them as Tailwind theme tokens. Never hard-code hex in components.
-- One volt element per screen (the primary action). Text on volt is ink. Never volt on bone.
-- Dark-first employee screens. Big numerals. Round 96px+ clock button. Transitions under 200ms.
-- Copy is short, warm, a little cheeky, in sentence case. Use "Clock in", not "Submit".
-  Use the voice table in section 07.
+Photo rules (never break these)
+- Three kinds: identity (selfie), presence (location/QR/site photo), compliance (photos in forms).
+- Capture live from the camera; never accept gallery uploads for evidence.
+- Store in private buckets only. Server records time, location and SHA-256 hash. View via
+  short-lived signed URLs. No automatic face matching.
+
+Privacy and security rules
+- Never put secrets in the repo or the browser. Service-role key is server-only.
+- Every table has company_id and RLS policies; write tests that prove cross-company isolation.
+- Records are append-only: corrections create new versions and audit-log entries.
+
+Brand rules
+- Colors: ink #141414, volt #C6F432, bone #F5F5F0, pop #FF5C8A, pop-deep #B8154F,
+  graphite #2A2A2A, smoke #8A8A85. Use the Tailwind tokens, never raw hex in components.
+- One volt element per screen. Ink text on volt. Never volt on bone.
+- Big targets (56px+) for gloved hands, high contrast, plain words on safety screens.
 
 Engineering rules
-- Validate every clock event on the server (identity, geofence, QR token). Never trust the client.
-- Every table is scoped by org_id with RLS policies. Write migrations as SQL files in
-  supabase/migrations.
-- Keep components small and in /components. Use server components by default and add
-  "use client" only where needed. Wrap dynamic params/searchParams in &lt;Suspense&gt;
-  (cacheComponents is on).
-- Work on a feature branch per change. Run `npm run lint` and `npm run build` before saying
-  a change is done.
-- Never put passwords, API keys or demo logins in docs or committed files. Keep them in
-  .env.local (git-ignored) and use clearly fake seed data for demos (e.g. the Daybreak
-  Coffee demo account).
-- After any UI change, run the dev server, check the page in the browser at mobile (375px)
-  and desktop widths, and show a screenshot.
+- Validate everything on the server. Wrap request data in &lt;Suspense&gt; (cacheComponents is on).
+- Run `npm run lint` and `npm run build` before saying a change is done.
+- After UI changes, check the page in the browser at 375px and desktop widths and show a screenshot.
+- Use fake demo data (Northshore Builders) and never real people's photos.
 
 Demo videos
-- When asked for a demo, script the flow (e.g., admin creates location → prints poster →
-  employee scans → clocks in → dashboard headcount updates), automate it with Playwright
-  against the local dev server at a mobile viewport, and record the video. Save it to
-  /docs/demos/ with a short caption file.
+- Script the Northshore Builders flow, automate it with Playwright on a phone-sized viewport,
+  record it, and save to docs/demos/. Never copy competitors' videos or materials.
 
-When unsure about product decisions, check the founding document. If it doesn't answer the
-question, ask instead of guessing.</pre>
+When unsure about product decisions, check the founding document. If it doesn't answer, ask.</pre>
 </section>
 
 <!-- APPENDIX -->
@@ -590,27 +667,27 @@ question, ask instead of guessing.</pre>
   <h2>Pages and glossary</h2>
   <h3>Pages in the product</h3>
   <table>
-    <tr><th style="width:14%">Who</th><th style="width:40%">Today (prototype)</th><th>Target</th></tr>
-    <tr><td><strong>Public</strong></td><td><code>/</code> landing page with links to the admin pages</td><td>Marketing site, sign-up, log in</td></tr>
-    <tr><td><strong>Employee</strong></td><td><code>/scan/[locationId]</code> sign-in form (name, contact, in/out)</td><td><code>/scan/[locationSlug]</code> clock-in screen; "My hours"</td></tr>
-    <tr><td><strong>Admin</strong></td><td><code>/admin</code> dashboard (sample data), <code>/admin/qr</code> poster generator</td><td>Dashboard, Locations, People, Timesheets, Exceptions, Settings and billing</td></tr>
-    <tr><td><strong>Downloads</strong></td><td>CSV of sample log, printable QR poster</td><td>Timesheet CSV and payroll exports, printable posters</td></tr>
+    <tr><th style="width:14%">Who</th><th style="width:38%">Today (prototype)</th><th>Target</th></tr>
+    <tr><td><strong>Public</strong></td><td><code>/</code> landing page, header links: Admin</td><td>Landing page with <strong>Admin and Billing</strong> links in the header; sign-up; log in; privacy and terms</td></tr>
+    <tr><td><strong>On site</strong></td><td><code>/scan/[location]</code> time-clock screen</td><td><code>/s/[site]</code> check-in: identify, selfie, site check, FLHA, sign; check-out; visitor form; "My records"</td></tr>
+    <tr><td><strong>Admin</strong></td><td><code>/admin</code> dashboard, <code>/admin/qr</code> posters</td><td>Dashboard (roster, FLHAs, hazards, selfie review, muster), Sites, People, Forms, Records, Billing</td></tr>
   </table>
   <h3>Glossary</h3>
   <table>
     <tr><th style="width:22%">Term</th><th>Meaning</th></tr>
-    <tr><td><strong>Clock event</strong></td><td>One clock-in or clock-out, with time, location check results and whether it was flagged</td></tr>
-    <tr><td><strong>Shift</strong></td><td>A clock-in and its matching clock-out (or a planned block of work, once scheduling exists)</td></tr>
-    <tr><td><strong>Exception</strong></td><td>Anything a manager should look at: a flagged clock-in, a missed clock-out, a late arrival</td></tr>
-    <tr><td><strong>Flagged</strong></td><td>Accepted but marked for review because a check didn't fully pass</td></tr>
-    <tr><td><strong>Geofence</strong></td><td>The circle around a location (center point + radius) where clocking in is allowed</td></tr>
-    <tr><td><strong>QR token</strong></td><td>A short-lived signed code in the QR link that proves the scan happened recently</td></tr>
-    <tr><td><strong>Buddy punching</strong></td><td>One employee clocking in or out for another</td></tr>
-    <tr><td><strong>Headcount</strong></td><td>The people whose most recent clock event is a clock-in</td></tr>
-    <tr><td><strong>Pay period</strong></td><td>The date range a timesheet covers (e.g. weekly or every two weeks)</td></tr>
-    <tr><td><strong>Timesheet</strong></td><td>An employee's shifts and total hours for a pay period, ready for approval</td></tr>
-    <tr><td><strong>Proximity prompt</strong></td><td>A phone notification offering to clock in when the employee arrives at a location</td></tr>
-    <tr><td><strong>Org</strong></td><td>One customer company in Tock, with its own locations, people and data</td></tr>
+    <tr><td><strong>FLHA</strong></td><td>Field Level Hazard Assessment: a short pre-task check of today's hazards and controls, signed by the worker</td></tr>
+    <tr><td><strong>FLRA</strong></td><td>Field Level Risk Assessment: a similar form name used by some companies and competitors</td></tr>
+    <tr><td><strong>Check-in</strong></td><td>One person's arrival at a site: identity, location, form and signature. Also starts their time record</td></tr>
+    <tr><td><strong>Identity photo</strong></td><td>The selfie taken at check-in, reviewed by a supervisor</td></tr>
+    <tr><td><strong>Presence evidence</strong></td><td>Location, QR token and optional site photo showing the person was on site</td></tr>
+    <tr><td><strong>Compliance photo</strong></td><td>A photo inside a form proving a control is in place (PPE, harness, barricade)</td></tr>
+    <tr><td><strong>Countersign</strong></td><td>The supervisor's review and signature on a worker's FLHA</td></tr>
+    <tr><td><strong>Muster / muster point</strong></td><td>The emergency assembly point, and the roll call taken there</td></tr>
+    <tr><td><strong>Subcontractor</strong></td><td>A worker employed by another company working on the site</td></tr>
+    <tr><td><strong>COR</strong></td><td>Certificate of Recognition: a safety certification program that rewards documented safety practices</td></tr>
+    <tr><td><strong>PPE</strong></td><td>Personal protective equipment: hard hat, hi-vis, boots, gloves, eye and hearing protection, fall protection</td></tr>
+    <tr><td><strong>RLS</strong></td><td>Row-level security: database rules that decide which rows each user may read or write</td></tr>
+    <tr><td><strong>Retention</strong></td><td>How long a record or photo is kept before it is deleted automatically</td></tr>
   </table>
 </section>
 
@@ -619,14 +696,13 @@ question, ask instead of guessing.</pre>
   <p class="eyebrow">Sources</p>
   <h2>References</h2>
   <ol class="sources">
-    <li id="s1">The Business Research Company, <em>Time &amp; Attendance Software Global Market Report</em>. https://www.giiresearch.com/report/tbrc1977515-time-attendance-software-global-market-report.html</li>
-    <li id="s2">Mordor Intelligence, <em>Time &amp; Attendance Software Market Share Analysis</em>. https://www.giiresearch.com/report/moi2125434-time-attendance-software-market-share-analysis.html</li>
-    <li id="s3">MarkNtel Advisors, <em>Global Time and Attendance Software Market (2026–2032)</em>. https://www.marknteladvisors.com/query/request-sample/time-attendance-software-market.html</li>
-    <li id="s4">IMARC Group, <em>Time &amp; Attendance Software Market Size, Share &amp; Trends</em>. https://www.giiresearch.com/report/imarc2024903-time-attendance-software-market-size-share-trends.html</li>
-    <li id="s5">Biometric Update, <em>U.S. economy loses $373 million to time theft</em> (TSheets/Pollfish survey, 2017). https://www.biometricupdate.com/201706/u-s-economy-loses-373-million-to-time-theft. See also Synerion, <em>Buddy Punching and Employee Time Theft Statistics</em>. https://blog.synerion.com/buddy-punching-and-employee-time-theft-statistics</li>
-    <li id="s6">Rework, <em>Connecteam vs QuickBooks Time vs Jibble: pricing (2026)</em>. https://resources.rework.com/tools/time-attendance/connecteam-vs-quickbooks-time-vs-jibble</li>
-    <li id="s7">Capterra, <em>Jibble pricing and reviews</em>. https://www.capterra.com/p/156992/Jibble/reviews/4350309</li>
-    <li id="s8">Homebase, <em>Best geofencing time clock</em>. https://www.joinhomebase.com/blog/best-geofencing-time-clock</li>
+    <li id="s1">Dataintelo, <em>Construction Safety Management Software Market</em>. https://dataintelo.com/report/construction-safety-management-software-market</li>
+    <li id="s2">Global Market Insights, <em>Construction Risk Assessment Software Market</em>. https://www.gminsights.com/industry-analysis/construction-risk-assessment-software-market</li>
+    <li id="s3">The Business Research Company, <em>Time &amp; Attendance Software Global Market Report</em>. https://www.giiresearch.com/report/tbrc1977515-time-attendance-software-global-market-report.html; MarkNtel Advisors, <em>Global Time and Attendance Software Market</em>. https://www.marknteladvisors.com/query/request-sample/time-attendance-software-market.html</li>
+    <li id="s4">SiteDocs, <em>How much does SiteDocs cost?</em> https://www.sitedocs.com/ufaq/how-much-does-sitedocs-cost/; Capterra, <em>SiteDocs reviews</em>. https://www.capterra.ca/reviews/143579/sitedocs</li>
+    <li id="s5">SafetyCulture, <em>The 7 Best Construction Safety Software of 2026</em>. https://safetyculture.com/app/construction-safety-software/; G2, <em>HammerTech pricing</em>. https://www.g2.com/products/hammertech-global-hammertech/pricing</li>
+    <li id="s6">Field Level Hazard Assessment guide (FLHA). https://gravelbc.ca/wp-content/uploads/2020/09/Field-Level-Hazard-Assessment.pdf</li>
+    <li id="s7">WorkSafeBC, <em>Searchable OHS Regulation</em> (Part 3 and Part 20). https://www.worksafebc.com/en/law-policy/occupational-health-safety/searchable-ohs-regulation</li>
   </ol>
 </section>
 

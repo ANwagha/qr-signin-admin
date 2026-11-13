@@ -2,7 +2,7 @@
 
 **Scan, tap, you're in.** Tock is a QR-based time clock for teams. Employees scan a poster with their phone, Tock checks they're on-site, and one tap clocks them in or out. Managers see who's in the building and get timesheets they can trust.
 
-The product vision, brand and roadmap live in the founding document: [`docs/Tock-Founding-Document.pdf`](docs/Tock-Founding-Document.pdf) (source: [`docs/founding/`](docs/founding/)).
+The product vision, brand and roadmap live in the founding document: [`docs/Musterpass-Founding-Document.pdf`](docs/Musterpass-Founding-Document.pdf) (source: [`docs/founding/`](docs/founding/)).
 
 ## Status: Phase 0 (UI prototype)
 
