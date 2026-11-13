@@ -230,7 +230,7 @@ export default function SignupWizard() {
                 ))}
               </ul>
               <SitePoster site={created} companyName={company} origin={window.location.origin} />
-              <div className="no-print flex flex-wrap gap-3">
+              <div className="no-print flex flex-wrap items-center justify-center gap-3">
                 <Button type="button" variant="volt" onClick={() => router.push("/admin")}>
                   Go to your dashboard
                 </Button>
