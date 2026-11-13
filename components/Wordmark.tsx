@@ -16,7 +16,7 @@ export default function Wordmark({ tone = "volt", className = "" }: Props) {
       className={`inline-flex items-center gap-1.5 font-display text-xl font-bold tracking-tight ${toneClass[tone]} ${className}`}
     >
       <span aria-hidden className="size-3 rounded-full border-[2.5px] border-current" />
-      tock
+      musterpass
     </span>
   );
 }

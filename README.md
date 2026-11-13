@@ -1,21 +1,31 @@
-# Tock
+# Musterpass
 
-**Scan, tap, you're in.** Tock is a QR-based time clock for teams. Employees scan a poster with their phone, Tock checks they're on-site, and one tap clocks them in or out. Managers see who's in the building and get timesheets they can trust.
+**Scan in. Sign off. Proven on site.** Musterpass is a site check-in and safety compliance SaaS. Everyone who arrives at a work site scans the gate QR code, takes a selfie, passes a location check, completes the day's Field Level Hazard Assessment (FLHA) with photo evidence, and signs. That one scan also clocks them in.
 
-The product vision, brand and roadmap live in the founding document: [`docs/Musterpass-Founding-Document.pdf`](docs/Musterpass-Founding-Document.pdf) (source: [`docs/founding/`](docs/founding/)).
+The product vision, privacy plan and roadmap live in the founding document: [`docs/Musterpass-Founding-Document.pdf`](docs/Musterpass-Founding-Document.pdf) (source: [`docs/founding/`](docs/founding/)).
 
-## Status: Phase 0 (UI prototype)
+## Status: clickable prototype (step 1 of the roadmap)
 
-This build is the rebranded UI prototype. Everything runs in the browser with demo data:
+The whole user journey works in the browser. There is **no backend yet**: companies, people, check-ins and photos are stored in that browser's `localStorage` (`lib/store.ts`) until Supabase is connected in step 2.
 
 | Page | What it does |
 |---|---|
-| `/` | Landing page |
-| `/scan/[location]` | Employee clock-in screen. Asks for a name once, then shows a live clock and a Clock in / Clock out button |
-| `/admin` | Dashboard for the made-up Daybreak Coffee: headcount, flagged clock-ins, activity, CSV export |
-| `/admin/qr` | Makes a printable Tock poster for a location |
+| `/` | Landing page (Admin and Billing links in the header) |
+| `/signup` | Company sign-up: company and owner → industry → first site → invite team → ready (poster) |
+| `/s/[site]` | Check-in on a phone: who are you + consent → selfie → site check → FLHA (job, hazards with compliance photos, PPE photo) or visitor form → signature. Scan again to check out |
+| `/admin` | Safety dashboard: on site now, FLHAs, review queue (selfie review, countersign), flagged check-ins, printable muster list |
+| `/admin/sites` | Sites, boundaries and printable gate posters |
+| `/admin/people` | Everyone who has checked in, subcontractor companies, dashboard invites |
+| `/admin/forms` | The FLHA template and which hazards require a photo |
+| `/admin/records` | Search every check-in, open the full record (photos, hashes, signatures), export CSV, print |
+| `/admin/billing` | Per-company plans, trial, and **Reset demo** |
 
-**Demo only:** the employee's name and clock events are kept in that browser's `localStorage` (`lib/demo-store.ts`), and the dashboard mixes them with sample data. Nothing is shared between devices, and there are no logins or location checks yet. Those come with Supabase in Phase 1 (see section 09 of the founding document).
+**Try it fast:** open `/signup` and click **Explore the demo instead** to load Northshore Builders, a made-up contractor with check-ins already in it. Then open `/s/lonsdale-tower` to check in yourself.
+
+### Prototype limits
+- One company per browser; data isn't shared between devices.
+- On a phone over plain `http://` (your computer's network address), the camera works but **location and photo hashing don't**: browsers only allow them on `https` or `localhost`. The site check offers "Prototype: simulate being on site". Real phone testing comes with the Vercel preview URL (step 3).
+- No emails or SMS are sent; billing doesn't charge.
 
 ## Run it locally
 
@@ -24,23 +34,12 @@ npm install
 npm run dev
 ```
 
-Then open http://localhost:3000. Try `/scan/main-street` on your phone (same Wi-Fi, using your computer's IP address) to see the clock-in screen at real size.
+Then open http://localhost:3000.
 
 ## Stack
 
-Next.js 16 (App Router, `cacheComponents` on), React 19, Tailwind CSS 4, TypeScript, `qrcode.react`. Fonts: Space Grotesk (display) and Inter (UI).
+Next.js 16 (App Router, `cacheComponents`), React 19, Tailwind CSS 4, TypeScript, `qrcode.react`. Fonts: Space Grotesk and Inter. Planned: Supabase (Canada region), Vercel, Stripe.
 
 ## Brand tokens
 
-Defined in `app/globals.css` and available as Tailwind classes (`bg-ink`, `text-volt`, …):
-
-| Token | Hex | Use |
-|---|---|---|
-| `ink` | `#141414` | Dark background, text on light surfaces |
-| `volt` | `#C6F432` | The one primary action per screen. Text on volt is always ink |
-| `bone` | `#F5F5F0` | Text on ink, light backgrounds |
-| `pop` | `#FF5C8A` | Clock out, alerts, flags |
-| `pop-deep` | `#B8154F` | Pop-coloured text on light backgrounds |
-| `graphite` | `#2A2A2A` | Raised surfaces on ink |
-| `smoke` | `#8A8A85` | Secondary text |
-| `line` | `#DDDCD3` | Hairlines on light backgrounds |
+Defined in `app/globals.css` as Tailwind classes (`bg-ink`, `text-volt`, …): `ink` #141414, `volt` #C6F432 (the one primary action per screen; ink text on it), `bone` #F5F5F0, `pop` #FF5C8A (flags, check-out), `pop-deep` #B8154F (pink text on light backgrounds), `graphite` #2A2A2A, `smoke` #8A8A85, `line` #DDDCD3.

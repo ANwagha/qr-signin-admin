@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Tock "Electric" palette — see docs/Tock-Founding-Document.pdf, section 07.
+/* Musterpass "Electric" palette — see docs/Musterpass-Founding-Document.pdf, section 07.
    Rules: one volt element per screen; text on volt is ink; never volt on bone. */
 @theme inline {
   --color-ink: #141414;

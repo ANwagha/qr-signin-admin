@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Lets phones on the same Wi-Fi load the dev server via this computer's IP (dev only).
   // Update it if the computer's local IP changes (run `ipconfig`).
-  allowedDevOrigins: ["10.0.0.51"],
+  allowedDevOrigins: ["10.2.52.206", "10.0.0.51"],
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

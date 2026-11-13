@@ -13,8 +13,8 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: { default: "Tock", template: "%s · Tock" },
-  description: "Scan, tap, you're in. The QR time clock for teams.",
+  title: { default: "Musterpass", template: "%s · Musterpass" },
+  description: "Scan in. Sign off. Proven on site. Site check-in and safety forms with photo evidence.",
 };
 
 export const viewport: Viewport = {
