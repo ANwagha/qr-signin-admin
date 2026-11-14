@@ -2,11 +2,13 @@
 
 **Scan in. Sign off. Proven on site.** Musterpass is a site check-in and safety compliance SaaS. Everyone who arrives at a work site scans the gate QR code, takes a selfie, passes a location check, completes the day's Field Level Hazard Assessment (FLHA) with photo evidence, and signs. That one scan also clocks them in.
 
+**Live demo:** https://musterpass.vercel.app (deploys automatically from `main`).
+
 The product vision, privacy plan and roadmap live in the founding document: [`docs/Musterpass-Founding-Document.pdf`](docs/Musterpass-Founding-Document.pdf) (source: [`docs/founding/`](docs/founding/)).
 
 ## Status: clickable prototype (step 1 of the roadmap)
 
-The whole user journey works in the browser. There is **no backend yet**: companies, people, check-ins and photos are stored in that browser's `localStorage` (`lib/store.ts`) until Supabase is connected in step 2.
+The whole user journey works in the browser. There is **no backend yet**: companies, people, check-ins and photos are stored in that browser's `localStorage` (`lib/store.ts`) until Supabase is connected in step 3.
 
 | Page | What it does |
 |---|---|
@@ -24,7 +26,7 @@ The whole user journey works in the browser. There is **no backend yet**: compan
 
 ### Prototype limits
 - One company per browser; data isn't shared between devices.
-- On a phone over plain `http://` (your computer's network address), the camera works but **location and photo hashing don't**: browsers only allow them on `https` or `localhost`. The site check offers "Prototype: simulate being on site". Real phone testing comes with the Vercel preview URL (step 3).
+- On a phone over plain `http://` (your computer's network address), the camera works but **location and photo hashing don't**: browsers only allow them on `https` or `localhost`. The site check offers "Prototype: simulate being on site". For real phone testing, use the HTTPS Vercel URL (step 2).
 - No emails or SMS are sent; billing doesn't charge.
 
 ## Run it locally

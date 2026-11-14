@@ -24,7 +24,11 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} h-full`}>
-      <body className="flex min-h-full flex-col bg-ink text-bone">{children}</body>
+      {/* suppressHydrationWarning: some browser extensions add attributes (e.g. style="isolation:isolate")
+          to <body> before React loads. This only ignores <body>'s own attributes, not its children. */}
+      <body className="flex min-h-full flex-col bg-ink text-bone" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }

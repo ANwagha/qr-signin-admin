@@ -31,7 +31,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
             </Link>
             {store?.company && <span className="hidden text-sm text-smoke sm:inline">{store.company.name}</span>}
           </div>
-          <nav className="-mx-1 flex max-w-full gap-1 overflow-x-auto text-sm font-medium">
+          <nav className="-mx-1 flex max-w-full gap-1 overflow-x-auto text-sm font-medium [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {links.map((l) => {
               const active = l.href === "/admin" ? pathname === "/admin" : pathname.startsWith(l.href);
               return (

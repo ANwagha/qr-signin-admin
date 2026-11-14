@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["10.2.52.206", "10.0.0.51"],
   cacheComponents: true,
   partialPrefetching: true,
+  // Old time-clock posters pointed at /scan/<location>; send them to the Musterpass check-in.
+  async redirects() {
+    return [{ source: "/scan/:slug", destination: "/s/:slug", permanent: false }];
+  },
   turbopack: {
     rules: {
       "*.css": {
