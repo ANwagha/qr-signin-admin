@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
+import BrandLogo from "@/components/BrandLogo";
 import PhotoCapture from "@/components/PhotoCapture";
 import SignaturePad from "@/components/SignaturePad";
-import ThemeToggle from "@/components/ThemeToggle";
 import { Button, Choice, Field } from "@/components/ui";
 import Wordmark from "@/components/Wordmark";
+import { DEFAULT_BRAND, brandStyle, type Brand } from "@/lib/brand";
 import { loadDemo } from "@/lib/demo-seed";
 import {
   CONSENT_TEXT,
@@ -44,24 +45,31 @@ export default function CheckInFlow({ slug }: { slug: string }) {
   if (!store || now === null) return <Shell><div className="h-64 animate-pulse rounded-3xl bg-raised" /></Shell>;
   const site = store.sites.find((s) => s.slug === slug);
   if (!store.company || !site) return <NotSetUp slug={slug} />;
-  return <Flow key={site.id} store={store} site={site} now={now} />;
+  return (
+    <BrandCtx.Provider value={{ brand: store.company.brand ?? DEFAULT_BRAND, company: store.company.name }}>
+      <Flow key={site.id} store={store} site={site} now={now} />
+    </BrandCtx.Provider>
+  );
 }
 
+/** The company's logo and colour for every clock-in screen. Absent before a company exists. */
+const BrandCtx = createContext<{ brand: Brand; company: string } | null>(null);
+
 function Shell({ children, site, progress, onBack }: { children: ReactNode; site?: string; progress?: number; onBack?: () => void }) {
+  const b = useContext(BrandCtx);
   return (
-    <main className="flex min-h-dvh flex-col bg-bg px-5 pb-8 pt-5 text-fg">
+    <main className="flex min-h-dvh flex-col bg-bg px-5 pb-20 pt-5 text-fg" style={brandStyle(b?.brand)}>
       <header className="mx-auto flex w-full max-w-md items-center justify-between gap-3">
         {onBack ? (
           <button onClick={onBack} className="min-h-11 text-sm text-muted hover:text-fg">
             ← Back
           </button>
+        ) : b?.brand.logo ? (
+          <BrandLogo brand={b.brand} companyName={b.company} size="sm" />
         ) : (
           <Wordmark tone="fg" />
         )}
-        <div className="flex min-w-0 items-center gap-3">
-          {site && <span className="truncate text-sm text-muted">{site}</span>}
-          <ThemeToggle />
-        </div>
+        {site && <span className="min-w-0 truncate text-sm text-muted">{site}</span>}
       </header>
       {progress !== undefined && (
         <div className="mx-auto mt-4 h-1.5 w-full max-w-md overflow-hidden rounded-full bg-raised" aria-hidden>
@@ -462,6 +470,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
           <p className="mt-4 text-muted">
             {me ? `${greeting(now, firstName)}. ` : ""}A selfie, a quick location check{inForms.length ? " and a short form" : ""}. Under a minute.
           </p>
+          {company.brand?.welcome && <p className="mt-4 border-l-4 border-brand pl-3 text-fg">{company.brand.welcome}</p>}
           <div className="mt-10 space-y-3">
             <Button variant="volt" size="lg" onClick={() => go(me ? "selfie" : "identify")}>
               {me ? "Clock in" : "Start"}
@@ -676,7 +685,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
     return (
       <Shell site={site.name}>
         <div className="flex flex-1 flex-col justify-center text-center">
-          <div className="mx-auto flex size-24 items-center justify-center rounded-full bg-volt text-ink animate-tock-pulse">
+          <div className="mx-auto flex size-24 items-center justify-center rounded-full bg-brand text-brand-fg animate-tock-pulse">
             <svg viewBox="0 0 24 24" className="size-12" fill="none" stroke="currentColor" strokeWidth="3">
               <path d="m5 12.5 4.5 4.5L19 7.5" />
             </svg>

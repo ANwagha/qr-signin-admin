@@ -6,7 +6,8 @@ import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react
 type Variant = "volt" | "ink" | "outline" | "outline-dark" | "ghost" | "danger";
 
 const variants: Record<Variant, string> = {
-  volt: "bg-volt text-ink hover:brightness-95",
+  // The main action. Volt by default; on clock-in screens it takes the company's brand colour.
+  volt: "bg-brand text-brand-fg hover:brightness-95",
   ink: "bg-fg text-bg hover:opacity-90",
   outline: "border border-line text-fg hover:border-fg",
   "outline-dark": "border border-line text-fg hover:border-fg",

@@ -104,7 +104,7 @@ export default function SignupWizard() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-xl px-4 py-10">
+      <div className="mx-auto max-w-xl px-4 pb-24 pt-10">
         <ol className="mb-8 flex gap-1.5" aria-label="Sign-up steps">
           {STEPS.map((s, i) => (
             <li key={s} className="flex-1">

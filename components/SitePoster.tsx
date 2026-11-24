@@ -1,15 +1,27 @@
 "use client";
 
 import { QRCodeSVG } from "qrcode.react";
+import BrandLogo from "@/components/BrandLogo";
 import Wordmark from "@/components/Wordmark";
+import type { Brand } from "@/lib/brand";
 import type { Site } from "@/lib/store";
 
 /** The printable gate poster for one site. `origin` comes from the browser. */
-export default function SitePoster({ site, companyName, origin }: { site: Site; companyName: string; origin: string }) {
+export default function SitePoster({
+  site,
+  companyName,
+  origin,
+  brand,
+}: {
+  site: Site;
+  companyName: string;
+  origin: string;
+  brand?: Brand;
+}) {
   const url = `${origin}/s/${site.slug}`;
   return (
     <div className="print-area mx-auto flex max-w-md flex-col items-center rounded-3xl bg-ink px-8 py-10 text-center text-bone">
-      <Wordmark tone="volt" className="text-3xl" />
+      {brand?.logo ? <BrandLogo brand={brand} companyName={companyName} size="lg" /> : <Wordmark tone="volt" className="text-3xl" />}
       <p className="mt-6 text-sm uppercase tracking-[0.2em] text-smoke">{companyName}</p>
       <h2 className="mt-1 font-display text-4xl font-bold leading-tight">{site.name}</h2>
       <p className="mt-2 text-lg text-smoke">Scan to clock in or out. Visitors sign in here too.</p>
@@ -18,6 +30,7 @@ export default function SitePoster({ site, companyName, origin }: { site: Site; 
       </div>
       <p className="font-display text-xl font-semibold">Scan in. Clock in. Done.</p>
       <p className="mt-6 break-all text-xs text-smoke">{url}</p>
+      {brand?.logo && <Wordmark tone="bone" className="mt-4 text-sm opacity-70" />}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
+import ThemeToggle from "@/components/ThemeToggle";
 import "./globals.css";
 
 const inter = Inter({
@@ -38,6 +39,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           to <body> before React loads. This only ignores <body>'s own attributes, not its children. */}
       <body className="flex min-h-full flex-col bg-bg text-fg" suppressHydrationWarning>
         {children}
+        {/* Theme switch floats bottom-right on every page (the Next.js dev badge sits bottom-left). */}
+        <div className="no-print fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-50 rounded-full bg-raised shadow-lg shadow-black/10">
+          <ThemeToggle />
+        </div>
       </body>
     </html>
   );

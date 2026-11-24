@@ -59,7 +59,7 @@ export default function SitesPage() {
       </div>
       {poster && (
         <div className="space-y-3">
-          <SitePoster site={poster} companyName={s.company.name} origin={window.location.origin} />
+          <SitePoster site={poster} companyName={s.company.name} brand={s.company.brand} origin={window.location.origin} />
           <div className="no-print flex justify-center">
             <Button variant="ink" onClick={() => window.print()}>
               Print poster

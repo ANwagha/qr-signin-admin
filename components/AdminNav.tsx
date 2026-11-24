@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import ThemeToggle from "@/components/ThemeToggle";
+import BrandLogo from "@/components/BrandLogo";
 import { Button } from "@/components/ui";
 import Wordmark from "@/components/Wordmark";
 import { loadDemo } from "@/lib/demo-seed";
@@ -15,6 +15,7 @@ const links = [
   { href: "/admin/people", label: "People" },
   { href: "/admin/forms", label: "Forms" },
   { href: "/admin/records", label: "Records" },
+  { href: "/admin/branding", label: "Branding" },
   { href: "/admin/billing", label: "Billing" },
 ];
 
@@ -30,6 +31,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
             <Link href="/" aria-label="Musterpass home">
               <Wordmark tone="bone" />
             </Link>
+            {store?.company?.brand?.logo && <BrandLogo brand={store.company.brand} companyName={store.company.name} size="sm" />}
             {store?.company && <span className="hidden text-sm text-smoke sm:inline">{store.company.name}</span>}
           </div>
           <nav className="-mx-1 flex max-w-full gap-1 overflow-x-auto text-sm font-medium [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -47,10 +49,9 @@ export default function AdminShell({ children }: { children: ReactNode }) {
               );
             })}
           </nav>
-          <ThemeToggle onDark />
         </div>
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-8">
+      <main className="mx-auto max-w-6xl px-4 pb-24 pt-8">
         {store === null && <div className="h-64 animate-pulse rounded-3xl bg-line/60" />}
         {store && !store.company && <NoCompany />}
         {/* Always rendered so Next.js can prerender the route; each page shows nothing until a company exists. */}

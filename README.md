@@ -50,6 +50,10 @@ Next.js 16 (App Router, `cacheComponents`), React 19, Tailwind CSS 4, TypeScript
 
 The app follows the device's light or dark setting, and a sun/moon switch in the header (Auto, Light, Dark) overrides it per browser. Pages use theme roles defined in `app/globals.css` as Tailwind classes: `bg`, `surface`, `raised`, `fg`, `muted`, `line`, `alert` and `accent-fg`. Each has a light and a dark value, all at 4.5:1 contrast or better. Printing always uses light colours. The black top bar, posters and the lime and pink buttons keep their fixed brand colours.
 
+## Company branding
+
+Admin → Branding sets a company's logo, brand colour and a short welcome message. Workers see them on the clock-in screens and the gate posters; the admin dashboard stays in Musterpass colours. The main button text switches to black or white automatically, whichever is easier to read, and the page warns when a colour would blend into the light or dark background. The logo is shrunk to a PNG of at most 320 px and kept with the company (in this browser until Supabase).
+
 ## Brand tokens
 
 Defined in `app/globals.css` as Tailwind classes (`bg-ink`, `text-volt`, …): `ink` #141414, `volt` #C6F432 (the one primary action per screen; ink text on it), `bone` #F5F5F0, `pop` #CA2A30 (alert red: flags, clock-out, alert borders; white text on it), `pop-deep` #CA2A30 (red text on light backgrounds; #FF6369 in dark mode), `graphite` #2A2A2A, `smoke` #8A8A85, `line` #DDDCD3.

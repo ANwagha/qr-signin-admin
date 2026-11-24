@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useSyncExternalStore } from "react";
+import type { Brand } from "@/lib/brand";
 import { flagsForResponse, starterForms, type FormDef, type FormResponse } from "@/lib/forms";
 
 // Prototype data layer. Everything lives in this browser's localStorage until Supabase is
@@ -28,6 +29,8 @@ export type Company = {
   trialEndsAt: string;
   createdAt: string;
   demo: boolean;
+  /** Logo, colour and welcome line for clock-in screens and posters. Missing = Musterpass defaults. */
+  brand?: Brand;
 };
 
 export type Site = {
@@ -282,6 +285,10 @@ export function addInvite(email: string, role: Role) {
 
 export function setPlan(plan: Plan) {
   update((s) => (s.company ? { ...s, company: { ...s.company, plan } } : s));
+}
+
+export function setBrand(brand: Brand) {
+  update((s) => (s.company ? { ...s, company: { ...s.company, brand } } : s));
 }
 
 export function saveForm(form: FormDef) {

@@ -23,6 +23,11 @@
   --color-alert: var(--alert);
   --color-accent-fg: var(--accent-fg);
 
+  /* Company brand colour for the main button on clock-in screens. Defaults to volt with ink text;
+     a company's colour is set with brandStyle() (lib/brand.ts), which also picks black or white text. */
+  --color-brand: var(--brand, #c6f432);
+  --color-brand-fg: var(--brand-fg, #141414);
+
   --font-sans: var(--font-inter);
   --font-display: var(--font-space-grotesk);
 }
@@ -79,9 +84,9 @@ body {
 }
 
 @keyframes tock-pulse {
-  0% { box-shadow: 0 0 0 0 rgb(198 244 50 / 0.55); transform: scale(1); }
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-brand) 55%, transparent); transform: scale(1); }
   40% { transform: scale(1.06); }
-  100% { box-shadow: 0 0 0 28px rgb(198 244 50 / 0); transform: scale(1); }
+  100% { box-shadow: 0 0 0 28px color-mix(in srgb, var(--color-brand) 0%, transparent); transform: scale(1); }
 }
 .animate-tock-pulse { animation: tock-pulse 600ms ease-out; }
 

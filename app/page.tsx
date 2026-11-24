@@ -1,5 +1,4 @@
 import Link from "next/link";
-import ThemeToggle from "@/components/ThemeToggle";
 import Wordmark from "@/components/Wordmark";
 
 const steps = [
@@ -11,7 +10,7 @@ const steps = [
 
 export default function Home() {
   return (
-    <main className="flex min-h-dvh flex-col bg-bg px-6 py-6 text-fg">
+    <main className="flex min-h-dvh flex-col bg-bg px-6 pb-20 pt-6 text-fg">
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between">
         <Wordmark tone="fg" />
         <nav className="flex items-center gap-5 text-sm">
@@ -21,7 +20,6 @@ export default function Home() {
           <Link href="/admin/billing" className="text-muted hover:text-fg">
             Billing
           </Link>
-          <ThemeToggle />
         </nav>
       </header>
 
