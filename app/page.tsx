@@ -1,6 +1,7 @@
 import Link from "next/link";
 import HeroCarousel from "@/components/HeroCarousel";
 import HowItWorks from "@/components/HowItWorks";
+import TryItOut from "@/components/TryItOut";
 import Wordmark from "@/components/Wordmark";
 
 export default function Home() {
@@ -9,8 +10,8 @@ export default function Home() {
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between">
         <Wordmark tone="fg" />
         <nav className="flex items-center gap-5 text-sm">
-          <Link href="/admin" className="text-muted hover:text-fg">
-            Admin
+          <Link href="/login" className="text-muted hover:text-fg">
+            Log in
           </Link>
           <Link href="/admin/billing" className="text-muted hover:text-fg">
             Billing
@@ -40,12 +41,7 @@ export default function Home() {
               >
                 Start your free trial
               </Link>
-              <Link
-                href="/s/lonsdale-tower"
-                className="rounded-full border border-line px-6 py-3.5 font-display font-bold text-fg transition hover:border-fg"
-              >
-                Try clocking in
-              </Link>
+              <TryItOut />
             </div>
           </div>
           <div className="mx-auto w-full max-w-md lg:max-w-none">
