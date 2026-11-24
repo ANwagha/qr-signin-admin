@@ -87,7 +87,7 @@ Admin → Branding sets a company's logo, brand colour and a short welcome messa
 
 ## Command center
 
-Log in → Admin login opens `/command`, for the Musterpass team.
+Log in → Admin login opens `/command`, for the Musterpass team. The whole page stays locked until the command key (`COMMAND_KEY`, below) is entered; it is kept only in that browser tab until it closes or **Lock** is pressed.
 
 - **Versions:** every production deploy from Vercel, which one is live, and **Roll back** (puts the live site back to an earlier version for everyone). After a rollback Vercel stops releasing new pushes until you press **Undo** (or **Make live** on a newer version). On Vercel's Hobby plan you can only roll back one version.
 - **Tester bot:** clocks a worker in and out inside an on-page phone frame, then checks the dashboard and records. It runs on the demo company and restores this browser's data afterwards.

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Button, Card, Pill } from "@/components/ui";
 import type { CompaniesResponse, Version, VersionsResponse } from "@/lib/command-types";
 import { useStore } from "@/lib/store";
@@ -9,7 +9,123 @@ import { CHECKS, runTesterBot, type Check } from "@/lib/tester-bot";
 type Tab = "versions" | "bot" | "companies";
 const KEY_STORE = "musterpass.commandKey";
 
+type Gate = "checking" | "locked" | "setup" | "open";
+
+async function checkKey(k: string): Promise<Gate | "wrong"> {
+  const res = await fetch("/api/command/check", { method: "POST", headers: { "x-command-key": k }, cache: "no-store" });
+  if (res.ok) return "open";
+  if (res.status === 503) return "setup";
+  return "wrong";
+}
+
+/** Nothing in the command center shows until the right command key is entered. */
 export default function CommandCenter() {
+  const [gate, setGate] = useState<Gate>("checking");
+  const [draft, setDraft] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  // A key entered earlier in this tab: check it's still right.
+  useEffect(() => {
+    const k = readKey();
+    if (!k) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- nothing to check without a key
+      setGate("locked");
+      return;
+    }
+    checkKey(k)
+      .then((g) => {
+        if (g === "wrong") forgetKey();
+        setGate(g === "wrong" ? "locked" : g);
+      })
+      .catch(() => setGate("locked"));
+  }, []);
+
+  async function unlock(e: FormEvent) {
+    e.preventDefault();
+    const k = draft.trim();
+    if (!k || busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const g = await checkKey(k);
+      if (g === "wrong") return setError("That isn't the command key.");
+      if (g === "open") {
+        try {
+          sessionStorage.setItem(KEY_STORE, k);
+        } catch {}
+        setDraft("");
+      }
+      setGate(g);
+    } catch {
+      setError("Couldn't reach the server. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (gate === "checking") return <div className="mx-auto mt-16 h-48 max-w-md animate-pulse rounded-3xl bg-line/60" />;
+
+  if (gate === "setup")
+    return (
+      <Card className="mx-auto mt-10 max-w-lg p-6">
+        <h1 className="font-display text-2xl font-bold">Set a command key first</h1>
+        <p className="mt-2 text-sm text-muted">
+          The command center stays locked until it has a key. In Vercel → musterpass → Settings → Environment Variables, add{" "}
+          <code className="font-mono font-semibold text-fg">COMMAND_KEY</code> as a secret, with a long phrase only the Musterpass team knows.
+          Then redeploy and come back.
+        </p>
+      </Card>
+    );
+
+  if (gate === "locked")
+    return (
+      <Card className="mx-auto mt-10 max-w-md p-6">
+        <p className="text-sm text-muted">Musterpass team only</p>
+        <h1 className="mt-1 font-display text-2xl font-bold">Unlock the command center</h1>
+        <form className="mt-5 space-y-3" onSubmit={unlock}>
+          <label htmlFor="command-gate-key" className="block text-sm font-medium">
+            Command key
+          </label>
+          <input
+            id="command-gate-key"
+            type="password"
+            autoComplete="current-password"
+            autoFocus
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            className="w-full rounded-2xl border border-line bg-raised px-4 py-3 text-base text-fg outline-none focus:border-fg"
+          />
+          {error && (
+            <p role="alert" className="text-sm text-alert">
+              {error}
+            </p>
+          )}
+          <Button type="submit" variant="ink" size="lg" disabled={busy}>
+            {busy ? "Checking…" : "Unlock"}
+          </Button>
+        </form>
+        <p className="mt-4 text-xs text-muted">Kept only in this tab until you close it or lock again.</p>
+      </Card>
+    );
+
+  return (
+    <Unlocked
+      onLock={() => {
+        forgetKey();
+        setGate("locked");
+      }}
+    />
+  );
+}
+
+function forgetKey() {
+  try {
+    sessionStorage.removeItem(KEY_STORE);
+  } catch {}
+}
+
+function Unlocked({ onLock }: { onLock: () => void }) {
   const [tab, setTab] = useState<Tab>("versions");
   const tabs: [Tab, string][] = [
     ["versions", "Versions"],
@@ -18,9 +134,14 @@ export default function CommandCenter() {
   ];
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-sm text-muted">Musterpass team only</p>
-        <h1 className="font-display text-3xl font-bold tracking-tight">Command center</h1>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-sm text-muted">Musterpass team only</p>
+          <h1 className="font-display text-3xl font-bold tracking-tight">Command center</h1>
+        </div>
+        <Button variant="outline" size="sm" onClick={onLock}>
+          Lock
+        </Button>
       </div>
       <div role="tablist" aria-label="Command center sections" className="inline-flex rounded-full border border-line p-1">
         {tabs.map(([id, label]) => (

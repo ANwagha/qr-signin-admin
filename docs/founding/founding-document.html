@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Musterpass · Founding document v0.3</title>
+<title>Musterpass · Founding document v0.4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#141414;--volt:#C6F432;--bone:#F5F5F0;--pop:#FF5C8A;--graphite:#2A2A2A;--smoke:#6B6B66;--olive:#4F6600;--line:#DDDDD3;--tint:#EAEAE1}
+:root{--ink:#141414;--volt:#C6F432;--bone:#F5F5F0;--pop:#CA2A30;--graphite:#2A2A2A;--smoke:#6B6B66;--olive:#4F6600;--line:#DDDDD3;--tint:#EAEAE1}
 @page{size:A4;margin:16mm 16mm 18mm;background:var(--bone);
-  @bottom-left{content:"Musterpass · Founding document v0.3 · November 2026";font:7.5pt Inter,sans-serif;color:#8A8A85}
+  @bottom-left{content:"Musterpass · Founding document v0.4 · November 2026";font:7.5pt Inter,sans-serif;color:#8A8A85}
   @bottom-right{content:counter(page) " / " counter(pages);font:7.5pt Inter,sans-serif;color:#8A8A85}}
 @page cover{margin:0;background:var(--ink);@bottom-left{content:none}@bottom-right{content:none}}
 *{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -74,13 +74,13 @@ a{color:inherit}
 <!-- COVER -->
 <section class="cover">
   <div class="wordmark"><span class="dot"></span>musterpass</div>
-  <h1>Scan in. Sign off.<br><span>Proven on site.</span></h1>
-  <p class="sub">Founding document: how one QR scan at the site entrance replaces paper safety forms, keycards and time clocks, and how that becomes a SaaS business.</p>
-  <div class="quote">"Every person on site: checked in, verified and signed off, with proof, the moment they arrive."</div>
+  <h1>Scan in. Clock in.<br><span>Proven on site.</span></h1>
+  <p class="sub">Founding document: how one QR scan at the entrance replaces paper sign-in sheets, time clocks and clipboard forms, and how that becomes a SaaS business.</p>
+  <div class="quote">"Everyone on site: clocked in, verified and accounted for, with proof, the moment they arrive."</div>
   <div class="meta">
-    <div><b>Document</b>Founding document, version 0.3 (the site-safety pivot)</div>
+    <div><b>Document</b>Founding document, version 0.4 (live product, company-built forms)</div>
     <div><b>Date</b>November 2026</div>
-    <div><b>Product status</b>UI prototype. No saved data, logins or photo capture yet</div>
+    <div><b>Product status</b>Live at musterpass.vercel.app with company logins, a shared database and private photo storage. First real clock-in tested 24 November 2026</div>
   </div>
 </section>
 
@@ -89,7 +89,7 @@ a{color:inherit}
   <p class="eyebrow">Contents</p>
   <h2>In this document</h2>
   <ol class="toc">
-    <li><span class="n">00</span>At a glance, and what changed in version 0.3</li>
+    <li><span class="n">00</span>At a glance, and what changed in version 0.4</li>
     <li><span class="n">01</span>System vision and product overview</li>
     <li><span class="n">02</span>Market opportunity</li>
     <li><span class="n">03</span>Commercial pitch, value matrix and pricing</li>
@@ -109,26 +109,26 @@ a{color:inherit}
 <section class="section">
   <p class="eyebrow">00 · Summary</p>
   <h2>At a glance</h2>
-  <p class="lead">Musterpass is a site check-in platform. Everyone who arrives at a work site scans a QR code, takes a selfie, completes the day's safety form with photo evidence, and signs off. That one scan clocks them in. Managers see who is on site, whether they are cleared to work, and have a timestamped, photo-backed record ready for any audit or incident.</p>
+  <p class="lead">Musterpass is a QR clock-in and clock-out app for teams. Everyone who arrives scans the poster at the entrance with their phone camera, takes a selfie, passes a one-time location check, answers any forms their company has added, and is clocked in. Managers see who is on site, the hours worked and anything flagged, with a timestamped, photo-backed record ready for payroll, audits or an emergency roll call.</p>
   <div class="pivot">
-    <h4>What changed in version 0.3</h4>
+    <h4>What changed in version 0.4</h4>
     <ul>
-      <li><strong>From time clock to site safety.</strong> Clocking in is now a by-product of checking in safely, not the product itself.</li>
-      <li><strong>Photo verification</strong> in three separate roles: identity, presence and compliance.</li>
-      <li><strong>The first form is the Field Level Hazard Assessment (FLHA),</strong> the daily pre-task hazard check used across Canadian construction.</li>
-      <li><strong>A full SaaS journey</strong> from company sign-up to daily use, with per-company pricing and a Billing page.</li>
-      <li><strong>Six industries at sign-up</strong> (construction, warehouse, kitchen, manufacturing, cleaning, general), each with its own daily form. Construction is the first market. Everyone on site checks in: employees, subcontractors and visitors.</li>
-      <li><strong>Supabase and Vercel</strong> are now planned in detail, including how photos and personal data are protected.</li>
-      <li><strong>A new name: Musterpass.</strong> It replaces the working name "Tock" (see section 07).</li>
+      <li><strong>Back to a general clock-in app.</strong> Clocking in is the product again; safety is one strong use of it, not the whole product. The six industry templates and the industry step at sign-up are gone.</li>
+      <li><strong>Each company builds its own forms</strong> (or none, for a plain time clock), starting from a library of six ready-made forms. See section 01.</li>
+      <li><strong>It's live.</strong> Company sign-up and login, a shared Supabase database, server-checked clock-ins and private photo storage run on musterpass.vercel.app.</li>
+      <li><strong>Company branding:</strong> each company's logo, colour and welcome line on its clock-in screens and posters.</li>
+      <li><strong>Light and dark mode,</strong> and alerts are now red (#CA2A30, white text) instead of pink.</li>
+      <li><strong>A command center</strong> for the Musterpass team: every company, a tester bot, and one-click rollback of the live site.</li>
+      <li><strong>A new homepage</strong> with an illustrated card carousel, animated how-it-works steps, Log in, and a "Try it out" demo.</li>
     </ul>
   </div>
   <div class="cards c3">
-    <div class="card"><h4>For companies</h4>Sign up, choose "Construction", and get a ready-made FLHA, dashboard and site posters. One flat price per company, with no per-worker counting.</div>
-    <div class="card"><h4>For workers and visitors</h4>Scan with the phone camera. No app, no paper. About a minute to check in and sign the day's FLHA.</div>
-    <div class="card"><h4>For safety managers</h4>Live list of who is on site and cleared. Hazards flagged the moment they are reported. Records exported in one click.</div>
+    <div class="card"><h4>For companies</h4>Sign up, add a first site, print its poster. Two starter forms are ready; edit them, add more from the library, or turn them off. One flat price per company, with no per-worker counting.</div>
+    <div class="card"><h4>For workers and visitors</h4>Scan with the phone camera. No app, no account, no paper. Under a minute to clock in, and scan again to clock out.</div>
+    <div class="card"><h4>For managers</h4>Live list of who is clocked in, hours worked, flagged answers and selfies to review, updating by itself. Records and a payroll CSV in one click.</div>
   </div>
   <h3>Where we start</h3>
-  <p><strong>Construction in British Columbia,</strong> then Alberta and the rest of Canada. Warehouses, kitchens, manufacturing plants, cleaning and facilities teams, and any other workplace can sign up from day one with a template written for their work.</p>
+  <p><strong>Construction and trades in British Columbia</strong> stay the first market: sites with walk-on subcontractors, safety forms and emergency musters get the most from proof at the gate. Because forms are built by each company, warehouses, kitchens, cleaning crews and any other team can use Musterpass from day one.</p>
 </section>
 
 <!-- 01 VISION -->
@@ -150,7 +150,7 @@ a{color:inherit}
   <div class="cards c2">
     <div class="card"><h4>Proven, not claimed</h4>Every check-in and form carries server time, location and photos that cannot be edited afterwards.</div>
     <div class="card"><h4>Evidence at the moment, never surveillance</h4>Photos and location are captured only at check-in, check-out and in forms. No tracking during the shift.</div>
-    <div class="card"><h4>Faster than paper</h4>A daily check-in with FLHA must take about a minute. If paper is faster, we've failed.</div>
+    <div class="card"><h4>Faster than paper</h4>A daily clock-in, forms included, must take about a minute. If paper is faster, we've failed.</div>
     <div class="card"><h4>Fair to everyone on site</h4>Workers can see their own records. Nothing is changed silently; every correction is logged with who and why.</div>
   </div>
 </section>
@@ -160,24 +160,26 @@ a{color:inherit}
   <h2>The product</h2>
   <table>
     <tr><th style="width:22%">Surface</th><th style="width:22%">Who</th><th>What it does</th></tr>
-    <tr><td><strong>Site QR poster</strong></td><td>Printed by the company, scanned by everyone</td><td>One per site entrance. Opens the check-in flow for that site</td></tr>
-    <tr><td><strong>Check-in flow</strong> (mobile web)</td><td>Workers, subcontractors, visitors</td><td>Identify → selfie → site check → FLHA with compliance photos → sign → checked in (and clocked in)</td></tr>
-    <tr><td><strong>Check-out</strong></td><td>Everyone on site</td><td>Scan again at the end of the day; optional "any incidents?" question</td></tr>
-    <tr><td><strong>Safety dashboard</strong></td><td>Safety managers, supervisors</td><td>Who is on site now, FLHAs submitted, hazards flagged, selfies to review, muster list</td></tr>
-    <tr><td><strong>Forms</strong></td><td>Company admins</td><td>Industry templates (FLHA first), edited per company; later, upload an existing paper form to convert it</td></tr>
-    <tr><td><strong>Sites and people</strong></td><td>Company admins</td><td>Create sites and geofences, print posters, invite crews, manage subcontractor companies</td></tr>
-    <tr><td><strong>Records and exports</strong></td><td>Safety managers</td><td>Search any day, person or site; export a PDF or CSV for audits, COR, insurers or incident investigations</td></tr>
-    <tr><td><strong>Billing</strong></td><td>Company owner</td><td>One subscription per company: plan, invoices, payment method. Linked next to Admin in the top navigation</td></tr>
+    <tr><td><strong>Site QR poster</strong></td><td>Printed by the company, scanned by everyone</td><td>One per entrance, with the company's logo. Opens clock-in for that site</td></tr>
+    <tr><td><strong>Clock-in</strong> (phone browser)</td><td>Staff, contractors, visitors</td><td>Who are you (once per phone) → selfie → location check → the company's clock-in forms (signature if a form asks) → clocked in. Visitors get a short visitor form instead</td></tr>
+    <tr><td><strong>Clock-out</strong></td><td>Everyone on site</td><td>Scan again; answer any clock-out forms (for example "Any incidents?")</td></tr>
+    <tr><td><strong>Dashboard</strong></td><td>Owners, managers, supervisors</td><td>Who is clocked in now, hours today, flagged answers, selfies to review, countersign, printable emergency list. Updates live</td></tr>
+    <tr><td><strong>Forms</strong></td><td>Company admins</td><td>Build clock-in and clock-out forms, or add them from the library; reorder, turn on or off</td></tr>
+    <tr><td><strong>Sites and people</strong></td><td>Company admins</td><td>Sites with location boundaries and printable posters; everyone who has clocked in; dashboard invites</td></tr>
+    <tr><td><strong>Records</strong></td><td>Managers</td><td>Every clock-in with hours, answers, photos (with hashes) and signatures; CSV for payroll; print</td></tr>
+    <tr><td><strong>Branding</strong></td><td>Company admins</td><td>Logo, brand colour (with automatic readable text and contrast warnings) and a welcome line for clock-in screens and posters</td></tr>
+    <tr><td><strong>Billing</strong></td><td>Company owner</td><td>Plan and trial. Linked in the homepage header</td></tr>
+    <tr><td><strong>Log in</strong></td><td>Companies; the Musterpass team</td><td>Company login (email and password, with reset) or Admin login to the command center</td></tr>
+    <tr><td><strong>Command center</strong></td><td>Musterpass team only</td><td>Every company and its activity; tester bot; live-site versions with rollback</td></tr>
   </table>
   <h3>Core capabilities</h3>
   <ol>
-    <li><strong>One-scan check-in</strong> for everyone, including people the company never invited.</li>
+    <li><strong>One-scan clock-in</strong> for everyone, including people the company never invited.</li>
     <li><strong>Photo verification</strong> in three roles (next page).</li>
-    <li><strong>Digital FLHA</strong> signed before work starts, with hazards and controls, PPE photos and supervisor review.</li>
-    <li><strong>Live site roster and muster list</strong> for emergencies.</li>
-    <li><strong>Automatic time records</strong> from check-in and check-out, exportable for payroll.</li>
-    <li><strong>Industry-aware setup:</strong> choosing an industry sets up forms, dashboard cards and wording automatically.</li>
-    <li><strong>Evidence-grade records</strong>: server timestamps, location, hashed photos and an append-only audit trail.</li>
+    <li><strong>Company-built forms</strong> with photo questions, signatures and alert rules.</li>
+    <li><strong>Live roster and emergency list</strong> for musters.</li>
+    <li><strong>Automatic time records</strong> from clock-in and clock-out, exportable for payroll.</li>
+    <li><strong>Evidence-grade records:</strong> server timestamps, location, hashed photos in private storage, and records that can be reviewed but never edited.</li>
   </ol>
 </section>
 
@@ -197,7 +199,7 @@ a{color:inherit}
       <li>The selfie background adds visual proof of the site.</li>
       <li>Optional per site: a photo of the entrance or posted site board.</li></ul></div>
     <div class="photo"><span class="tag">3 · Compliance</span><h4>Is the work set up safely?</h4>
-      <ul><li>Photos attached to answers inside the FLHA: PPE worn, harness tie-off, barricades, housekeeping.</li>
+      <ul><li>Photo questions inside the company's forms: PPE worn, harness tie-off, barricades, a clean station, a fridge thermometer.</li>
       <li>The form decides which answers require a photo.</li>
       <li>This is the strongest evidence in an audit or after an incident.</li>
       <li>Kept as long as the safety record itself.</li></ul></div>
@@ -213,61 +215,53 @@ a{color:inherit}
 </section>
 
 <section class="section">
-  <p class="eyebrow">01 · Industry templates</p>
-  <h2>A daily form for every industry</h2>
-  <p>At sign-up, a company picks its industry (step 2). Musterpass then loads that industry&apos;s daily safety form, photo rules, wording and visitor rules. Every template has the same four parts: <strong>job and readiness</strong> questions, <strong>hazards and controls</strong>, optional <strong>checks</strong> (pass/fail, readings or photos), and a <strong>PPE check</strong> with photo. Any answer that needs attention is flagged for the supervisor.</p>
-  <table>
-    <tr><th style="width:17%">Industry</th><th style="width:21%">Daily form</th><th style="width:22%">Readiness</th><th>Hazards (photo by default)</th><th style="width:20%">Checks</th></tr>
-    <tr><td><strong>Construction</strong></td><td>Field Level Hazard Assessment</td><td>Fit for duty; knows the muster point</td><td>12 hazards; heights, excavation and hot work need photos</td><td>None</td></tr>
-    <tr><td><strong>Warehouse and logistics</strong></td><td>Pre-shift safety check</td><td>Fit for duty; trained on today&apos;s equipment; knows exits and muster point</td><td>Forklifts and pedestrians, racking, docks and trailers (photos); lifting, conveyors, battery charging, slips, cold storage</td><td>Forklift pre-use inspection (pass/fail, photo on fail)</td></tr>
-    <tr><td><strong>Kitchen and food service</strong></td><td>Opening safety and food-safety check</td><td>No illness symptoms in 48 h; cuts covered; knows fire exits and extinguisher</td><td>Burns, knives, slips (photo), chemicals, allergens, lifting</td><td>Fridge &le; 4 &deg;C, freezer &le; &minus;18 &deg;C, hot holding &ge; 60 &deg;C; handwash station photo</td></tr>
-    <tr><td><strong>Manufacturing</strong></td><td>Pre-shift machine and safety check</td><td>Fit for duty; trained on today&apos;s machine; knows the muster point</td><td>Machine guarding and lockout (photos); pinch points, noise, hot surfaces, chemicals, forklifts, repetitive strain</td><td>Guards in place; e-stop tested (pass/fail)</td></tr>
-    <tr><td><strong>Cleaning and facilities</strong></td><td>Job-start safety check</td><td>Fit for duty; working alone today (alerts for check-ins); knows the building&apos;s exits</td><td>Chemicals/WHMIS and wet floors (photos); ladders, sharps, electrical, lifting, working alone</td><td>None</td></tr>
-    <tr><td><strong>Other / general</strong></td><td>Daily safety check-in</td><td>Fit for duty; knows exits and muster point</td><td>Slips, lifting, electrical, working alone, aggressive visitors, ergonomics</td><td>None</td></tr>
-  </table>
-  <p class="small muted">Templates were written for this product and use common Canadian practice (for example, BC food-safety temperatures). Companies can switch photo rules per hazard; later, &quot;Tailor these forms with Claude&quot; will adapt them further (needs a Claude API key).</p>
-</section>
-
-<section class="section">
-  <p class="eyebrow">01 · Construction template in detail</p>
-  <h2>Field Level Hazard Assessment</h2>
-  <p>The FLHA is a short pre-task check where each worker identifies the hazards of today's work and how they're controlled. It is widely used on Canadian construction sites as part of the hazard assessment that occupational safety rules require, and it must be redone when the task or conditions change.<sup><a href="#s6">6</a> <a href="#s7">7</a></sup> WorkSafeBC does not mandate one specific FLHA form, so ours is a strong default that each company can adapt.</p>
-  <div class="cards c2">
-    <div class="card"><h4>1 · Job details</h4>Site (from the QR), date and time (automatic), worker and employer company, supervisor, task description, work location on site.</div>
-    <div class="card"><h4>2 · Fit for work</h4>"Are you fit for duty today?" Have you reviewed the site orientation and know the muster point? Any "no" alerts the supervisor.</div>
-    <div class="card"><h4>3 · Hazards (tick all that apply)</h4>Working at heights · falling objects · mobile equipment · excavation or trenching · electrical · hot work · confined space · hazardous materials · noise · weather · slips, trips and housekeeping · manual lifting · other (describe).</div>
-    <div class="card"><h4>4 · Controls</h4>For each hazard ticked: how it's controlled (guardrail, tie-off, spotter, barricade, lockout, ventilation, permit…). Height, excavation and hot-work answers <strong>require a compliance photo</strong>.</div>
-    <div class="card"><h4>5 · PPE check</h4>Hard hat · hi-vis · safety boots · eye protection · gloves · hearing protection · fall protection. One PPE photo (compliance photo).</div>
-    <div class="card"><h4>6 · Sign-off</h4>Worker signs on screen. Supervisor reviews and countersigns from the dashboard. If conditions change, "Update my FLHA" creates a new version, never an overwrite.</div>
+  <p class="eyebrow">01 · Forms</p>
+  <h2>Forms each company builds</h2>
+  <p>Every team checks different things, so Musterpass doesn't guess by industry. Each company builds its own clock-in and clock-out forms on the Forms page, or turns them all off for a plain time clock. Forms run in order after the location check; any answer that matches an alert rule is flagged for the supervisor on the dashboard.</p>
+  <div class="cards c3">
+    <div class="card"><h4>Question types</h4>Yes/no · pick one · pick any · short answer · number (with a +/− button, since phone keypads lack a minus) · photo (camera only).</div>
+    <div class="card"><h4>Rules</h4>Any question can be required, and can alert the supervisor on certain answers (for example "No" to "Fit for work?", or a number out of range). A form can ask for a signature.</div>
+    <div class="card"><h4>When</h4>Each form runs at clock-in or at clock-out. Reorder forms, turn them on or off, or delete them. Visitors get their own short form.</div>
   </div>
-  <div class="note">The other five industries follow the same structure with their own questions, hazards, checks and PPE (see the previous page).</div>
+  <h3>The library</h3>
+  <table>
+    <tr><th style="width:24%">Form</th><th>What it asks</th><th style="width:20%">Typical use</th></tr>
+    <tr><td><strong>Fit for work</strong></td><td>Fit for duty today, any reason you shouldn't work</td><td>Everyone (starter form)</td></tr>
+    <tr><td><strong>End of shift</strong></td><td>Any incidents or injuries, anything to report</td><td>Everyone (starter form, at clock-out)</td></tr>
+    <tr><td><strong>PPE check</strong></td><td>Which PPE you're wearing, with a photo</td><td>Construction, manufacturing</td></tr>
+    <tr><td><strong>Hazard assessment</strong></td><td>Today's task, hazards, how they're controlled, photo for high-risk work, signature: a Field Level Hazard Assessment (FLHA)</td><td>Construction and trades</td></tr>
+    <tr><td><strong>Equipment check</strong></td><td>Pre-use inspection, pass/fail items, photo of any fault</td><td>Warehouses, yards</td></tr>
+    <tr><td><strong>Temperature log</strong></td><td>Fridge and freezer readings, flagged out of range</td><td>Kitchens, food service</td></tr>
+  </table>
+  <div class="note"><strong>The FLHA</strong> is the short pre-task hazard check used across Canadian construction as part of the hazard assessment that occupational safety rules require.<sup><a href="#s6">6</a> <a href="#s7">7</a></sup> WorkSafeBC doesn't mandate one form, so the library version is a strong default that each company adapts.</div>
+  <p class="small muted">Later, "Tailor my forms with Claude" will write or adapt forms from a description or a photo of an existing paper form. It needs a Claude API key.</p>
 </section>
 
 <section class="section">
   <p class="eyebrow">01 · How it works</p>
   <h2>From sign-up to every day</h2>
-  <h3>The company's journey (SaaS onboarding)</h3>
+  <h3>The company's journey</h3>
   <div class="cards c4">
-    <div class="step"><h4>1 · Sign up</h4>Company name, owner account, and "What industry are you in?"</div>
-    <div class="step"><h4>2 · Auto-setup</h4>Construction loads the FLHA, dashboard cards and wording.</div>
-    <div class="step"><h4>3 · Add sites</h4>Address and geofence; print each site's QR poster.</div>
-    <div class="step"><h4>4 · Invite</h4>Supervisors and crews by email or SMS. Subcontractor companies by link.</div>
-    <div class="step"><h4>5 · Customize</h4>Adjust the FLHA, choose which answers need photos.</div>
-    <div class="step"><h4>6 · Go live</h4>Free trial ends; choose a plan on the Billing page.</div>
-    <div class="step"><h4>7 · Daily use</h4>Everyone checks in; supervisors review and countersign.</div>
-    <div class="step"><h4>8 · Prove it</h4>Export records for audits, COR, insurers or incidents.</div>
+    <div class="step"><h4>1 · Sign up</h4>Company name, owner, work email and password; confirm the email.</div>
+    <div class="step"><h4>2 · First site</h4>Name, address and location boundary; print its QR poster.</div>
+    <div class="step"><h4>3 · Invite</h4>Supervisors and managers by email. Crews don't need invites: they scan.</div>
+    <div class="step"><h4>4 · Forms</h4>Fit for work and End of shift are ready; edit or add from the library.</div>
+    <div class="step"><h4>5 · Branding</h4>Logo, colour and a welcome line on clock-in screens and posters.</div>
+    <div class="step"><h4>6 · Go live</h4>30-day free trial; choose a plan on the Billing page.</div>
+    <div class="step"><h4>7 · Daily use</h4>Everyone clocks in; supervisors review selfies and flags, and countersign.</div>
+    <div class="step"><h4>8 · Prove it</h4>Records and payroll CSV for audits, insurers or incidents.</div>
   </div>
-  <h3>The worker's check-in (every day)</h3>
+  <h3>The worker's clock-in (every day)</h3>
   <div class="cards c4">
-    <div class="step"><h4>Scan</h4>Phone camera on the site poster.</div>
-    <div class="step"><h4>Who are you?</h4>Signed-in workers are recognized. New people enter name, company and phone once.</div>
-    <div class="step"><h4>Selfie + site check</h4>Identity photo and location, checked by the server.</div>
-    <div class="step"><h4>FLHA and sign</h4>Hazards, controls, PPE photo, signature. "You're checked in."</div>
+    <div class="step"><h4>Scan</h4>Phone camera on the site poster. No app.</div>
+    <div class="step"><h4>Who are you?</h4>Name, company and phone once; the phone remembers them after that.</div>
+    <div class="step"><h4>Selfie + location</h4>A live selfie and a one-time location check against the site boundary.</div>
+    <div class="step"><h4>Forms and sign</h4>The company's forms, a signature if asked. "You're clocked in."</div>
   </div>
   <h3>Everyone else</h3>
   <div class="cards c2">
-    <div class="card"><h4>Subcontractors</h4>Scan the same poster. If their company is linked, their records are shared with it; if not, the general contractor still gets the full check-in and FLHA.</div>
-    <div class="card"><h4>Visitors and inspectors</h4>A shorter visitor form (who you're seeing, site rules acknowledged, selfie). They appear on the muster list until they check out.</div>
+    <div class="card"><h4>Contractors</h4>Scan the same poster and pick "A contractor". The site's company gets the full clock-in, forms and hours. Linking subcontractor companies comes with onboarding (section 09).</div>
+    <div class="card"><h4>Visitors and inspectors</h4>A short visitor form (who you're seeing, purpose, site rules) and a selfie. They stay on the emergency list until they sign out.</div>
   </div>
 </section>
 
@@ -278,26 +272,26 @@ a{color:inherit}
 flowchart TD
     subgraph Company["Company onboarding (once)"]
         direction LR
-        C1[Sign up + industry] --> C2[Auto-setup forms + dashboard]
+        C1[Sign up + confirm email] --> C2[Starter forms + branding]
         C2 --> C3[Add sites + print QR]
-        C3 --> C4[Invite crews + subs]
+        C3 --> C4[Invite supervisors]
         C4 --> C5[Choose plan in Billing]
     end
     subgraph Daily["Everyone on site, every day"]
         D1[Scan site QR] --> D2{Known on<br/>this phone?}
         D2 -- No --> D3[Name, company, phone<br/>+ consent] --> D4
         D2 -- Yes --> D4["Selfie (identity)"]
-        D4 --> D5{On site?<br/>location + QR token}
+        D4 --> D5{On site?<br/>location check}
         D5 -- No --> D6[Flagged for supervisor]
-        D5 -- Yes --> D7["FLHA: hazards, controls,<br/>PPE + compliance photos"]
-        D7 --> D8["Sign: 'You're checked in'"]
-        D8 --> D9[End of day: scan to check out]
+        D5 -- Yes --> D7["Company's forms:<br/>answers + photos"]
+        D7 --> D8["Sign if asked: 'You're clocked in'"]
+        D8 --> D9[End of day: scan to clock out]
     end
     subgraph Manager["Safety manager, ongoing"]
         direction LR
-        M1[Live roster + muster list] --> M2[Review selfies + hazards]
-        M2 --> M3[Countersign FLHAs]
-        M3 --> M4[Export records]
+        M1[Live roster + emergency list] --> M2[Review selfies + flags]
+        M2 --> M3[Countersign]
+        M3 --> M4[Records + payroll CSV]
     end
     Company -. "posters on site" .-> Daily
     Daily -. "records arrive instantly" .-> Manager
@@ -307,15 +301,15 @@ flowchart TD
 <section class="section">
   <p class="eyebrow">01 · A worked example</p>
   <h2>Northshore Builders</h2>
-  <p class="muted small">Northshore Builders is a made-up company. It will be the demo account and the script for the demo video.</p>
+  <p class="muted small">Northshore Builders is a made-up company. It is the demo company on the live site ("Try it out") and the script for the demo video.</p>
   <p>Northshore Builders is a general contractor in Burnaby with 60 workers across three sites and about a dozen subcontractor crews. Until now, FLHAs were done on clipboards and collected by the site supervisor at the end of the week.</p>
   <div class="cards c2">
-    <div class="card"><h4>Setup · Monday, 15 minutes</h4>Priya, the safety manager, signs up and picks "Construction". The FLHA, dashboard and wording load automatically. She adds the Lonsdale Tower site, prints two posters for the gates and invites the supervisors.</div>
-    <div class="card"><h4>Check-in · Tuesday, 6:48 am</h4>Jas, a framer, scans the gate poster, takes a selfie and fills in the FLHA: working at heights, controlled by guardrails and tie-off. The form asks for a photo of the harness. Jas signs, and the dashboard shows 23 on site.</div>
-    <div class="card"><h4>A walk-on · 7:05 am</h4>An electrician from a subcontractor the company never invited scans the same poster, enters name, company and phone, does the selfie and FLHA, and appears on the roster like everyone else.</div>
-    <div class="card"><h4>A hazard · 9:30 am</h4>A labourer ticks "Excavation" with no barricade photo. The supervisor gets an alert, the area is barricaded, and the FLHA is updated as a new version with the photo.</div>
+    <div class="card"><h4>Setup · Monday, 15 minutes</h4>Priya, the safety manager, signs up, adds the Lonsdale Tower site and prints two posters for the gates. She keeps the Fit for work form, adds Hazard assessment and PPE check from the library, uploads the company logo and invites the supervisors.</div>
+    <div class="card"><h4>Check-in · Tuesday, 6:48 am</h4>Jas, a framer, scans the gate poster, takes a selfie and fills in the hazard assessment: working at heights, controlled by guardrails and tie-off. The form asks for a photo of the harness. Jas signs, and the dashboard shows 23 clocked in.</div>
+    <div class="card"><h4>A walk-on · 7:05 am</h4>An electrician from a subcontractor the company never invited scans the same poster, enters name, company and phone, does the selfie and forms, and appears on the roster like everyone else.</div>
+    <div class="card"><h4>A hazard · 9:30 am</h4>A labourer answers that an excavation has no barricade. The answer is flagged on the dashboard, the supervisor has the area barricaded and countersigns the record.</div>
   </div>
-  <div class="callout"><strong>Three weeks later,</strong> a worker is injured on site. Priya exports that day's records in one click: who was on site, each signed FLHA with timestamps, location and photos, and the supervisor's countersignature. With paper, this would have taken days and might not have existed.</div>
+  <div class="callout"><strong>Three weeks later,</strong> a worker is injured on site. Priya exports that day's records in one click: who was clocked in, each signed hazard assessment with timestamps, location and photos, and the supervisor's countersignature. With paper, this would have taken days and might not have existed.</div>
 </section>
 
 <!-- 02 MARKET -->
@@ -336,18 +330,18 @@ flowchart TD
     <li>Existing safety platforms are built for large contractors, with per-user pricing and long rollouts. Small and mid-size contractors are underserved.</li>
   </ul>
   <h3>Beyond construction</h3>
-  <p><strong>Food service</strong> (second): kitchens run daily checklists and temperature logs on paper for health inspections. <strong>Warehouses</strong> and <strong>public-sector field teams</strong> (for example police or municipal crews using site questionnaires) are later options; public-sector buyers will require Canadian data residency, which our Supabase plan already allows.</p>
+  <p><strong>Food service</strong> (second): kitchens run daily checklists and temperature logs on paper for health inspections; the Temperature log form already covers the basics. <strong>Warehouses</strong>, <strong>cleaning and facilities crews</strong> and <strong>public-sector field teams</strong> can use company-built forms today; public-sector buyers will require Canadian data residency, which our Supabase plan allows.</p>
 </section>
 
 <!-- 03 PITCH -->
 <section class="section">
   <p class="eyebrow">03 · Commercial pitch and value matrix</p>
   <h2>Proof, the moment they arrive</h2>
-  <div class="callout">Replace the clipboard at the gate with one QR code. Everyone on site checks in from their own phone, takes a selfie, signs today's FLHA with photo evidence, and is clocked in. You see who's on site and cleared to work, and you have <strong>proof that stands up</strong> when it matters.</div>
+  <div class="callout">Replace the clipboard at the gate with one QR code. Everyone on site clocks in from their own phone, takes a selfie, answers your forms with photo evidence, and signs. You see who's on site and cleared to work, and you have <strong>proof that stands up</strong> when it matters.</div>
   <table>
     <tr><th style="width:17%">Stakeholder</th><th style="width:27%">Pain today</th><th style="width:31%">What Musterpass gives them</th><th>Proof point</th></tr>
     <tr><td><strong>Owner / buyer</strong></td><td>Liability and insurance exposure from missing records</td><td>Complete, signed, photo-backed records for every day on every site</td><td>Records available within minutes of an incident</td></tr>
-    <tr><td><strong>Safety manager</strong></td><td>Chasing clipboards; typing up forms; COR audit prep</td><td>Forms arrive instantly; one-click exports; flagged hazards</td><td>Hours per week saved; audit prep time</td></tr>
+    <tr><td><strong>Safety or operations manager</strong></td><td>Chasing clipboards; typing up forms; COR audit prep</td><td>Forms arrive instantly; one-click exports; flagged hazards</td><td>Hours per week saved; audit prep time</td></tr>
     <tr><td><strong>Site supervisor</strong></td><td>Not knowing who's on site; collecting signatures</td><td>Live roster, muster list, alerts, countersign on phone</td><td>Time to account for everyone in a drill</td></tr>
     <tr><td><strong>Worker / subcontractor</strong></td><td>Clipboard queues; paperwork before work</td><td>About a minute on their own phone; their records visible to them</td><td>Check-in time</td></tr>
     <tr><td><strong>Payroll</strong></td><td>Hand-written hours</td><td>Check-in and check-out times as a timesheet export</td><td>Timesheet corrections per week</td></tr>
@@ -355,7 +349,7 @@ flowchart TD
   <h3>Pricing: one price per company (hypothesis to validate)</h3>
   <p>Competitors mostly charge per user (SafetyCulture lists $24 per user per month) or quote by company size (SiteDocs).<sup><a href="#s4">4</a> <a href="#s5">5</a></sup> On construction sites, the number of people changes daily and many are subcontractors, so <strong>per-user pricing punishes exactly the behaviour we want</strong>: everyone checking in. We charge one price per company, with tiers by number of active sites.</p>
   <div class="cards c3">
-    <div class="card"><h4>Crew · ~$149/month</h4>1 active site. Unlimited workers, subcontractors and visitors. FLHA and visitor forms. 30-day free trial.</div>
+    <div class="card"><h4>Crew · ~$149/month</h4>1 active site. Unlimited workers, subcontractors and visitors. Custom forms and visitor sign-in. 30-day free trial.</div>
     <div class="card"><h4>Company · ~$399/month</h4>Up to 10 active sites. Form customization, exports, supervisor countersign, time records.</div>
     <div class="card"><h4>Enterprise · custom</h4>Unlimited sites, SSO, longer retention, API access, dedicated onboarding.</div>
   </div>
@@ -369,7 +363,7 @@ flowchart TD
   <div class="note"><strong>Honest view:</strong> digital safety forms are not new. SiteDocs, SafetyCulture, HammerTech and others offer them. We win on speed at the gate, photo evidence by default, and pricing that welcomes subcontractors, not on having more features.</div>
   <table>
     <tr><th style="width:19%">Competitor</th><th style="width:33%">What it does well</th><th>Where we're different</th></tr>
-    <tr><td><strong>SiteDocs</strong></td><td>Construction safety compliance: digital hazard assessments and FLRAs, toolbox talks, custom forms, certifications, offline access. Popular with small construction teams; priced annually by company size.<sup><a href="#s4">4</a></sup></td><td>Our check-in, selfie, FLHA and clock-in happen in one scan with no app install; photo evidence is built into every record</td></tr>
+    <tr><td><strong>SiteDocs</strong></td><td>Construction safety compliance: digital hazard assessments and FLRAs, toolbox talks, custom forms, certifications, offline access. Popular with small construction teams; priced annually by company size.<sup><a href="#s4">4</a></sup></td><td>Our clock-in, selfie, forms and signature happen in one scan with no app install; photo evidence is built into every record</td></tr>
     <tr><td><strong>SafetyCulture</strong></td><td>Flexible inspections and checklists across industries; free for up to 10 users, Premium $24 per user per month.<sup><a href="#s5">5</a></sup></td><td>Built for construction sites and walk-on subcontractors; flat company price</td></tr>
     <tr><td><strong>HammerTech</strong></td><td>Construction safety and site management for larger contractors; custom pricing.<sup><a href="#s5">5</a></sup></td><td>Simpler and faster to set up for small and mid-size contractors</td></tr>
     <tr><td><strong>Salus, Raken, Procore forms</strong></td><td>Safety and daily reporting inside wider platforms</td><td>Focused on the gate moment rather than project management</td></tr>
@@ -379,11 +373,12 @@ flowchart TD
   <h3>Musterpass's edge</h3>
   <table>
     <tr><th style="width:30%">Advantage</th><th style="width:44%">Why it matters</th><th>Defensibility</th></tr>
-    <tr><td><strong>One scan does everything</strong></td><td>Check-in, identity, FLHA, sign-off and clock-in in about a minute</td><td>Medium; it's in the product design</td></tr>
+    <tr><td><strong>One scan does everything</strong></td><td>Clock-in, identity, location, forms and sign-off in about a minute</td><td>Medium; it's in the product design</td></tr>
     <tr><td><strong>Evidence-grade photos</strong></td><td>Server-stamped, hashed, private; three clear roles</td><td>Medium–high; hard to bolt on later</td></tr>
     <tr><td><strong>Flat per-company pricing</strong></td><td>No reason to keep subcontractors off the system</td><td>High against per-user competitors</td></tr>
     <tr><td><strong>No app install</strong></td><td>Walk-on subs and visitors can check in on the spot</td><td>Medium</td></tr>
-    <tr><td><strong>Industry auto-setup</strong></td><td>Useful on day one for construction, then food</td><td>Medium</td></tr>
+    <tr><td><strong>Forms in minutes</strong></td><td>A ready-made library plus a builder anyone can use; no setup project</td><td>Medium</td></tr>
+    <tr><td><strong>Company branding</strong></td><td>Workers see their employer's logo and colour, not ours, so it feels like the company's own system</td><td>Low–medium</td></tr>
     <tr><td><strong>Canadian data residency</strong></td><td>Matters to Canadian contractors and public-sector buyers</td><td>Medium</td></tr>
   </table>
 </section>
@@ -395,13 +390,13 @@ flowchart TD
   <table>
     <tr><th style="width:24%">Primary ICP</th><th>Construction, starting in BC</th></tr>
     <tr><td><strong>Company</strong></td><td>General contractors and trade contractors with 10–250 workers and 1–10 active sites</td></tr>
-    <tr><td><strong>Current setup</strong></td><td>Paper FLHAs and sign-in sheets, or a safety app that crews avoid</td></tr>
+    <tr><td><strong>Current setup</strong></td><td>Paper sign-in sheets and FLHAs, punch clocks, or an app that crews avoid</td></tr>
     <tr><td><strong>Buyer</strong></td><td>Safety manager or owner; operations manager in smaller firms</td></tr>
     <tr><td><strong>Daily users</strong></td><td>Workers, foremen, subcontractor crews, visitors and inspectors</td></tr>
     <tr><td><strong>Trigger events</strong></td><td>A COR audit, an incident or near miss, an insurer request, a new large site, a failed muster drill</td></tr>
   </table>
   <table>
-    <tr><th style="width:24%">Other industries</th><th>Supported from sign-up</th></tr>
+    <tr><th style="width:24%">Other teams</th><th>Served by company-built forms from day one</th></tr>
     <tr><td><strong>Warehouse and logistics</strong></td><td>Distribution centres and cross-docks; buyer: operations or EHS manager</td></tr>
     <tr><td><strong>Kitchen and food service</strong></td><td>Restaurant groups, commercial kitchens, caterers with 2–20 locations; buyer: operations manager or owner</td></tr>
     <tr><td><strong>Manufacturing</strong></td><td>Plants and fabrication shops; buyer: plant or EHS manager</td></tr>
@@ -424,9 +419,9 @@ flowchart TD
     <li><strong>Founder-led pilots (months 0–3):</strong> 5–10 BC contractors, one site each, free in exchange for feedback and a case study.</li>
     <li><strong>Safety consultants and COR advisors:</strong> they set up safety programs for many contractors and can recommend us.</li>
     <li><strong>Industry associations and events:</strong> construction safety associations, trade shows, toolbox-talk content.</li>
-    <li><strong>Self-serve trial:</strong> sign up, print a poster and run a first FLHA within 15 minutes.</li>
+    <li><strong>Self-serve trial:</strong> sign up, print a poster and see the first clock-in within 15 minutes. "Try it out" on the homepage shows the demo without signing up.</li>
     <li><strong>Our own demo video:</strong> scripted from the Northshore Builders example and recorded from the real app. We study how competitors present themselves, but never copy their videos or materials.</li>
-    <li><strong>Food service (later):</strong> once the forms engine is proven, launch restaurant templates with one restaurant group as a design partner.</li>
+    <li><strong>Food service (later):</strong> with one restaurant group as a design partner, grow the kitchen forms in the library (temperature logs, opening and closing checks).</li>
   </ol>
   <h3>Built-in growth</h3>
   <div class="cards c3">
@@ -434,7 +429,7 @@ flowchart TD
     <div class="card"><h4>The poster is the ad</h4>Every gate poster carries the brand and a "get this for your company" link.</div>
     <div class="card"><h4>Records sell the product</h4>Every clean export shown to an auditor or insurer demonstrates the value to people who influence buying decisions.</div>
   </div>
-  <p><strong>Early metrics:</strong> time from sign-up to first FLHA, check-ins per site per day, share of check-ins with all required photos, subcontractor share of check-ins, trial-to-paid conversion.</p>
+  <p><strong>Early metrics:</strong> time from sign-up to first clock-in, check-ins per site per day, share of check-ins with all required photos, subcontractor share of check-ins, trial-to-paid conversion.</p>
 </section>
 
 <!-- 07 BRAND -->
@@ -444,27 +439,29 @@ flowchart TD
   <h3>Personality</h3>
   <p>Still bold and quick, but now also <strong>trustworthy</strong>: this product holds evidence. Plain words, big tap targets for gloved hands, and no jokes on safety screens. The cheeky voice stays for greetings and confirmations.</p>
   <h3>Color: "Electric", now with a reason</h3>
-  <p>Volt lime is the colour of hi-vis vests, so the palette fits construction naturally. Pop pink marks hazards and flags.</p>
+  <p>Volt lime is the colour of hi-vis vests, so the palette fits work sites naturally. <strong>Alert red</strong> (it replaced pop pink in version 0.4) marks flags, warnings and clock-out, always with white text.</p>
   <div class="cards" style="grid-template-columns:repeat(6,1fr)">
     <div><div class="swatch" style="background:#141414"></div><strong>ink</strong><br><span class="small muted">#141414</span></div>
     <div><div class="swatch" style="background:#C6F432"></div><strong>volt</strong><br><span class="small muted">#C6F432</span></div>
     <div><div class="swatch" style="background:#F5F5F0"></div><strong>bone</strong><br><span class="small muted">#F5F5F0</span></div>
-    <div><div class="swatch" style="background:#FF5C8A"></div><strong>pop</strong><br><span class="small muted">#FF5C8A</span></div>
+    <div><div class="swatch" style="background:#CA2A30"></div><strong>pop (alert red)</strong><br><span class="small muted">#CA2A30</span></div>
     <div><div class="swatch" style="background:#2A2A2A"></div><strong>graphite</strong><br><span class="small muted">#2A2A2A</span></div>
     <div><div class="swatch" style="background:#8A8A85"></div><strong>smoke</strong><br><span class="small muted">#8A8A85</span></div>
   </div>
-  <p class="small">Rules from version 0.2 still apply: one volt element per screen, ink text on volt, never volt on bone. <code>pop-deep</code> (#B8154F) is used for pink text on light backgrounds.</p>
+  <p class="small">Rules: one volt element per screen, ink text on volt, never volt on bone, white text on red. Red text on light backgrounds is #CA2A30; on dark it is #FF6369. All text meets 4.5:1 contrast.</p>
+  <h3>Light and dark, and the company's own brand</h3>
+  <p>Every page follows the phone's light or dark setting, with a switch in the bottom-right corner (Auto, Light, Dark). Printing always uses light colours. On clock-in screens and posters, a company can swap in its <strong>logo, brand colour and welcome line</strong>; Musterpass picks black or white button text automatically and warns if a colour would be hard to read. The dashboard stays in Musterpass colours.</p>
   <h3>Voice on site</h3>
   <table>
     <tr><th style="width:42%">Instead of</th><th>We say</th></tr>
-    <tr><td>"Submit form"</td><td>"Sign and check in"</td></tr>
+    <tr><td>"Submit form"</td><td>"Sign and clock in"</td></tr>
     <tr><td>"Upload image"</td><td>"Take a photo of your harness"</td></tr>
     <tr><td>"Validation error: field required"</td><td>"Add a photo of the barricade to continue."</td></tr>
-    <tr><td>"Submission successful"</td><td>"You're checked in at Lonsdale Tower. Work safe."</td></tr>
-    <tr><td>"Active users: 23"</td><td>"23 on site · 2 waiting for review"</td></tr>
+    <tr><td>"Submission successful"</td><td>"You're clocked in at Lonsdale Tower. Have a good one."</td></tr>
+    <tr><td>"Active users: 23"</td><td>"23 clocked in · 2 waiting for review"</td></tr>
   </table>
   <h3>Usability on site</h3>
-  <ul><li>Works with gloves: tap targets at least 56px, no small checkboxes.</li><li>Readable in sunlight: high contrast, large type.</li><li>Works on weak signal: the form saves as you go and sends when it can.</li></ul>
+  <ul><li>Works with gloves: tap targets at least 56px, no small checkboxes.</li><li>Readable in sunlight: high contrast, large type.</li><li>Works on weak signal: a failed save says so plainly and can be retried (saving offline is planned).</li></ul>
 </section>
 
 <section class="section">
@@ -490,32 +487,29 @@ flowchart TD
   <p class="eyebrow">08 · Technical architecture</p>
   <h2>A small, modern stack</h2>
   <table>
-    <tr><th style="width:17%">Layer</th><th style="width:33%">Choice</th><th>Notes</th></tr>
-    <tr><td>Frontend</td><td><strong>Next.js 16</strong> + React 19 + Tailwind 4</td><td>Already built (Phase 0)</td></tr>
-    <tr><td>Hosting</td><td><strong>Vercel</strong></td><td>Preview deployment for every pull request; production from <code>main</code></td></tr>
-    <tr><td>Database</td><td><strong>Supabase Postgres</strong>, Canada (Central) region</td><td>Row-level security on every table</td></tr>
-    <tr><td>Auth</td><td><strong>Supabase Auth</strong></td><td>Admins: email + password with MFA. Workers: SMS or email one-time code. Walk-ons: anonymous session tied to the check-in</td></tr>
-    <tr><td>Files</td><td><strong>Supabase Storage</strong>, private buckets</td><td>Selfies and compliance photos; short-lived signed links only</td></tr>
-    <tr><td>Realtime</td><td><strong>Supabase Realtime</strong></td><td>Live roster and alerts on the dashboard</td></tr>
-    <tr><td>Billing</td><td><strong>Stripe</strong></td><td>One subscription per company; Billing page links to Stripe's customer portal</td></tr>
-    <tr><td>Email / SMS</td><td>Resend (email), Twilio or similar (SMS)</td><td>Sign-in codes, invites, hazard alerts</td></tr>
+    <tr><th style="width:17%">Layer</th><th style="width:33%">Choice</th><th>Status and notes</th></tr>
+    <tr><td>Frontend</td><td><strong>Next.js 16</strong> + React 19 + Tailwind 4, TypeScript</td><td>Built. App Router with <code>cacheComponents</code></td></tr>
+    <tr><td>Hosting</td><td><strong>Vercel</strong></td><td>Live. Production from <code>main</code>, preview link per branch; rollback from the command center</td></tr>
+    <tr><td>Database</td><td><strong>Supabase Postgres</strong></td><td>Live. Row level security on every table; tests prove one company can't read another. Must run in Canada (Central) before real customers</td></tr>
+    <tr><td>Auth</td><td><strong>Supabase Auth</strong></td><td>Live for company owners: email and password, email confirmation, password reset. Workers never sign in; their phone keeps a random key. Later: more logins per company, MFA</td></tr>
+    <tr><td>Files</td><td><strong>Supabase Storage</strong>, private bucket</td><td>Live. Selfies and form photos, uploaded by the server; viewed through links that expire after two hours</td></tr>
+    <tr><td>Realtime</td><td><strong>Supabase Realtime</strong></td><td>Live. The dashboard updates when someone clocks in or out</td></tr>
+    <tr><td>Billing</td><td><strong>Stripe</strong></td><td>Planned. Plans and trial show on the Billing page but don't charge yet</td></tr>
+    <tr><td>Email / SMS</td><td>Resend or Supabase SMTP; Twilio or similar</td><td>Planned. Invite emails, alerts; custom SMTP before real sign-ups</td></tr>
   </table>
-  <h3>Data model (initial)</h3>
-<pre class="light">companies        (id, name, industry, plan, billing_customer_id, created_at)
-sites            (id, company_id, name, address, lat, lng, radius_m, qr_secret, active)
-people           (id, company_id, user_id?, name, phone?, employer_company, role:
-                  owner|safety_manager|supervisor|worker|subcontractor|visitor, profile_photo_id?)
-check_ins        (id, company_id, site_id, person_id, checked_in_at, checked_out_at,
-                  distance_m, accuracy_m, qr_token_ok, selfie_photo_id, status, review_status)
-form_templates   (id, company_id?, industry, key: 'flha', version, schema_json)
-form_submissions (id, company_id, check_in_id, template_id, version, answers_json,
-                  signed_at, supervisor_id?, countersigned_at?, supersedes_id?)
-photos           (id, company_id, kind: identity|presence|compliance, storage_path,
-                  sha256, captured_at_server, lat, lng, submission_id?, retain_until)
-consents         (id, person_id, wording_version, accepted_at)
-audit_log        (id, company_id, actor_id, action, target, at, details_json)  -- append-only</pre>
-  <h3>Key routes (target)</h3>
-  <p class="small"><code>/s/[siteSlug]</code> check-in · <code>/admin</code> dashboard · <code>/admin/sites</code> · <code>/admin/people</code> · <code>/admin/forms</code> · <code>/admin/records</code> · <code>/admin/billing</code> · <code>/signup</code>. All validation happens on the server.</p>
+  <h3>Data model (live)</h3>
+<pre class="light">companies  (id, name, owner_name, owner_email, plan, trial_ends_at, brand, created_at)
+members    (company_id, user_id, role: owner|manager|supervisor)       -- login → company
+sites      (id, company_id, slug unique, name, address, lat, lng, radius_m)
+people     (id, company_id, name, employer, phone, role, consent_version,
+            device_key_hash)                                           -- hash never readable by users
+invites    (id, company_id, email, role)
+forms      (company_id, id, position, def)                             -- the form builder's JSON
+check_ins  (id, company_id, site_id, person_id, in_at, out_at, selfie, presence,
+            forms, out_forms, visitor, photos, signature, review)       -- users may only update review</pre>
+  <p class="small">Clock-ins go through server routes (<code>/api/clock/site</code>, <code>/in</code>, <code>/out</code>) that check every request: the poster link exists, photos are real images, and only the phone that clocked a person in can clock them out. Times come from the server. The setup is one file, <code>supabase/schema.sql</code>.</p>
+  <h3>Still to add (trust step)</h3>
+  <p class="small">Location checked on the server and short-lived QR tokens; an append-only audit log of views and changes; retention dates with automatic deletion of old selfies; PDF exports.</p>
 </section>
 
 <section class="section">
@@ -524,22 +518,22 @@ audit_log        (id, company_id, actor_id, action, target, at, details_json)  -
   <p class="muted small">Photos of people plus their location are sensitive personal information under Canadian privacy law (PIPEDA, and BC and Alberta PIPA). These are the technical rules; the legal side (policy wording, retention periods) needs a lawyer before the first pilot.</p>
   <div class="cards c2">
     <div class="card"><h4>Where data lives</h4><ul>
-      <li>Supabase project in the <strong>Canada (Central)</strong> region.</li>
+      <li>Supabase project in the <strong>Canada (Central)</strong> region. A project can't change region after it's created, so a project made elsewhere must be recreated before real customers.</li>
       <li>Separate projects for development, staging and production. Real data only in production.</li>
       <li>Point-in-time backups on the production project.</li></ul></div>
     <div class="card"><h4>Who can see what</h4><ul>
       <li><strong>Row-level security</strong> on every table, scoped by <code>company_id</code> and role.</li>
       <li>Workers see only their own records; supervisors see their sites; safety managers see the company.</li>
-      <li>Automated tests prove company A can never read company B, and that public visitors can't read anything.</li></ul></div>
+      <li>Automated tests prove company A can never read company B, and that public visitors can't read anything (31 checks pass on the current schema).</li></ul></div>
     <div class="card"><h4>Photos</h4><ul>
       <li><strong>Private storage buckets</strong> only; no public URLs ever.</li>
-      <li>Uploads use one-time signed upload URLs issued by the server after the check-in is validated.</li>
+      <li>Photos are uploaded by the server only after the clock-in is validated.</li>
       <li>The server records time, location and SHA-256 hash; photo rows can't be updated or deleted by users.</li>
-      <li>Viewing uses signed links that expire in a few minutes.</li>
+      <li>Viewing uses signed links that expire (two hours today; shorter later).</li>
       <li>Hidden metadata (EXIF) is stripped from stored copies; the evidence fields live in the database.</li></ul></div>
     <div class="card"><h4>Keys and access</h4><ul>
-      <li>The <strong>service-role key</strong> lives only in server environment variables on Vercel, never in the browser or the repo.</li>
-      <li>The browser uses the public anon key, which can do nothing without RLS permission.</li>
+      <li>The <strong>secret key</strong> lives only in server environment variables on Vercel (marked secret), never in the browser or the repo.</li>
+      <li>The browser uses the publishable key, which can do nothing without RLS permission.</li>
       <li>Admin accounts require MFA. Staff access to production is limited and logged.</li></ul></div>
     <div class="card"><h4>Retention and deletion</h4><ul>
       <li>Each photo stores <code>retain_until</code>. A scheduled job (pg_cron) deletes expired identity selfies.</li>
@@ -560,10 +554,11 @@ audit_log        (id, company_id, actor_id, action, target, at, details_json)  -
   <ol>
     <li><strong>Import the GitHub repository</strong> (<code>ANwagha/qr-signin-admin</code>) into Vercel. The framework is detected as Next.js; no extra build settings needed.</li>
     <li><strong>Production branch: <code>main</code>.</strong> Every other branch and pull request gets its own preview URL to review before merging.</li>
-    <li><strong>Environment variables</strong>, set separately for Preview and Production:
-      <ul><li><code>NEXT_PUBLIC_SUPABASE_URL</code>, <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> (safe for the browser)</li>
-      <li><code>SUPABASE_SERVICE_ROLE_KEY</code>, <code>STRIPE_SECRET_KEY</code>, <code>STRIPE_WEBHOOK_SECRET</code>, <code>QR_TOKEN_SECRET</code> (server only)</li></ul></li>
-    <li><strong>Preview deployments use the staging Supabase project,</strong> never production data.</li>
+    <li><strong>Environment variables</strong> (set today: the Supabase ones; command center ones when wanted):
+      <ul><li><code>NEXT_PUBLIC_SUPABASE_URL</code>, <code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code> (safe for the browser)</li>
+      <li><code>SUPABASE_SECRET_KEY</code>, <code>COMMAND_KEY</code>, <code>VERCEL_TOKEN</code>, <code>VERCEL_PROJECT_ID</code>, <code>VERCEL_TEAM_ID</code> (server only, secret)</li>
+      <li>Later: <code>STRIPE_SECRET_KEY</code>, <code>STRIPE_WEBHOOK_SECRET</code>, <code>QR_TOKEN_SECRET</code>, <code>ANTHROPIC_API_KEY</code></li></ul></li>
+    <li><strong>Preview deployments should use a separate staging Supabase project,</strong> never production data (today there is one project; split before real customers).</li>
     <li><strong>Function region:</strong> choose the Vercel region closest to Supabase's Canada (Central) region. If a contract requires that data never leaves Canada, confirm whether that's possible on our Vercel plan before signing.</li>
     <li><strong>Custom domain</strong> (musterpass.com, once registered) (<code>app.musterpass.com</code>); HTTPS is automatic.</li>
   </ol>
@@ -574,8 +569,8 @@ audit_log        (id, company_id, actor_id, action, target, at, details_json)  -
   </ul>
   <h3>Before the first production deploy</h3>
   <ul class="check">
-    <li><code>npm run lint</code> and <code>npm run build</code> pass (they do today)</li>
-    <li>No secrets in the repository; <code>.env.local</code> is git-ignored</li>
+    <li><code>npm run lint</code> and <code>npm run build</code> pass (they do today), and the tester bot passes 6 of 6</li>
+    <li>No secrets in the repository; <code>.env.local</code> is git-ignored (done)</li>
     <li>Remove the developer-only <code>allowedDevOrigins</code> IP (it has no effect in production, but should not drift)</li>
     <li>Error tracking (e.g. Sentry) and a health-check route</li>
     <li>Privacy policy and terms pages live</li>
@@ -586,25 +581,26 @@ audit_log        (id, company_id, actor_id, action, target, at, details_json)  -
 <section class="section">
   <p class="eyebrow">09 · Key implementation steps</p>
   <h2>What's built and what's next</h2>
-  <p class="muted small">We work one step at a time, each as its own prompt and branch.</p>
+  <p class="muted small">We work one step at a time, each as its own prompt and commit, tested on the live site.</p>
   <table>
-    <tr><th style="width:21%">Step</th><th>Deliverables</th><th style="width:12%">Status</th></tr>
-    <tr><td><strong>Prototype + Phase 0 rebrand</strong></td><td>Brand, clock-in screen, dashboard, QR posters (time-clock version)</td><td><span class="badge done">Done</span></td></tr>
-    <tr><td><strong>Founding document v0.3</strong></td><td>This document: the site-safety pivot</td><td><span class="badge done">Done</span></td></tr>
-    <tr><td><strong>1. Check-in prototype</strong></td><td>Clickable flow: scan → identify → selfie → site check → FLHA with compliance photos → sign. Dashboard with roster, FLHAs, hazards and selfie review. Billing page linked next to Admin. Visitor form. Demo data: Northshore Builders</td><td><span class="badge done">Done</span></td></tr>
-    <tr><td><strong>2. Vercel deployment</strong></td><td>Live at musterpass.vercel.app, deploying from <code>main</code> with preview links per branch. HTTPS for real phone testing (camera, location, hashing). Environment variables added when Supabase arrives</td><td><span class="badge done">Done</span></td></tr>
-    <tr><td><strong>Industry templates</strong></td><td>Six industries at sign-up, each with its own daily form, checks, photo rules and demo company</td><td><span class="badge done">Done</span></td></tr>
-    <tr><td><strong>3. Supabase foundation</strong></td><td>Projects (dev, staging, prod) in Canada; schema, RLS and isolation tests; auth (admins, workers, walk-ons); private photo storage with hashing; audit log</td><td><span class="badge next">Next</span></td></tr>
-    <tr><td><strong>4. SaaS onboarding</strong></td><td>Sign-up, industry auto-setup, sites, invites, subcontractor companies</td><td><span class="badge">Later</span></td></tr>
-    <tr><td><strong>5. Trust</strong></td><td>Geofence and QR tokens enforced server-side; supervisor countersign; exports (PDF, CSV)</td><td><span class="badge">Later</span></td></tr>
-    <tr><td><strong>6. Billing</strong></td><td>Stripe subscriptions per company, trial, plans, customer portal</td><td><span class="badge">Later</span></td></tr>
-    <tr><td><strong>Future</strong></td><td>Upload a paper form to convert it (AI); face matching (after legal review); proximity prompts; offline-first native wrapper</td><td><span class="badge">Future</span></td></tr>
+    <tr><th style="width:24%">Step</th><th>Deliverables</th><th style="width:12%">Status</th></tr>
+    <tr><td><strong>Prototype and Vercel</strong></td><td>Clickable clock-in flow, dashboard, posters, Northshore Builders demo; live at musterpass.vercel.app with HTTPS for real phones</td><td><span class="badge done">Done</span></td></tr>
+    <tr><td><strong>General clock-in app</strong></td><td>Company-built forms with a library; signature only when a form asks; visitor sign-in; hours and payroll CSV</td><td><span class="badge done">Done</span></td></tr>
+    <tr><td><strong>Look and feel</strong></td><td>Light and dark mode; alert red; company branding; homepage carousel and animated steps</td><td><span class="badge done">Done</span></td></tr>
+    <tr><td><strong>Log in and command center</strong></td><td>Company and admin login; Try it out demo; tester bot; versions and rollback; every company listed</td><td><span class="badge done">Done</span></td></tr>
+    <tr><td><strong>Supabase</strong></td><td>Shared database with row level security, owner sign-up and login, server-checked clock-ins, private photo storage, live dashboard. First real clock-in on 24 November 2026</td><td><span class="badge done">Done</span></td></tr>
+    <tr><td><strong>1. Production in Canada</strong></td><td>Supabase project in Canada (Central); separate staging project for previews; custom SMTP for sign-up emails; backups</td><td><span class="badge next">Next</span></td></tr>
+    <tr><td><strong>2. SaaS onboarding</strong></td><td>Invite emails; more logins per company with roles (owner, manager, supervisor); subcontractor companies linked by invite; MFA for admins</td><td><span class="badge">Then</span></td></tr>
+    <tr><td><strong>3. Trust</strong></td><td>Location checked on the server and short-lived QR tokens; append-only audit log; selfie retention and automatic deletion; PDF exports; save offline and send later</td><td><span class="badge">Then</span></td></tr>
+    <tr><td><strong>4. Billing</strong></td><td>Stripe subscriptions per company, trial ending, plans, customer portal, invoices</td><td><span class="badge">Then</span></td></tr>
+    <tr><td><strong>5. Forms with Claude</strong></td><td>"Tailor my forms with Claude" and turning a photo of a paper form into a Musterpass form (needs a Claude API key)</td><td><span class="badge">Later</span></td></tr>
+    <tr><td><strong>Future</strong></td><td>Face matching (only after legal review); proximity prompts; native phone wrapper; payroll integrations</td><td><span class="badge">Future</span></td></tr>
   </table>
   <div class="cards c2">
     <div class="card"><h4>Deliberately not in the first version</h4><ul>
-      <li>Automatic face matching</li><li>AI conversion of uploaded forms</li><li>Native phone apps</li><li>Scheduling and payroll processing</li><li>Project management features</li></ul></div>
+      <li>Automatic face matching</li><li>Native phone apps</li><li>Scheduling and payroll processing</li><li>Project management features</li></ul></div>
     <div class="card"><h4>Before the first paid customer</h4><ul>
-      <li>Privacy policy, terms and consent wording reviewed by a lawyer</li><li>Retention periods confirmed</li><li>Production Supabase in Canada with backups</li><li>musterpass.com and .ca registered, trademark search done</li><li>Stripe billing live</li></ul></div>
+      <li>Production Supabase in Canada with backups, and a separate staging project</li><li>Privacy policy, terms and consent wording reviewed by a lawyer</li><li>Retention periods confirmed</li><li>musterpass.com and .ca registered, trademark search done</li><li>Stripe billing live</li></ul></div>
   </div>
 </section>
 
@@ -613,11 +609,12 @@ audit_log        (id, company_id, actor_id, action, target, at, details_json)  -
   <h2>Risks and how we handle them</h2>
   <table>
     <tr><th style="width:22%">Risk</th><th style="width:26%">What could happen</th><th>How we handle it</th></tr>
-    <tr><td><strong>Privacy and photos</strong></td><td>A breach or misuse of selfies and locations</td><td>Canadian region, RLS, private buckets, expiring links, short selfie retention, audit log, legal review before pilots</td></tr>
+    <tr><td><strong>Privacy and photos</strong></td><td>A breach or misuse of selfies and locations</td><td>Canadian region, RLS (tested), private storage, expiring links; short selfie retention and audit log in the trust step; legal review before pilots</td></tr>
     <tr><td><strong>Workers resist selfies</strong></td><td>Low adoption, union concerns</td><td>Clear purpose and retention on screen; supervisor review only, no face matching; workers see their own records</td></tr>
     <tr><td><strong>Weak signal on site</strong></td><td>Forms fail to send</td><td>Save progress locally and send when connected; the server still timestamps on arrival and keeps the phone's capture time</td></tr>
     <tr><td><strong>Gloves, sun, noise</strong></td><td>The app is hard to use outdoors</td><td>Large targets, high contrast, minimal typing, photo prompts instead of text</td></tr>
-    <tr><td><strong>FLHA becomes tick-box theatre</strong></td><td>Records exist but nobody thinks</td><td>Required photos for high-risk answers; supervisor countersign; hazard alerts</td></tr>
+    <tr><td><strong>Forms become tick-box theatre</strong></td><td>Records exist but nobody thinks</td><td>Photo questions for high-risk answers; supervisor countersign; alert rules</td></tr>
+    <tr><td><strong>Faked location</strong></td><td>The location check runs on the phone today, so it can be spoofed</td><td>Flagged for review now; checked on the server with QR tokens in the trust step</td></tr>
     <tr><td><strong>Relying on us for compliance</strong></td><td>A company assumes the app makes it compliant</td><td>The app records and supports; the employer stays responsible. Clear terms and onboarding</td></tr>
     <tr><td><strong>GPS inaccuracy</strong></td><td>Honest workers flagged</td><td>Allow for reported accuracy; flag rather than block by default; supervisor approves in one tap</td></tr>
     <tr><td><strong>Established competitors</strong></td><td>SiteDocs and others already sell to our buyers</td><td>Win on speed at the gate, evidence, and flat pricing; target firms still on paper</td></tr>
@@ -629,6 +626,7 @@ audit_log        (id, company_id, actor_id, action, target, at, details_json)  -
     <li>Pricing levels, tested with pilot customers</li>
     <li>Which payroll export formats pilots need</li>
     <li>Which BC contractors to approach for the first pilots</li>
+    <li>A Claude API key from the company account for the forms-with-Claude step</li>
   </ul>
 </section>
 
@@ -637,44 +635,42 @@ audit_log        (id, company_id, actor_id, action, target, at, details_json)  -
   <p class="eyebrow">10 · Development prompt and instructions for Claude</p>
   <h2>Instructions for Claude</h2>
   <p>Paste this into a Claude Code session (or keep it as <code>CLAUDE.md</code>) when working on the product.</p>
-<pre>You are working on Musterpass (formerly the working name Tock), a site check-in
-and safety compliance SaaS (repo: qr-signin-admin). Read docs/founding/founding-document.html
-first. It is the source of truth for vision, brand, privacy and architecture.
+<pre>You are working on Musterpass, a QR clock-in and clock-out SaaS (repo: qr-signin-admin,
+fork ANwagha/qr-signin-admin; never target the upstream repo). Read README.md and
+docs/founding/founding-document.html first. They are the source of truth.
 
 Context
-- Product: one QR scan at a site entrance -> identify -> selfie -> site check -> FLHA with
-  compliance photos -> sign -> checked in (and clocked in). Six industry templates in lib/templates/.
-  Everyone on site checks in: employees, subcontractors and visitors.
-- Stack: Next.js 16 App Router, React 19, Tailwind 4, TypeScript. Vercel. Supabase (Canada
-  Central): Postgres + Auth + Storage + Realtime, with RLS on every table. Stripe for billing.
-- Work one step at a time (section 09), each on its own branch. Don't start later steps unless asked.
+- Product: scan the site poster -> who are you (once per phone) -> selfie -> location check ->
+  the company's own forms (lib/forms.ts; signature only if a form asks) -> clocked in. Scan
+  again to clock out. Visitors sign in separately. Demo company: Northshore Builders.
+- Stack: Next.js 16 App Router (cacheComponents), React 19, Tailwind 4, TypeScript. Vercel.
+  Supabase: Postgres with RLS, Auth, Storage, Realtime (supabase/schema.sql, lib/cloud/).
+  Without Supabase keys the app runs browser-only (lib/store.ts); the demo always stays local.
+- Work one step at a time (section 09). Commit and push only when asked, straight to main.
 
 Photo rules (never break these)
-- Three kinds: identity (selfie), presence (location/QR/site photo), compliance (photos in forms).
+- Three kinds: identity (selfie), presence (location), compliance (photos in forms).
 - Capture live from the camera; never accept gallery uploads for evidence.
-- Store in private buckets only. Server records time, location and SHA-256 hash. View via
-  short-lived signed URLs. No automatic face matching.
+- Private storage only, uploaded by the server; view through expiring signed links.
+- No automatic face matching.
 
 Privacy and security rules
-- Never put secrets in the repo or the browser. Service-role key is server-only.
-- Every table has company_id and RLS policies; write tests that prove cross-company isolation.
-- Records are append-only: corrections create new versions and audit-log entries.
+- Never put secrets in the repo, the browser or a NEXT_PUBLIC_ variable. The secret key is server-only.
+- Every table has company_id and RLS; keep the cross-company isolation tests passing.
+- Clock-in records can be reviewed and countersigned, never edited.
+- Workers don't sign in: the server routes in app/api/clock/ check every request themselves.
 
 Brand rules
-- Colors: ink #141414, volt #C6F432, bone #F5F5F0, pop #FF5C8A, pop-deep #B8154F,
-  graphite #2A2A2A, smoke #8A8A85. Use the Tailwind tokens, never raw hex in components.
-- One volt element per screen. Ink text on volt. Never volt on bone.
-- Big targets (56px+) for gloved hands, high contrast, plain words on safety screens.
+- Colors: ink #141414, volt #C6F432, bone #F5F5F0, alert red #CA2A30 (white text),
+  graphite #2A2A2A, smoke #8A8A85. Use the Tailwind theme roles, never raw hex in components.
+- One volt element per screen. Ink text on volt. 4.5:1 contrast in light and dark mode.
+- Big targets for gloved hands, plain words on clock-in screens.
 
 Engineering rules
-- Validate everything on the server. Wrap request data in &lt;Suspense&gt; (cacheComponents is on).
-- Run `npm run lint` and `npm run build` before saying a change is done.
-- After UI changes, check the page in the browser at 375px and desktop widths and show a screenshot.
-- Use fake demo data (Northshore Builders) and never real people's photos.
-
-Demo videos
-- Script the Northshore Builders flow, automate it with Playwright on a phone-sized viewport,
-  record it, and save to docs/demos/. Never copy competitors' videos or materials.
+- Validate everything on the server. Keep request data inside &lt;Suspense&gt;.
+- Run `npm run lint` and `npm run build`, and the tester bot, before saying a change is done.
+- After UI changes, check the page at 375px and desktop widths, light and dark.
+- Use fake demo data and never real people's photos.
 
 When unsure about product decisions, check the founding document. If it doesn't answer, ask.</pre>
 </section>
@@ -685,21 +681,22 @@ When unsure about product decisions, check the founding document. If it doesn't 
   <h2>Pages and glossary</h2>
   <h3>Pages in the product</h3>
   <table>
-    <tr><th style="width:14%">Who</th><th style="width:38%">Today (prototype)</th><th>Target</th></tr>
-    <tr><td><strong>Public</strong></td><td><code>/</code> landing page, header links: Admin</td><td>Landing page with <strong>Admin and Billing</strong> links in the header; sign-up; log in; privacy and terms</td></tr>
-    <tr><td><strong>On site</strong></td><td><code>/scan/[location]</code> time-clock screen</td><td><code>/s/[site]</code> check-in: identify, selfie, site check, FLHA, sign; check-out; visitor form; "My records"</td></tr>
-    <tr><td><strong>Admin</strong></td><td><code>/admin</code> dashboard, <code>/admin/qr</code> posters</td><td>Dashboard (roster, FLHAs, hazards, selfie review, muster), Sites, People, Forms, Records, Billing</td></tr>
+    <tr><th style="width:14%">Who</th><th style="width:43%">Today (live)</th><th>Still to come</th></tr>
+    <tr><td><strong>Public</strong></td><td><code>/</code> homepage (Log in, Billing, Try it out), <code>/signup</code>, <code>/login</code>, <code>/login/company</code>, <code>/login/reset</code></td><td>Privacy and terms pages</td></tr>
+    <tr><td><strong>On site</strong></td><td><code>/s/[site]</code> clock-in and clock-out, visitor sign-in (old <code>/scan/…</code> links redirect)</td><td>"My records" for workers</td></tr>
+    <tr><td><strong>Company</strong></td><td><code>/admin</code> dashboard, Sites, People, Forms, Records, Branding, Billing</td><td>Team logins and roles; subcontractor companies</td></tr>
+    <tr><td><strong>Musterpass team</strong></td><td><code>/command</code>: Versions, Tester bot, Companies</td><td>Support tools</td></tr>
   </table>
   <h3>Glossary</h3>
   <table>
     <tr><th style="width:22%">Term</th><th>Meaning</th></tr>
     <tr><td><strong>FLHA</strong></td><td>Field Level Hazard Assessment: a short pre-task check of today's hazards and controls, signed by the worker</td></tr>
     <tr><td><strong>FLRA</strong></td><td>Field Level Risk Assessment: a similar form name used by some companies and competitors</td></tr>
-    <tr><td><strong>Check-in</strong></td><td>One person's arrival at a site: identity, location, form and signature. Also starts their time record</td></tr>
+    <tr><td><strong>Clock-in</strong></td><td>One person's arrival at a site: identity, location, forms and signature. Starts their time record; clock-out ends it</td></tr>
     <tr><td><strong>Identity photo</strong></td><td>The selfie taken at check-in, reviewed by a supervisor</td></tr>
-    <tr><td><strong>Presence evidence</strong></td><td>Location, QR token and optional site photo showing the person was on site</td></tr>
+    <tr><td><strong>Presence evidence</strong></td><td>Location (and later a QR token) showing the person was on site</td></tr>
     <tr><td><strong>Compliance photo</strong></td><td>A photo inside a form proving a control is in place (PPE, harness, barricade)</td></tr>
-    <tr><td><strong>Countersign</strong></td><td>The supervisor's review and signature on a worker's FLHA</td></tr>
+    <tr><td><strong>Countersign</strong></td><td>The supervisor's review and signature on a worker's signed forms</td></tr>
     <tr><td><strong>Muster / muster point</strong></td><td>The emergency assembly point, and the roll call taken there</td></tr>
     <tr><td><strong>Subcontractor</strong></td><td>A worker employed by another company working on the site</td></tr>
     <tr><td><strong>COR</strong></td><td>Certificate of Recognition: a safety certification program that rewards documented safety practices</td></tr>

@@ -4,5 +4,5 @@
 Edit the HTML, then rebuild the PDF with Chrome (it needs internet access for fonts and the diagram):
 
 ```bash
-"/c/Program Files/Google/Chrome/Application/chrome.exe" --headless=new --no-pdf-header-footer --virtual-time-budget=15000 --print-to-pdf="docs/Musterpass-Founding-Document.pdf" "file:///C:/Users/xande/qr-signin-admin/docs/founding/founding-document.html"
+"/c/Program Files/Google/Chrome/Application/chrome.exe" --headless=new --no-pdf-header-footer --virtual-time-budget=15000 --print-to-pdf="C:\Users\xande\qr-signin-admin\docs\Musterpass-Founding-Document.pdf" "file:///C:/Users/xande/qr-signin-admin/docs/founding/founding-document.html"
 ```
