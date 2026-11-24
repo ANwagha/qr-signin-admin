@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Card, Pill } from "@/components/ui";
-import type { Version, VersionsResponse } from "@/lib/command-types";
+import type { CompaniesResponse, Version, VersionsResponse } from "@/lib/command-types";
 import { useStore } from "@/lib/store";
 import { CHECKS, runTesterBot, type Check } from "@/lib/tester-bot";
 
@@ -489,40 +489,127 @@ function StatusIcon({ status }: { status: Check["status"] }) {
 // ---------------- Companies ----------------
 
 function Companies() {
+  const [list, setList] = useState<(CompaniesResponse & { at: number }) | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [needsKey, setNeedsKey] = useState(false);
+
+  useEffect(() => {
+    const k = readKey();
+    if (!k) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- nothing to fetch without the key
+      setNeedsKey(true);
+      return;
+    }
+    fetch("/api/command/companies", { headers: { "x-command-key": k }, cache: "no-store" })
+      .then(async (res) => {
+        const body = await res.json();
+        if (res.status === 401 || res.status === 503) return setNeedsKey(true);
+        if (!res.ok) throw new Error(body.error ?? `Error ${res.status}`);
+        setList({ ...body, at: Date.now() });
+      })
+      .catch((e) => setError(e instanceof Error ? e.message : "Couldn't load companies."));
+  }, []);
+
+  if (needsKey)
+    return (
+      <div className="space-y-4">
+        <Card className="p-5 text-sm text-muted">Unlock with the command key on the Versions tab, then come back here to see every company.</Card>
+        <ThisBrowser />
+      </div>
+    );
+  if (error) return <Card className="p-5 text-sm text-alert">{error}</Card>;
+  if (!list) return <div className="h-32 animate-pulse rounded-3xl bg-line/60" />;
+  if (!list.connected)
+    return (
+      <div className="space-y-4">
+        <p className="max-w-2xl text-sm text-muted">
+          Supabase isn&apos;t connected on the server yet, so each browser holds one company. Add the Supabase environment variables (see
+          the README) to list every company here.
+        </p>
+        <ThisBrowser />
+      </div>
+    );
+
+  const onSite = list.companies.reduce((n, c) => n + c.onSite, 0);
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted">
+        {list.companies.length} compan{list.companies.length === 1 ? "y" : "ies"} · {onSite} people clocked in right now
+      </p>
+      {list.companies.length === 0 && <Card className="p-5 text-sm text-muted">No companies have signed up yet.</Card>}
+      <ul className="grid gap-3 md:grid-cols-2">
+        {list.companies.map((c) => {
+          const trialLeft = Math.ceil((new Date(c.trialEndsAt).getTime() - list.at) / 86_400_000);
+          return (
+            <li key={c.id}>
+              <Card className="p-5">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-display text-lg font-bold">{c.name}</p>
+                    <p className="truncate text-sm text-muted">{c.ownerEmail || "No owner email"}</p>
+                  </div>
+                  <Pill tone={c.plan === "trial" && trialLeft <= 0 ? "pop" : "outline"}>
+                    {c.plan === "trial" ? (trialLeft > 0 ? `Trial · ${trialLeft} d left` : "Trial ended") : c.plan}
+                  </Pill>
+                </div>
+                <dl className="mt-4 grid grid-cols-4 gap-2 text-center">
+                  {(
+                    [
+                      ["Sites", c.sites],
+                      ["People", c.people],
+                      ["Clock-ins", c.checkIns],
+                      ["On site", c.onSite],
+                    ] as const
+                  ).map(([k, v]) => (
+                    <div key={k} className="rounded-2xl bg-bg p-2.5">
+                      <dt className="text-xs text-muted">{k}</dt>
+                      <dd className="font-display text-xl font-bold">{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <p className="mt-3 text-xs text-muted">
+                  Joined {new Date(c.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })} · last
+                  clock-in {c.lastCheckIn ? ago(new Date(c.lastCheckIn).getTime()) : "never"}
+                </p>
+              </Card>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+/** The company saved in this browser (the only one there is without Supabase). */
+function ThisBrowser() {
   const s = useStore();
   if (s === null) return <div className="h-32 animate-pulse rounded-3xl bg-line/60" />;
   const c = s.company;
+  if (!c) return <Card className="p-5 text-sm text-muted">No company saved in this browser.</Card>;
   return (
-    <div className="space-y-4">
-      <p className="max-w-2xl text-sm text-muted">
-        Every company on Musterpass will be listed here once we connect Supabase. Until then, each browser holds one company, so this
-        shows the one saved in this browser.
-      </p>
-      {c ? (
-        <Card className="p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="font-display text-lg font-bold">{c.name}</p>
-              <p className="text-sm text-muted">{c.demo ? "Demo company" : `Owner: ${c.ownerName}`}</p>
-            </div>
-            <Pill tone="outline">{c.plan}</Pill>
+    <Card className="p-5">
+      <p className="text-xs font-semibold uppercase tracking-wider text-muted">In this browser</p>
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="font-display text-lg font-bold">{c.name}</p>
+          <p className="text-sm text-muted">{c.demo ? "Demo company" : `Owner: ${c.ownerName}`}</p>
+        </div>
+        <Pill tone="outline">{c.plan}</Pill>
+      </div>
+      <dl className="mt-4 grid grid-cols-3 gap-3 text-center">
+        {(
+          [
+            ["Sites", s.sites.length],
+            ["People", s.people.length],
+            ["Clock-ins", s.checkIns.length],
+          ] as const
+        ).map(([k, v]) => (
+          <div key={k} className="rounded-2xl bg-bg p-3">
+            <dt className="text-xs text-muted">{k}</dt>
+            <dd className="font-display text-2xl font-bold">{v}</dd>
           </div>
-          <dl className="mt-4 grid grid-cols-3 gap-3 text-center">
-            {[
-              ["Sites", s.sites.length],
-              ["People", s.people.length],
-              ["Clock-ins", s.checkIns.length],
-            ].map(([k, v]) => (
-              <div key={k} className="rounded-2xl bg-bg p-3">
-                <dt className="text-xs text-muted">{k}</dt>
-                <dd className="font-display text-2xl font-bold">{v}</dd>
-              </div>
-            ))}
-          </dl>
-        </Card>
-      ) : (
-        <Card className="p-5 text-sm text-muted">No company saved in this browser.</Card>
-      )}
-    </div>
+        ))}
+      </dl>
+    </Card>
   );
 }

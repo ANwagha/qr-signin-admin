@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Wordmark from "@/components/Wordmark";
+import { cloudEnabled } from "@/lib/cloud/config";
 
 export const metadata: Metadata = { title: "Log in" };
 
 const OPTIONS = [
   {
-    href: "/admin",
+    href: cloudEnabled ? "/login/company" : "/admin",
     title: "Company login",
     who: "For owners, managers and supervisors",
     body: "Your dashboard: who is on site, hours, sites, people, forms and records.",
@@ -62,9 +63,11 @@ export default function LoginPage() {
             </li>
           ))}
         </ul>
-        <p className="mt-6 rounded-2xl border border-dashed border-line p-4 text-sm text-muted">
-          Prototype: email and password sign-in arrives when we connect Supabase. For now, pick where to go.
-        </p>
+        {!cloudEnabled && (
+          <p className="mt-6 rounded-2xl border border-dashed border-line p-4 text-sm text-muted">
+            Prototype: accounts switch on once Supabase is connected. Until then, the dashboard shows the company saved in this browser.
+          </p>
+        )}
         <p className="mt-6 text-sm text-muted">
           New to Musterpass?{" "}
           <Link href="/signup" className="font-medium text-fg underline underline-offset-4">

@@ -20,3 +20,20 @@ export type VersionsResponse = {
   /** The commit this server is running, when deployed on Vercel. */
   serving: string | null;
 };
+
+export type CompanySummary = {
+  id: string;
+  name: string;
+  ownerEmail: string;
+  plan: string;
+  trialEndsAt: string;
+  createdAt: string;
+  sites: number;
+  people: number;
+  checkIns: number;
+  onSite: number;
+  lastCheckIn: string | null;
+};
+
+/** `connected: false` when Supabase isn't set up on the server yet. */
+export type CompaniesResponse = { connected: boolean; companies: CompanySummary[] };

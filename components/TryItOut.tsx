@@ -71,7 +71,8 @@ export default function TryItOut() {
 
   async function go(t: Target, replace = false) {
     const company = store?.company;
-    if (company && !company.demo && !replace) return setConfirm({ ...t, company: company.name });
+    // A company saved in Supabase is safe: the demo only replaces this browser's copy of it.
+    if (company && !company.demo && !company.cloud && !replace) return setConfirm({ ...t, company: company.name });
     setBusy(true);
     if (!company?.demo) await loadDemo();
     router.push(t.href);

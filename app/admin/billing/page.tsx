@@ -110,25 +110,28 @@ export default function BillingPage() {
         </Card>
       </div>
 
-      <Card className="p-6">
-        <h2 className="font-display text-lg font-semibold">Prototype data</h2>
-        <p className="mt-1 text-sm text-muted">
-          Everything here is stored in this browser only{c.demo ? ", using the Northshore Builders demo" : ""}. Resetting clears the company, people,
-          check-ins and photos.
-        </p>
-        <Button
-          className="mt-4"
-          variant="danger"
-          onClick={() => {
-            if (window.confirm("Delete all prototype data in this browser?")) {
-              resetDemo();
-              router.push("/");
-            }
-          }}
-        >
-          Reset demo
-        </Button>
-      </Card>
+      {/* A company saved in Supabase isn't prototype data; deleting it would be a separate, careful feature. */}
+      {!c.cloud && (
+        <Card className="p-6">
+          <h2 className="font-display text-lg font-semibold">Prototype data</h2>
+          <p className="mt-1 text-sm text-muted">
+            Everything here is stored in this browser only{c.demo ? ", using the Northshore Builders demo" : ""}. Resetting clears the company, people,
+            check-ins and photos.
+          </p>
+          <Button
+            className="mt-4"
+            variant="danger"
+            onClick={() => {
+              if (window.confirm("Delete all prototype data in this browser?")) {
+                resetDemo();
+                router.push("/");
+              }
+            }}
+          >
+            Reset demo
+          </Button>
+        </Card>
+      )}
     </div>
   );
 }

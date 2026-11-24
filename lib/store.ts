@@ -4,8 +4,10 @@ import { useMemo, useSyncExternalStore } from "react";
 import type { Brand } from "@/lib/brand";
 import { flagsForResponse, starterForms, type FormDef, type FormResponse } from "@/lib/forms";
 
-// Prototype data layer. Everything lives in this browser's localStorage until Supabase is
-// connected. The shapes mirror the planned database tables.
+// Data layer. The screens read one state object kept in this browser's localStorage.
+// Without Supabase (or for the demo) that is all the data there is. With Supabase connected and a
+// company user signed in, it is a copy of their company: lib/cloud/sync.ts fills it from the
+// database, and each action below also sends its change there (see `connectRemote`).
 
 export type Plan = "trial" | "crew" | "company" | "enterprise";
 export type Role = "safety_manager" | "supervisor" | "worker" | "subcontractor" | "visitor";
@@ -18,6 +20,8 @@ export type Photo = {
   dataUrl: string;
   capturedAt: string;
   sha256: string | null; // null when the browser can't hash (http on a phone)
+  /** Where the photo is stored in Supabase. `dataUrl` then holds a short-lived link to it. */
+  path?: string;
 };
 
 export type Company = {
@@ -29,6 +33,8 @@ export type Company = {
   trialEndsAt: string;
   createdAt: string;
   demo: boolean;
+  /** True when this is a copy of a company saved in Supabase. */
+  cloud?: boolean;
   /** Logo, colour and welcome line for clock-in screens and posters. Missing = Musterpass defaults. */
   brand?: Brand;
 };
@@ -178,6 +184,30 @@ export function useStore(): State | null {
   return useMemo(() => (raw === undefined ? null : parse(raw)), [raw]);
 }
 
+// ---------- Sending changes to Supabase ----------
+
+/** The database side of each action. Set by lib/cloud/sync.ts while a company user is signed in. */
+export type Remote = {
+  addSite(input: Omit<Site, "id" | "slug">): Promise<unknown>;
+  addInvite(email: string, role: Role): Promise<unknown>;
+  setPlan(plan: Plan): Promise<unknown>;
+  setBrand(brand: Brand): Promise<unknown>;
+  saveForms(forms: FormDef[]): Promise<unknown>;
+  deleteForm(id: string): Promise<unknown>;
+  setReview(checkIn: CheckIn): Promise<unknown>;
+};
+
+let remote: Remote | null = null;
+export function connectRemote(r: Remote | null) {
+  remote = r;
+}
+
+/** Runs the database side of a change when the company lives in Supabase. */
+function send(fn: (r: Remote, s: State) => Promise<unknown>) {
+  const s = getState();
+  if (remote && s.company?.cloud) void fn(remote, s);
+}
+
 // ---------- Derived helpers ----------
 
 export function isToday(iso: string, now = Date.now()) {
@@ -277,18 +307,22 @@ export function addSite(input: Omit<Site, "id" | "slug">) {
     while (s.sites.some((x) => x.slug === slug)) slug += "-2";
     return { ...s, sites: [...s.sites, { ...input, id: uid(), slug }] };
   });
+  send((r) => r.addSite(input));
 }
 
 export function addInvite(email: string, role: Role) {
   update((s) => ({ ...s, invites: [...s.invites, { id: uid(), email, role, at: new Date().toISOString() }] }));
+  send((r) => r.addInvite(email, role));
 }
 
 export function setPlan(plan: Plan) {
   update((s) => (s.company ? { ...s, company: { ...s.company, plan } } : s));
+  send((r) => r.setPlan(plan));
 }
 
 export function setBrand(brand: Brand) {
   update((s) => (s.company ? { ...s, company: { ...s.company, brand } } : s));
+  send((r) => r.setBrand(brand));
 }
 
 export function saveForm(form: FormDef) {
@@ -296,10 +330,12 @@ export function saveForm(form: FormDef) {
     ...s,
     forms: s.forms.some((f) => f.id === form.id) ? s.forms.map((f) => (f.id === form.id ? form : f)) : [...s.forms, form],
   }));
+  send((r, s) => r.saveForms(s.forms));
 }
 
 export function deleteForm(id: string) {
   update((s) => ({ ...s, forms: s.forms.filter((f) => f.id !== id) }));
+  send((r) => r.deleteForm(id));
 }
 
 export function moveForm(id: string, dir: -1 | 1) {
@@ -311,6 +347,7 @@ export function moveForm(id: string, dir: -1 | 1) {
     [forms[i], forms[j]] = [forms[j], forms[i]];
     return { ...s, forms };
   });
+  send((r, s) => r.saveForms(s.forms));
 }
 
 export function reviewSelfie(checkInId: string, result: "approved" | "mismatch") {
@@ -318,6 +355,7 @@ export function reviewSelfie(checkInId: string, result: "approved" | "mismatch")
     ...s,
     checkIns: s.checkIns.map((c) => (c.id === checkInId ? { ...c, review: { ...c.review, selfie: result } } : c)),
   }));
+  sendReview(checkInId);
 }
 
 export function countersign(checkInId: string, by: string) {
@@ -329,6 +367,14 @@ export function countersign(checkInId: string, by: string) {
         : c,
     ),
   }));
+  sendReview(checkInId);
+}
+
+function sendReview(checkInId: string) {
+  send(async (r, s) => {
+    const c = s.checkIns.find((x) => x.id === checkInId);
+    if (c) await r.setReview(c);
+  });
 }
 
 export function upsertMe(p: Omit<Person, "id">, existingId: string | null) {

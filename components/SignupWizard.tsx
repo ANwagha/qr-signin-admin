@@ -6,6 +6,9 @@ import { useState, type FormEvent } from "react";
 import SitePoster from "@/components/SitePoster";
 import { Button, Choice, Field } from "@/components/ui";
 import Wordmark from "@/components/Wordmark";
+import { cloudMessage, supabase } from "@/lib/cloud/client";
+import { cloudEnabled } from "@/lib/cloud/config";
+import { createCompanyInCloud, savePendingSignup, useCloud, type SignupInput } from "@/lib/cloud/sync";
 import { loadDemo } from "@/lib/demo-seed";
 import { createCompany, roleLabel, useStore, type Role, type Site } from "@/lib/store";
 
@@ -14,12 +17,18 @@ const STEPS = ["Company", "First site", "Your team", "Ready"];
 export default function SignupWizard() {
   const router = useRouter();
   const store = useStore();
+  const cloud = useCloud();
+  // Signed in already (e.g. confirmed an email but have no company yet): no new account needed.
+  const signedIn = cloudEnabled && !!cloud.email;
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [company, setCompany] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [ownerEmail, setOwnerEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [confirmEmail, setConfirmEmail] = useState(false);
   const [siteName, setSiteName] = useState("");
   const [address, setAddress] = useState("");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
@@ -37,13 +46,17 @@ export default function SignupWizard() {
       .filter(Boolean);
   }
 
-  function next(e?: FormEvent) {
+  const email = signedIn ? (cloud.email ?? "") : ownerEmail.trim();
+
+  async function next(e?: FormEvent) {
     e?.preventDefault();
+    if (saving) return;
     const errs: Record<string, string> = {};
     if (step === 0) {
       if (!company.trim()) errs.company = "Add your company name.";
       if (!ownerName.trim()) errs.ownerName = "Add your name.";
-      if (!/^\S+@\S+\.\S+$/.test(ownerEmail.trim())) errs.ownerEmail = "Add a valid work email.";
+      if (!/^\S+@\S+\.\S+$/.test(email)) errs.ownerEmail = "Add a valid work email.";
+      if (cloudEnabled && !signedIn && password.length < 8) errs.password = "Use at least 8 characters.";
     }
     if (step === 1) {
       if (!siteName.trim()) errs.siteName = "Name the site, like Main Street office.";
@@ -57,16 +70,49 @@ export default function SignupWizard() {
     if (Object.keys(errs).length) return;
 
     if (step === 2) {
-      const site = createCompany({
+      const input: SignupInput = {
         name: company.trim(),
         ownerName: ownerName.trim(),
-        ownerEmail: ownerEmail.trim(),
+        ownerEmail: email,
         site: { name: siteName.trim(), address: address.trim(), lat: coords?.lat ?? null, lng: coords?.lng ?? null, radiusM: Number(radius) },
         invites: emails().map((email) => ({ email, role: inviteRole })),
-      });
-      setCreated(site);
+      };
+      if (!cloudEnabled) setCreated(createCompany(input));
+      else {
+        setSaving(true);
+        try {
+          const done = await createAccountAndCompany(input);
+          if (!done) {
+            setConfirmEmail(true);
+            return;
+          }
+          setCreated(done);
+        } catch (err) {
+          setErrors({ submit: cloudMessage(err) });
+          return;
+        } finally {
+          setSaving(false);
+        }
+      }
     }
     setStep((s) => s + 1);
+  }
+
+  /** Creates the login, then the company. Returns null when the email needs confirming first. */
+  async function createAccountAndCompany(input: SignupInput): Promise<Site | null> {
+    if (signedIn) return createCompanyInCloud(input);
+    const { data, error } = await supabase()!.auth.signUp({
+      email: input.ownerEmail,
+      password,
+      options: { emailRedirectTo: `${window.location.origin}/login/company`, data: { name: input.ownerName } },
+    });
+    if (error) throw error;
+    // Supabase hides whether an email is taken; an account with no identities means it was.
+    if (data.user && data.user.identities?.length === 0) throw new Error("There's already an account with this email. Log in instead.");
+    if (data.session) return createCompanyInCloud(input);
+    // Email confirmation is on: the company is created after the link is opened.
+    savePendingSignup(input);
+    return null;
   }
 
   function locateMe() {
@@ -114,7 +160,21 @@ export default function SignupWizard() {
           ))}
         </ol>
 
-        {store?.company && step === 0 && (
+        {confirmEmail && (
+          <div className="space-y-4">
+            <h1 className="font-display text-3xl font-bold">Confirm your email</h1>
+            <p className="text-muted">
+              We sent a link to <strong className="text-fg">{email}</strong>. Open it on this device and {company.trim()} will be set up with
+              everything you entered, then you&apos;ll land on your dashboard.
+            </p>
+            <p className="text-sm text-muted">No email after a few minutes? Check spam, or go back and check the address.</p>
+            <Button type="button" variant="outline" onClick={() => (setConfirmEmail(false), setStep(0))}>
+              Back
+            </Button>
+          </div>
+        )}
+
+        {!confirmEmail && store?.company && !store.company.demo && step === 0 && (
           <p className="mb-6 rounded-2xl border border-line bg-surface p-4 text-sm">
             This browser already has <strong>{store.company.name}</strong>. Signing up again replaces it.{" "}
             <Link href="/admin" className="underline">
@@ -123,14 +183,31 @@ export default function SignupWizard() {
           </p>
         )}
 
-        <form onSubmit={next} className="space-y-5">
+        <form onSubmit={next} className={`space-y-5 ${confirmEmail ? "hidden" : ""}`}>
           {step === 0 && (
             <>
               <h1 className="font-display text-3xl font-bold">Start your free trial</h1>
               <p className="text-muted">30 days free. One price per company after that, with unlimited staff, contractors and visitors.</p>
               <Field label="Company name" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Northshore Builders" error={errors.company} autoFocus />
               <Field label="Your name" value={ownerName} onChange={(e) => setOwnerName(e.target.value)} placeholder="Priya Shah" autoComplete="name" error={errors.ownerName} />
-              <Field label="Work email" type="email" value={ownerEmail} onChange={(e) => setOwnerEmail(e.target.value)} placeholder="priya@northshore.ca" autoComplete="email" error={errors.ownerEmail} />
+              {signedIn ? (
+                <p className="rounded-2xl bg-raised p-4 text-sm">
+                  Signed in as <strong>{cloud.email}</strong>. Your company will be added to this account.
+                </p>
+              ) : (
+                <Field label="Work email" type="email" value={ownerEmail} onChange={(e) => setOwnerEmail(e.target.value)} placeholder="priya@northshore.ca" autoComplete="email" error={errors.ownerEmail} />
+              )}
+              {cloudEnabled && !signedIn && (
+                <Field
+                  label="Password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password"
+                  hint="At least 8 characters. You'll use it to log in to your dashboard."
+                  error={errors.password}
+                />
+              )}
             </>
           )}
 
@@ -219,6 +296,11 @@ export default function SignupWizard() {
             </div>
           )}
 
+          {errors.submit && (
+            <p role="alert" className="text-sm text-alert">
+              {errors.submit}
+            </p>
+          )}
           {step < 3 && (
             <div className="flex items-center justify-between pt-2">
               {step > 0 ? (
@@ -228,8 +310,8 @@ export default function SignupWizard() {
               ) : (
                 <span />
               )}
-              <Button type="submit" variant="volt">
-                {step === 2 ? (emails().length ? "Send invites and finish" : "Skip and finish") : "Continue"}
+              <Button type="submit" variant="volt" disabled={saving}>
+                {saving ? "Setting up…" : step === 2 ? (emails().length ? "Send invites and finish" : "Skip and finish") : "Continue"}
               </Button>
             </div>
           )}

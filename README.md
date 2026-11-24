@@ -10,13 +10,18 @@ The product vision, privacy plan and roadmap live in the founding document: [`do
 
 Each company builds its own clock-in and clock-out forms on the Forms page (`lib/forms.ts`, `components/FormEditor.tsx`), or turns them all off for a plain time clock. Question types: yes/no, pick one, pick any, short answer, number (with a +/− button for negative readings) and photo. Any question can be required and can alert the supervisor on certain answers. A library of ready-made forms (Fit for work, End of shift, PPE check, Hazard assessment, Equipment check, Temperature log) gives a head start; new companies start with Fit for work and End of shift.
 
-## Status: clickable prototype
+## Status
 
-The whole user journey works in the browser. There is **no backend yet**: companies, people, check-ins and photos are stored in that browser's `localStorage` (`lib/store.ts`) until Supabase is connected in step 3.
+The whole user journey works. The app runs in one of two modes:
+
+- **Prototype mode**, when no Supabase keys are set: companies, people, clock-ins and photos are kept in that browser's `localStorage` (`lib/store.ts`). One company per browser, nothing shared between devices.
+- **Supabase mode**, once the keys below are set: companies sign up and log in with email and password, workers' clock-ins go to the database from any phone, photos go to private storage, and the dashboard updates live. See [Supabase](#supabase).
+
+The demo company (Northshore Builders) always stays in the browser, in both modes.
 
 | Page | What it does |
 |---|---|
-| `/` | Landing page (Admin and Billing links in the header) |
+| `/` | Landing page (Log in and Billing links in the header, Try it out menu) |
 | `/signup` | Company sign-up: company and owner → first site → invite team → ready (poster) |
 | `/s/[site]` | Clock-in on a phone: who are you + consent → selfie → location check → the company's clock-in forms (signature if a form asks for one), or a visitor form. Scan again to clock out and answer any clock-out forms |
 | `/admin` | Dashboard: clocked in now, hours worked today, review queue (selfie review, countersign), flagged answers, printable emergency list |
@@ -24,14 +29,16 @@ The whole user journey works in the browser. There is **no backend yet**: compan
 | `/admin/people` | Everyone who has checked in, subcontractor companies, dashboard invites |
 | `/admin/forms` | Form builder: create, edit, reorder, turn on or off, or add from the library |
 | `/admin/records` | Every clock-in with hours, forms, photos (with hashes) and signatures; CSV export for payroll; print |
-| `/admin/billing` | Per-company plans, trial, and **Reset demo** |
+| `/admin/billing` | Per-company plans and trial (and **Reset demo** for browser-only data) |
+| `/login`, `/login/company`, `/login/reset` | Choose company or admin login; email and password log in; choose a new password from a reset email |
 
 **Try it fast:** open `/signup` and click **Explore the demo instead** to load Northshore Builders, a made-up company with clock-ins already in it. Then clock in yourself at `/s/lonsdale-tower`.
 
-### Prototype limits
-- One company per browser; data isn't shared between devices.
-- On a phone over plain `http://` (your computer's network address), the camera works but **location and photo hashing don't**: browsers only allow them on `https` or `localhost`. The site check offers "Prototype: simulate being on site". For real phone testing, use the HTTPS Vercel URL (step 2).
-- No emails or SMS are sent; billing doesn't charge.
+### Limits for now
+- In prototype mode: one company per browser; data isn't shared between devices.
+- On a phone over plain `http://` (your computer's network address), the camera works but **location and photo hashing don't**: browsers only allow them on `https` or `localhost`. The demo offers "Prototype: simulate being on site"; real companies don't get that button, and the server marks any simulated location as flagged. For real phone testing, use the HTTPS Vercel URL.
+- Invites are listed but no invite email is sent yet; billing doesn't charge. One login per company (the owner) for now.
+- The phone's location check runs on the phone, so a determined worker could fake it. Checking it on the server comes with the trust step.
 
 ## Run it locally
 
@@ -40,11 +47,35 @@ npm install
 npm run dev
 ```
 
-Then open http://localhost:3000.
+Then open http://localhost:3000. Without a `.env.local` it runs in prototype mode. To use Supabase locally, put the three Supabase variables below in `.env.local` (it is git-ignored; never commit it).
+
+## Supabase
+
+One-time setup, done by whoever owns the Musterpass accounts:
+
+1. **Create the project** at supabase.com → New project. Region: **Canada (Central)**. Save the database password in a password manager; the app doesn't need it.
+2. **Create the tables and security rules:** SQL Editor → New query → paste all of [`supabase/schema.sql`](supabase/schema.sql) → Run. It's safe to run again after it changes.
+3. **Sign-in links:** Authentication → URL Configuration. Site URL: `https://musterpass.vercel.app`. Redirect URLs: add `https://musterpass.vercel.app/**` and `http://localhost:3000/**`.
+4. **Email confirmation** (Authentication → Sign In / Providers → Email → Confirm email) can stay on. New owners then get a link, and their company is created when they open it on the same device. Supabase's built-in email sender only allows a few emails an hour; set up custom SMTP (Authentication → Emails) before real customers sign up.
+5. **Add the keys to Vercel** (Project → Settings → Environment Variables, all environments), then redeploy:
+
+| Variable | Where to find it | Secret? |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Project Settings → API → Project URL | No (it ships to browsers) |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Project Settings → API keys → Publishable key (the older `NEXT_PUBLIC_SUPABASE_ANON_KEY` also works) | No; the security rules protect the data |
+| `SUPABASE_SECRET_KEY` | Project Settings → API keys → Secret key (the older `SUPABASE_SERVICE_ROLE_KEY` also works) | **Yes.** Server only, full access. Never put it in a `NEXT_PUBLIC_` variable or in the code |
+
+How it fits together:
+
+- **Tables:** `companies`, `members` (which login belongs to which company), `sites`, `people`, `invites`, `forms`, `check_ins`. Row level security lets a signed-in user see and change only their own company. Clock-in times, photos and answers can't be edited from the dashboard, only reviewed and countersigned.
+- **Workers never sign in.** The phone talks to `app/api/clock/site`, `/in` and `/out`, which use the secret key and check every request: the poster link must exist, photos must be real JPEG/PNG/WebP images, and only the phone that clocked someone in (it keeps a random key; the database keeps only its hash) can clock them out.
+- **Photos** go to the private `photos` bucket as `{company}/{clock-in}/{photo}.jpg`. The dashboard gets links that expire after two hours.
+- **The dashboard** keeps a copy of the company in the browser (`lib/cloud/sync.ts`), refreshes it when a clock-in arrives (Supabase Realtime) or the tab comes back into focus, and sends each change to the database.
+- Poster links are unique across all companies; `lonsdale-tower` and `brentwood-yard` stay reserved for the demo.
 
 ## Stack
 
-Next.js 16 (App Router, `cacheComponents`), React 19, Tailwind CSS 4, TypeScript, `qrcode.react`. Fonts: Space Grotesk and Inter. Planned: Supabase (Canada region), Vercel, Stripe.
+Next.js 16 (App Router, `cacheComponents`), React 19, Tailwind CSS 4, TypeScript, Supabase (`@supabase/supabase-js`: auth, Postgres, storage, realtime), `qrcode.react`. Fonts: Space Grotesk and Inter. Hosted on Vercel. Planned: Stripe.
 
 ## Light and dark mode
 
@@ -60,7 +91,7 @@ Log in → Admin login opens `/command`, for the Musterpass team.
 
 - **Versions:** every production deploy from Vercel, which one is live, and **Roll back** (puts the live site back to an earlier version for everyone). After a rollback Vercel stops releasing new pushes until you press **Undo** (or **Make live** on a newer version). On Vercel's Hobby plan you can only roll back one version.
 - **Tester bot:** clocks a worker in and out inside an on-page phone frame, then checks the dashboard and records. It runs on the demo company and restores this browser's data afterwards.
-- **Companies:** this browser's company until Supabase is connected.
+- **Companies:** with Supabase connected, every company with its plan or trial days left, sites, people, clock-ins, how many are on site now and the last clock-in. Unlock with the command key first. Without Supabase, this browser's company.
 
 Versions and rollback need these environment variables in Vercel (Project → Settings → Environment Variables). Never commit them:
 

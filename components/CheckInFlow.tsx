@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import BrandLogo from "@/components/BrandLogo";
 import PhotoCapture from "@/components/PhotoCapture";
 import SignaturePad from "@/components/SignaturePad";
 import { Button, Choice, Field } from "@/components/ui";
 import Wordmark from "@/components/Wordmark";
 import { DEFAULT_BRAND, brandStyle, type Brand } from "@/lib/brand";
+import type { SiteLookup } from "@/lib/cloud/clock-types";
+import { cloudEnabled } from "@/lib/cloud/config";
+import { forgetPerson, lookupSite, newDeviceKey, savePerson, savedPerson, sendClockIn, sendClockOut } from "@/lib/cloud/worker";
 import { loadDemo } from "@/lib/demo-seed";
 import {
   CONSENT_TEXT,
@@ -21,6 +24,7 @@ import {
 } from "@/lib/forms";
 import {
   CONSENT_VERSION,
+  EMPTY,
   addCheckIn,
   checkOut,
   distanceM,
@@ -31,6 +35,7 @@ import {
   upsertMe,
   useStore,
   type CheckIn,
+  type Person,
   type Photo,
   type Presence,
   type Role,
@@ -42,12 +47,134 @@ import { formatDuration, formatTime, greeting, useNow } from "@/lib/time";
 export default function CheckInFlow({ slug }: { slug: string }) {
   const store = useStore();
   const now = useNow();
-  if (!store || now === null) return <Shell><div className="h-64 animate-pulse rounded-3xl bg-raised" /></Shell>;
+  if (!store || now === null) return <Loading />;
   const site = store.sites.find((s) => s.slug === slug);
-  if (!store.company || !site) return <NotSetUp slug={slug} />;
+  // The demo (or the browser-only prototype) clocks in right here in this browser.
+  if (store.company && site && !store.company.cloud)
+    return (
+      <BrandCtx.Provider value={{ brand: store.company.brand ?? DEFAULT_BRAND, company: store.company.name }}>
+        <Flow key={site.id} store={store} site={site} now={now} actions={LOCAL} />
+      </BrandCtx.Provider>
+    );
+  // Real companies live in Supabase; the phone asks the server.
+  if (cloudEnabled) return <CloudCheckIn slug={slug} now={now} />;
+  return <NotSetUp slug={slug} />;
+}
+
+const Loading = () => (
+  <Shell>
+    <div className="h-64 animate-pulse rounded-3xl bg-raised" />
+  </Shell>
+);
+
+/** What the clock-in screens do with their answers: save in this browser, or send to the server. */
+type Actions = {
+  upsertMe(p: Omit<Person, "id">, existingId: string | null): void;
+  forgetMe(): void;
+  clockIn(record: CheckIn): Promise<CheckIn>;
+  clockOut(checkInId: string, outForms: FormResponse[], photos: Photo[]): Promise<void>;
+};
+
+const LOCAL: Actions = {
+  upsertMe,
+  forgetMe,
+  async clockIn(record) {
+    addCheckIn(record);
+    return record;
+  },
+  async clockOut(id, outForms, photos) {
+    checkOut(id, outForms, photos);
+  },
+};
+
+function CloudCheckIn({ slug, now }: { slug: string; now: number }) {
+  const [data, setData] = useState<SiteLookup | null>(null);
+  const [failure, setFailure] = useState<{ missing: boolean; message: string } | null>(null);
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    let live = true;
+    lookupSite(slug)
+      .then((d) => live && setData(d))
+      .catch((e: Error & { status?: number }) => live && setFailure({ missing: e.status === 404 || e.status === 400, message: e.message }));
+    return () => {
+      live = false;
+    };
+  }, [slug, attempt]);
+
+  // The screens read the same shape as the browser-only store.
+  const store = useMemo<State | null>(
+    () =>
+      data && {
+        ...EMPTY,
+        company: data.company,
+        sites: [data.site],
+        people: data.me ? [data.me] : [],
+        forms: data.forms,
+        checkIns: data.open ? [data.open] : [],
+        me: data.me?.id ?? null,
+      },
+    [data],
+  );
+
+  const actions = useMemo<Actions | null>(() => {
+    if (!data) return null;
+    const cid = data.company.id;
+    return {
+      upsertMe(p, existingId) {
+        const saved = savedPerson(cid);
+        const person = { ...p, id: existingId ?? saved?.id ?? uid() };
+        savePerson(cid, { ...person, key: saved?.key ?? newDeviceKey() });
+        setData((d) => d && { ...d, me: person });
+      },
+      forgetMe() {
+        forgetPerson(cid);
+        setData((d) => d && { ...d, me: null, open: null });
+      },
+      async clockIn(record) {
+        const person = savedPerson(cid);
+        if (!person) throw new Error("Add your details first.");
+        const res = await sendClockIn({ slug, person, record });
+        if (res.personId !== person.id) savePerson(cid, { ...person, id: res.personId });
+        const { key, ...me } = person;
+        void key; // stays on this phone
+        setData((d) => d && { ...d, me: { ...me, id: res.personId }, open: res.checkIn });
+        return res.checkIn;
+      },
+      async clockOut(checkInId, outForms, photos) {
+        const person = savedPerson(cid);
+        if (!person) throw new Error("This phone doesn't know who clocked in.");
+        await sendClockOut({ checkInId, personId: person.id, key: person.key, outForms, photos });
+        setData((d) => d && { ...d, open: null });
+      },
+    };
+  }, [data, slug]);
+
+  if (failure)
+    return failure.missing ? (
+      <NotSetUp slug={slug} cloud />
+    ) : (
+      <Shell>
+        <div className="flex flex-1 flex-col justify-center gap-4 text-center">
+          <h1 className="font-display text-3xl font-bold">Couldn&apos;t load this site</h1>
+          <p className="text-muted">{failure.message}</p>
+          <Button
+            variant="volt"
+            size="lg"
+            onClick={() => {
+              setFailure(null);
+              setAttempt((n) => n + 1);
+            }}
+          >
+            Try again
+          </Button>
+        </div>
+      </Shell>
+    );
+  if (!data || !store || !actions) return <Loading />;
   return (
-    <BrandCtx.Provider value={{ brand: store.company.brand ?? DEFAULT_BRAND, company: store.company.name }}>
-      <Flow key={site.id} store={store} site={site} now={now} />
+    <BrandCtx.Provider value={{ brand: data.company.brand ?? DEFAULT_BRAND, company: data.company.name }}>
+      <Flow key={data.site.id} store={store} site={data.site} now={now} actions={actions} />
     </BrandCtx.Provider>
   );
 }
@@ -81,14 +208,16 @@ function Shell({ children, site, progress, onBack }: { children: ReactNode; site
   );
 }
 
-function NotSetUp({ slug }: { slug: string }) {
+function NotSetUp({ slug, cloud = false }: { slug: string; cloud?: boolean }) {
   const [busy, setBusy] = useState(false);
   return (
     <Shell>
       <div className="flex flex-1 flex-col justify-center gap-4 text-center">
-        <h1 className="font-display text-3xl font-bold">This site isn&apos;t set up here</h1>
+        <h1 className="font-display text-3xl font-bold">{cloud ? "No site uses this link" : "This site isn't set up here"}</h1>
         <p className="text-muted">
-          The prototype keeps companies in this browser. Load the demo company to try clocking in, or sign up your own company.
+          {cloud
+            ? "Check the link on the poster, or ask the site's supervisor for the right one. You can also try clocking in at the demo company."
+            : "The prototype keeps companies in this browser. Load the demo company to try clocking in, or sign up your own company."}
         </p>
         <Button
           variant="volt"
@@ -317,7 +446,7 @@ function FormFields({ form, st }: { form: FormDef; st: ReturnType<typeof useForm
 
 type Step = "start" | "identify" | "selfie" | "location" | `form-${number}` | "visitor" | "finish" | "done" | "checkout" | "checkedOut";
 
-function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
+function Flow({ store, site, now, actions }: { store: State; site: Site; now: number; actions: Actions }) {
   const company = store.company!;
   const me = store.people.find((p) => p.id === store.me) ?? null;
   const open = me
@@ -348,6 +477,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
 
   const [signature, setSignature] = useState<string | null>(null);
   const [done, setDone] = useState<CheckIn | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const isVisitor = role === "visitor";
   const flow: Step[] = isVisitor
@@ -371,7 +501,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
     if (!employer.trim()) return setError("Add the company you work for.");
     if (!phone.trim()) return setError("Add a phone number so the site can reach you in an emergency.");
     if (!consent) return setError("Read and accept how your time and check-in are recorded to continue.");
-    upsertMe({ name: name.trim(), employer: employer.trim(), phone: phone.trim(), role, consentVersion: CONSENT_VERSION }, me?.id ?? null);
+    actions.upsertMe({ name: name.trim(), employer: employer.trim(), phone: phone.trim(), role, consentVersion: CONSENT_VERSION }, me?.id ?? null);
     go("selfie");
   }
 
@@ -415,7 +545,8 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
     forward();
   }
 
-  function finish() {
+  async function finish() {
+    if (saving) return;
     if (needsSignature && !signature) return setError("Sign with your finger to finish.");
     if (isVisitor && !rulesAck) return setError(`Confirm you'll follow the site rules.`);
     const record: CheckIn = {
@@ -433,9 +564,16 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
       signature: needsSignature ? signature : null,
       review: { selfie: "pending", countersignedAt: null, countersignedBy: null },
     };
-    addCheckIn(record);
-    setDone(record);
-    go("done");
+    setSaving(true);
+    setError(null);
+    try {
+      setDone(await actions.clockIn(record));
+      go("done");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Couldn't save your clock-in. Try again.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   // ---------- Screens ----------
@@ -478,7 +616,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
             {me && (
               <button
                 onClick={() => {
-                  forgetMe();
+                  actions.forgetMe();
                   setName("");
                   setPhone("");
                   setEmployer(company.name);
@@ -585,12 +723,15 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
             <Button variant="outline-dark" size="lg" onClick={checkLocation} disabled={locating}>
               {locating ? "Checking…" : "Check my location"}
             </Button>
-            <button
-              onClick={() => setPresence({ status: "verified", distanceM: 0, accuracyM: null, reason: "Simulated on site (prototype)" })}
-              className="min-h-11 w-full text-sm text-muted underline-offset-4 hover:text-fg hover:underline"
-            >
-              Prototype: simulate being on site
-            </button>
+            {/* Demo only: real companies always check the phone's location. */}
+            {!company.cloud && (
+              <button
+                onClick={() => setPresence({ status: "verified", distanceM: 0, accuracyM: null, reason: "Simulated on site (prototype)" })}
+                className="min-h-11 w-full text-sm text-muted underline-offset-4 hover:text-fg hover:underline"
+              >
+                Prototype: simulate being on site
+              </button>
+            )}
           </div>
         )}
         <Err>{error}</Err>
@@ -672,8 +813,8 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
         )}
         <Err>{error}</Err>
         <div className="mt-6">
-          <Button variant="volt" size="lg" onClick={finish}>
-            {isVisitor ? "Sign in" : needsSignature ? "Sign and clock in" : "Clock in"}
+          <Button variant="volt" size="lg" onClick={finish} disabled={saving}>
+            {saving ? "Saving…" : isVisitor ? "Sign in" : needsSignature ? "Sign and clock in" : "Clock in"}
           </Button>
         </div>
       </Shell>
@@ -729,17 +870,26 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
           <Button
             variant="danger"
             size="lg"
-            onClick={() => {
+            disabled={saving}
+            onClick={async () => {
               const forms = open.visitor === null ? outForms : [];
               for (const f of forms) {
                 const q = outState.missing(f);
                 if (q) return setError(`Answer "${q.label}".`);
               }
-              checkOut(open.id, forms.map(outState.response), outState.photosFor(forms));
-              go("checkedOut");
+              setSaving(true);
+              setError(null);
+              try {
+                await actions.clockOut(open.id, forms.map(outState.response), outState.photosFor(forms));
+                go("checkedOut");
+              } catch (e) {
+                setError(e instanceof Error ? e.message : "Couldn't save your clock-out. Try again.");
+              } finally {
+                setSaving(false);
+              }
             }}
           >
-            {open.visitor ? "Sign out" : "Clock out"}
+            {saving ? "Saving…" : open.visitor ? "Sign out" : "Clock out"}
           </Button>
         </div>
       </Shell>
