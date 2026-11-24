@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import RecordDetail, { personFor, SelfieReview } from "@/components/RecordDetail";
 import { Button, Card, PageHeader, Pill } from "@/components/ui";
-import { hazardById } from "@/lib/flha";
+import { hazardById, templateFor } from "@/lib/templates";
 import { countersign, flagsFor, isToday, needsReview, roleLabel, useStore, type CheckIn } from "@/lib/store";
 import { formatTime, useNow } from "@/lib/time";
 
@@ -14,19 +14,20 @@ export default function Dashboard() {
   const [siteId, setSiteId] = useState("all");
   const [openId, setOpenId] = useState<string | null>(null);
   if (!s || !s.company || now === null) return null;
+  const t = templateFor(s.company.industry);
 
   const today = s.checkIns
     .filter((c) => isToday(c.inAt, now) && (siteId === "all" || c.siteId === siteId))
     .sort((a, b) => b.inAt.localeCompare(a.inAt));
   const onSite = today.filter((c) => !c.outAt);
-  const flhas = today.filter((c) => c.form.kind === "flha");
+  const flhas = today.filter((c) => c.form.kind === "safety");
   const flagged = today.filter((c) => flagsFor(c).length > 0);
   const queue = today.filter(needsReview);
   const siteName = (id: string) => s.sites.find((x) => x.id === id)?.name ?? "";
   const open = s.checkIns.find((c) => c.id === openId);
 
   const hazardCounts = new Map<string, number>();
-  flhas.forEach((c) => c.form.kind === "flha" && c.form.answers.hazards.forEach((h) => hazardCounts.set(h, (hazardCounts.get(h) ?? 0) + 1)));
+  flhas.forEach((c) => c.form.kind === "safety" && c.form.answers.hazards.forEach((h) => hazardCounts.set(h, (hazardCounts.get(h) ?? 0) + 1)));
 
   return (
     <div className="space-y-6">
@@ -56,7 +57,7 @@ export default function Dashboard() {
           <p className="mt-3 font-display text-6xl font-bold tabular-nums leading-none">{onSite.length}</p>
           <p className="mt-2 font-display text-lg font-semibold">on site</p>
         </div>
-        <Stat label="Today" value={flhas.length} unit={flhas.length === 1 ? "FLHA signed" : "FLHAs signed"} />
+        <Stat label="Today" value={flhas.length} unit={`${t.formShort}${flhas.length === 1 ? "" : "s"} signed`} />
         <Stat label="Waiting on you" value={queue.length} unit="to review" />
         <Stat label="Needs attention" value={flagged.length} unit={flagged.length === 1 ? "flagged check-in" : "flagged check-ins"} dot={flagged.length > 0} />
       </div>
@@ -113,19 +114,19 @@ export default function Dashboard() {
                 <div className="min-w-48">
                   <p className="font-medium">{personFor(s, c)?.name}</p>
                   <p className="text-sm text-graphite/70">
-                    {siteName(c.siteId)} · {formatTime(c.inAt)} · {c.form.kind === "flha" ? "FLHA" : "Visitor"}
+                    {siteName(c.siteId)} · {formatTime(c.inAt)} · {c.form.kind === "safety" ? t.formShort : "Visitor"}
                   </p>
                   <button onClick={() => setOpenId(c.id)} className="mt-1 text-sm underline underline-offset-4">
                     Full record
                   </button>
                 </div>
                 <SelfieReview s={s} c={c} compact />
-                {c.form.kind === "flha" &&
+                {c.form.kind === "safety" &&
                   (c.review.countersignedAt ? (
                     <Pill tone="ink">Countersigned</Pill>
                   ) : (
                     <Button size="sm" variant="ink" onClick={() => countersign(c.id, s.company!.ownerName)}>
-                      Countersign FLHA
+                      Countersign
                     </Button>
                   ))}
               </li>
@@ -157,7 +158,7 @@ export default function Dashboard() {
               .sort((a, b) => b[1] - a[1])
               .map(([id, n]) => (
                 <Pill key={id} tone="outline">
-                  {hazardById(id)?.label} · {n}
+                  {hazardById(t, id)?.label ?? id} · {n}
                 </Pill>
               ))}
           </div>

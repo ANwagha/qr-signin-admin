@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo, useSyncExternalStore } from "react";
-import { FLHA_HAZARDS } from "@/lib/flha";
+import { checkFailed, defaultPhotoRequired, templateFor, type IndustryId } from "@/lib/templates";
 
 // Prototype data layer. Everything lives in this browser's localStorage until Supabase
 // (founding document, step 2). The shapes mirror the planned database tables.
 
-export type Industry = "construction" | "food";
+export type Industry = IndustryId;
 export type Plan = "trial" | "crew" | "company" | "enterprise";
 export type Role = "safety_manager" | "supervisor" | "worker" | "subcontractor" | "visitor";
 export type PhotoKind = "identity" | "presence" | "compliance";
@@ -60,22 +60,23 @@ export type Presence = {
   reason: string;
 };
 
-export type FlhaAnswers = {
+export type SafetyAnswers = {
+  templateId: IndustryId;
   task: string;
   workArea: string;
   supervisor: string;
-  fitForDuty: boolean;
-  knowsMuster: boolean;
+  readiness: Record<string, boolean>;
   hazards: string[];
   controls: Record<string, string[]>;
   otherHazard: string;
+  checks: Record<string, { pass?: boolean; value?: number }>;
   ppe: string[];
 };
 
 export type VisitorAnswers = { visiting: string; purpose: string; rulesAck: boolean };
 
 export type FormRecord =
-  | { kind: "flha"; answers: FlhaAnswers }
+  | { kind: "safety"; answers: SafetyAnswers }
   | { kind: "visitor"; answers: VisitorAnswers };
 
 export type CheckIn = {
@@ -109,12 +110,8 @@ export type State = {
 
 export const CONSENT_VERSION = "2026-11-v1";
 
-const KEY = "musterpass.demo.v1";
+const KEY = "musterpass.demo.v2"; // v2: industry templates (v1 data had the FLHA-only shape)
 const CHANGE = "musterpass-change";
-
-function defaultPhotoRequired() {
-  return Object.fromEntries(FLHA_HAZARDS.map((h) => [h.id, h.photoByDefault]));
-}
 
 export const EMPTY: State = {
   company: null,
@@ -122,7 +119,7 @@ export const EMPTY: State = {
   people: [],
   invites: [],
   checkIns: [],
-  photoRequired: defaultPhotoRequired(),
+  photoRequired: defaultPhotoRequired(templateFor("construction")),
   me: null,
 };
 
@@ -204,10 +201,15 @@ export function flagsFor(c: CheckIn): string[] {
   const flags: string[] = [];
   if (c.presence.status === "flagged") flags.push(`Location: ${c.presence.reason}`);
   if (c.review.selfie === "mismatch") flags.push("Selfie doesn't match");
-  if (c.form.kind === "flha") {
+  if (c.form.kind === "safety") {
     const a = c.form.answers;
-    if (!a.fitForDuty) flags.push("Not fit for duty");
-    if (!a.knowsMuster) flags.push("Hasn't reviewed the muster point");
+    const t = templateFor(a.templateId);
+    for (const q of t.readiness) if (q.id in a.readiness && a.readiness[q.id] !== q.expected) flags.push(q.alert);
+    for (const ch of t.checks) {
+      if (!checkFailed(t, ch.id, a.checks[ch.id]) || ch.kind === "photo") continue;
+      const v = a.checks[ch.id]?.value;
+      flags.push(ch.kind === "number" && v !== undefined ? `${ch.failAlert} (${v} ${ch.unit})` : ch.failAlert);
+    }
     if (a.otherHazard.trim()) flags.push(`Other hazard: ${a.otherHazard.trim()}`);
   }
   if (c.incidentReported) flags.push("Incident or near miss reported at check-out");
@@ -215,7 +217,7 @@ export function flagsFor(c: CheckIn): string[] {
 }
 
 export function needsReview(c: CheckIn) {
-  return c.review.selfie === "pending" || (c.form.kind === "flha" && !c.review.countersignedAt);
+  return c.review.selfie === "pending" || (c.form.kind === "safety" && !c.review.countersignedAt);
 }
 
 export function roleLabel(r: Role) {
@@ -277,6 +279,7 @@ export function createCompany(input: {
   };
   update(() => ({
     ...EMPTY,
+    photoRequired: defaultPhotoRequired(templateFor(input.industry)),
     company,
     sites: [site],
     people: [owner],

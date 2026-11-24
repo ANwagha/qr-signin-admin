@@ -7,7 +7,8 @@ import SignaturePad from "@/components/SignaturePad";
 import { Button, Choice, Field } from "@/components/ui";
 import Wordmark from "@/components/Wordmark";
 import { loadDemo } from "@/lib/demo-seed";
-import { CONSENT_TEXT, FLHA_HAZARDS, PPE_ITEMS, PPE_PHOTO_PROMPT, hazardById } from "@/lib/flha";
+import { CONSENT_TEXT } from "@/lib/flha";
+import { checkFailed, hazardById, templateFor } from "@/lib/templates";
 import {
   CONSENT_VERSION,
   addCheckIn,
@@ -20,7 +21,7 @@ import {
   upsertMe,
   useStore,
   type CheckIn,
-  type FlhaAnswers,
+  type SafetyAnswers,
   type Photo,
   type Presence,
   type Role,
@@ -36,6 +37,7 @@ type Step =
   | "location"
   | "job"
   | "hazards"
+  | "checks"
   | "ppe"
   | "visitor"
   | "sign"
@@ -43,7 +45,6 @@ type Step =
   | "checkout"
   | "checkedOut";
 
-const FLOW: Step[] = ["identify", "selfie", "location", "job", "hazards", "ppe", "sign"];
 const VISITOR_FLOW: Step[] = ["identify", "selfie", "location", "visitor", "sign"];
 
 export default function CheckInFlow({ slug }: { slug: string }) {
@@ -151,6 +152,7 @@ function YesNo({ label, value, onChange }: { label: string; value: boolean | nul
 
 function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
   const company = store.company!;
+  const t = templateFor(company.industry);
   const me = store.people.find((p) => p.id === store.me) ?? null;
   const open = me
     ? store.checkIns.find((c) => c.personId === me.id && c.siteId === site.id && !c.outAt && isToday(c.inAt, now))
@@ -171,22 +173,25 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
   const [presence, setPresence] = useState<Presence | null>(null);
   const [locating, setLocating] = useState(false);
 
-  // FLHA
+  // Safety form (industry template)
   const supervisors = store.people.filter((p) => p.role === "supervisor" || p.role === "safety_manager");
-  const [flha, setFlha] = useState<FlhaAnswers>({
+  const [flha, setFlha] = useState<SafetyAnswers>({
+    templateId: t.id,
     task: "",
     workArea: "",
     supervisor: supervisors[0]?.name ?? "",
-    fitForDuty: true,
-    knowsMuster: true,
+    readiness: {},
     hazards: [],
     controls: {},
     otherHazard: "",
+    checks: {},
     ppe: [],
   });
-  const [fit, setFit] = useState<boolean | null>(null);
-  const [muster, setMuster] = useState<boolean | null>(null);
+  const [readiness, setReadiness] = useState<Record<string, boolean | null>>({});
   const [hazardPhotos, setHazardPhotos] = useState<Record<string, Photo | null>>({});
+  const [checkPhotos, setCheckPhotos] = useState<Record<string, Photo | null>>({});
+  const [numText, setNumText] = useState<Record<string, string>>({});
+  const [negs, setNegs] = useState<Record<string, boolean>>({});
   const [ppePhoto, setPpePhoto] = useState<Photo | null>(null);
 
   // Visitor
@@ -199,7 +204,11 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
   const [incident, setIncident] = useState<boolean | null>(null);
 
   const isVisitor = role === "visitor";
-  const flow = isVisitor ? VISITOR_FLOW : FLOW;
+  const flow: Step[] = isVisitor
+    ? VISITOR_FLOW
+    : ["identify", "selfie", "location", "job", "hazards", ...(t.checks.length ? (["checks"] as Step[]) : []), "ppe", "sign"];
+  const formSteps = flow.filter((x) => ["job", "hazards", "checks", "ppe"].includes(x));
+  const partOf = (x: Step) => `${t.formName} · ${formSteps.indexOf(x) + 1} of ${formSteps.length}`;
   const idx = flow.indexOf(step);
   const progress = idx >= 0 ? (idx + 1) / (flow.length + 1) : undefined;
   const firstName = (me?.name ?? name).split(/\s+/)[0];
@@ -269,20 +278,40 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
 
   function submitJob() {
     if (!flha.task.trim()) return setError("Describe today's task.");
-    if (fit === null || muster === null) return setError("Answer both questions.");
-    setFlha((f) => ({ ...f, fitForDuty: fit, knowsMuster: muster }));
+    if (t.readiness.some((q) => readiness[q.id] === undefined || readiness[q.id] === null))
+      return setError("Answer every question.");
+    setFlha((f) => ({ ...f, readiness: readiness as Record<string, boolean> }));
     forward();
   }
 
   function submitHazards() {
     for (const id of flha.hazards) {
-      const h = hazardById(id)!;
+      const h = hazardById(t, id)!;
       if (!(flha.controls[id]?.length > 0)) return setError(`Choose how "${h.label}" is controlled.`);
       if (store.photoRequired[id] && !hazardPhotos[id]) return setError(`Add the photo for "${h.label}".`);
     }
     if (flha.hazards.length === 0 && !flha.otherHazard.trim())
       return setError("Tick at least one hazard, or describe it under Other. Every task has some.");
     forward();
+  }
+
+  function submitChecks() {
+    for (const c of t.checks) {
+      const a = flha.checks[c.id];
+      if (c.kind === "passfail") {
+        if (a?.pass === undefined) return setError(`Answer "${c.label}".`);
+        if (a.pass === false && c.photoOnFail && !checkPhotos[c.id]) return setError(`Add a photo of the problem with "${c.label}".`);
+      } else if (c.kind === "number") {
+        if (a?.value === undefined || Number.isNaN(a.value)) return setError(`Enter the reading for "${c.label}".`);
+      } else if (!checkPhotos[c.id]) {
+        return setError(`Add the photo for "${c.label}".`);
+      }
+    }
+    forward();
+  }
+
+  function setCheck(id: string, v: { pass?: boolean; value?: number }) {
+    setFlha((f) => ({ ...f, checks: { ...f.checks, [id]: v } }));
   }
 
   function submitPpe() {
@@ -293,7 +322,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
 
   function submitVisitor() {
     if (!visiting.trim()) return setError("Who are you here to see?");
-    if (!rulesAck) return setError("Confirm you'll follow the site rules.");
+    if (!rulesAck) return setError(`Confirm you'll follow the ${t.siteNoun} rules.`);
     forward();
   }
 
@@ -301,7 +330,11 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
     if (!signature) return setError("Sign with your finger to finish.");
     const photos: Photo[] = isVisitor
       ? []
-      : [...flha.hazards.map((id) => hazardPhotos[id]).filter((p): p is Photo => !!p), ...(ppePhoto ? [ppePhoto] : [])];
+      : [
+          ...flha.hazards.map((id) => hazardPhotos[id]),
+          ...t.checks.map((c) => checkPhotos[c.id]),
+          ppePhoto,
+        ].filter((p): p is Photo => !!p);
     const record: CheckIn = {
       id: uid(),
       siteId: site.id,
@@ -313,7 +346,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
       presence: presence!,
       form: isVisitor
         ? { kind: "visitor", answers: { visiting: visiting.trim(), purpose: purpose.trim(), rulesAck } }
-        : { kind: "flha", answers: { ...flha, task: flha.task.trim(), otherHazard: flha.otherHazard.trim() } },
+        : { kind: "safety", answers: { ...flha, task: flha.task.trim(), otherHazard: flha.otherHazard.trim() } },
       photos,
       signature,
       review: { selfie: "pending", countersignedAt: null, countersignedBy: null },
@@ -417,7 +450,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
             placeholder={role === "visitor" ? "City of North Vancouver" : "Volt Electric Ltd."}
           />
           <Field dark label="Mobile phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" placeholder="604-555-0123" />
-          <div className="rounded-2xl bg-graphite p-4 text-sm text-smoke">
+          <div className="rounded-2xl bg-graphite p-4 text-sm text-bone/70">
             <p>{CONSENT_TEXT}</p>
             <div className="mt-3">
               <Choice selected={consent} onClick={() => setConsent(!consent)}>
@@ -460,7 +493,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
         {presence ? (
           <div className={`rounded-3xl p-6 ${presence.status === "verified" ? "bg-graphite" : "border border-pop bg-graphite"}`}>
             <p className="font-display text-2xl font-bold">{presence.status === "verified" ? "You're on site" : "Couldn't confirm you're on site"}</p>
-            <p className="mt-1 text-smoke">
+            <p className="mt-1 text-bone/70">
               {presence.reason}
               {presence.accuracyM !== null && ` · ±${presence.accuracyM} m`}
             </p>
@@ -493,10 +526,10 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
   if (step === "job")
     return (
       <Shell site={site.name} progress={progress} onBack={back}>
-        <Title sub="Field Level Hazard Assessment · 1 of 3">Today&apos;s job</Title>
+        <Title sub={partOf("job")}>Today&apos;s job</Title>
         <div className="space-y-5">
-          <Field dark label="What are you doing today?" value={flha.task} onChange={(e) => setFlha({ ...flha, task: e.target.value })} placeholder="Framing, level 6" />
-          <Field dark label="Where on site?" value={flha.workArea} onChange={(e) => setFlha({ ...flha, workArea: e.target.value })} placeholder="North side" />
+          <Field dark label="What are you doing today?" value={flha.task} onChange={(e) => setFlha({ ...flha, task: e.target.value })} placeholder={t.taskExample} />
+          <Field dark label={`Where in the ${t.siteNoun}?`} value={flha.workArea} onChange={(e) => setFlha({ ...flha, workArea: e.target.value })} placeholder="North side" />
           <div>
             <label htmlFor="sup" className="mb-1.5 block text-sm font-medium">
               Your supervisor
@@ -513,9 +546,15 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
               <option value="Other">Someone else</option>
             </select>
           </div>
-          <YesNo label="Are you fit for duty today? (rested, not impaired, no injury)" value={fit} onChange={setFit} />
-          <YesNo label="Do you know where the muster point is?" value={muster} onChange={setMuster} />
-          {(fit === false || muster === false) && (
+          {t.readiness.map((q) => (
+            <YesNo
+              key={q.id}
+              label={q.question}
+              value={readiness[q.id] ?? null}
+              onChange={(v) => setReadiness((r) => ({ ...r, [q.id]: v }))}
+            />
+          ))}
+          {t.readiness.some((q) => readiness[q.id] !== undefined && readiness[q.id] !== null && readiness[q.id] !== q.expected) && (
             <p className="rounded-2xl border border-pop p-4 text-sm">Your supervisor will be alerted before you start work.</p>
           )}
         </div>
@@ -531,11 +570,11 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
   if (step === "hazards")
     return (
       <Shell site={site.name} progress={progress} onBack={back}>
-        <Title sub="Field Level Hazard Assessment · 2 of 3. Tick every hazard in today's work and how it's controlled.">
+        <Title sub={`${partOf("hazards")}. Tick every hazard in today's work and how it's controlled.`}>
           Hazards and controls
         </Title>
         <div className="space-y-2.5">
-          {FLHA_HAZARDS.map((h) => {
+          {t.hazards.map((h) => {
             const on = flha.hazards.includes(h.id);
             return (
               <div key={h.id} className={on ? "rounded-3xl bg-graphite/60 p-2" : ""}>
@@ -546,11 +585,11 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
                   }
                 >
                   {h.label}
-                  {store.photoRequired[h.id] && <span className="ml-2 text-xs text-smoke">Photo</span>}
+                  {store.photoRequired[h.id] && <span className="ml-2 text-xs opacity-70">Photo</span>}
                 </Choice>
                 {on && (
                   <div className="space-y-3 px-2 pb-2 pt-3">
-                    <p className="text-sm text-smoke">How is it controlled?</p>
+                    <p className="text-sm text-bone/70">How is it controlled?</p>
                     <div className="flex flex-wrap gap-2">
                       {h.controls.map((c) => {
                         const sel = flha.controls[h.id]?.includes(c) ?? false;
@@ -598,12 +637,140 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
       </Shell>
     );
 
+  if (step === "checks")
+    return (
+      <Shell site={site.name} progress={progress} onBack={back}>
+        <Title sub={partOf("checks")}>{t.checksTitle}</Title>
+        <div className="space-y-6">
+          {t.checks.map((c) => {
+            const a = flha.checks[c.id];
+            const failed = checkFailed(t, c.id, a);
+            return (
+              <div key={c.id} className={`rounded-3xl p-4 ${failed ? "border border-pop bg-graphite" : "bg-graphite/60"}`}>
+                {c.kind === "passfail" && (
+                  <>
+                    <p className="mb-2 font-medium">{c.label}</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[true, false].map((v) => (
+                        <button
+                          key={String(v)}
+                          type="button"
+                          aria-pressed={a?.pass === v}
+                          onClick={() => setCheck(c.id, { pass: v })}
+                          className={`min-h-14 rounded-2xl border font-display text-lg font-bold transition ${
+                            a?.pass === v ? (v ? "border-bone bg-bone text-ink" : "border-pop bg-pop text-ink") : "border-graphite bg-ink text-bone"
+                          }`}
+                        >
+                          {v ? "Pass" : "Fail"}
+                        </button>
+                      ))}
+                    </div>
+                    {a?.pass === false && c.photoOnFail && (
+                      <div className="pt-4">
+                        <PhotoCapture
+                          kind="compliance"
+                          label={c.label}
+                          prompt="Photo of the problem"
+                          facing="environment"
+                          value={checkPhotos[c.id] ?? null}
+                          onChange={(ph) => setCheckPhotos({ ...checkPhotos, [c.id]: ph })}
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
+                {c.kind === "number" &&
+                  (() => {
+                    // iPhone's decimal keypad has no minus key, so the sign is a separate button.
+                    const neg = negs[c.id] ?? (c.max !== undefined && c.max < 0);
+                    const emit = (text: string, isNeg: boolean) => {
+                      const clean = text.replace(",", ".").replace(/[-−]/g, "").trim();
+                      const n = Number(clean);
+                      setCheck(c.id, { value: clean === "" || Number.isNaN(n) ? undefined : isNeg ? -n : n });
+                    };
+                    const limit = c.max !== undefined ? c.max : c.min!;
+                    return (
+                      <div>
+                        <label htmlFor={`num-${c.id}`} className="mb-1.5 block text-sm font-medium text-bone">
+                          {c.label} ({c.unit})
+                        </label>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            aria-pressed={neg}
+                            aria-label={neg ? "Below zero. Tap to make it above zero" : "Above zero. Tap to make it below zero"}
+                            onClick={() => {
+                              setNegs({ ...negs, [c.id]: !neg });
+                              emit(numText[c.id] ?? "", !neg);
+                            }}
+                            className={`min-h-14 w-16 shrink-0 rounded-2xl border font-display text-2xl font-bold transition ${
+                              neg ? "border-bone bg-bone text-ink" : "border-graphite bg-ink text-bone"
+                            }`}
+                          >
+                            {neg ? "−" : "+"}
+                          </button>
+                          <input
+                            id={`num-${c.id}`}
+                            type="text"
+                            inputMode="decimal"
+                            autoComplete="off"
+                            value={numText[c.id] ?? ""}
+                            onChange={(e) => {
+                              const raw = e.target.value;
+                              // Keyboards that do have a minus key still work: a typed "-" flips the sign button.
+                              const typedMinus = /[-−]/.test(raw);
+                              const isNeg = typedMinus ? true : neg;
+                              if (typedMinus) setNegs({ ...negs, [c.id]: true });
+                              const digits = raw.replace(/[-−]/g, "");
+                              setNumText({ ...numText, [c.id]: digits });
+                              emit(digits, isNeg);
+                            }}
+                            placeholder={String(Math.abs(limit))}
+                            className="min-h-14 w-full min-w-0 rounded-2xl border border-graphite bg-graphite px-4 text-lg text-bone outline-none placeholder:text-bone/55 focus:border-bone"
+                          />
+                        </div>
+                        <p className="mt-1.5 text-xs text-bone/70">
+                          {c.max !== undefined
+                            ? `Should be ${String(c.max).replace("-", "−")} ${c.unit} or lower`
+                            : `Should be ${String(c.min).replace("-", "−")} ${c.unit} or higher`}
+                          {` · Tap ${neg ? "−" : "+"} to switch between below and above zero`}
+                        </p>
+                      </div>
+                    );
+                  })()}
+                {c.kind === "photo" && (
+                  <>
+                    <p className="mb-3 font-medium">{c.label}</p>
+                    <PhotoCapture
+                      kind="compliance"
+                      label={c.label}
+                      prompt={c.photoPrompt}
+                      facing="environment"
+                      value={checkPhotos[c.id] ?? null}
+                      onChange={(ph) => setCheckPhotos({ ...checkPhotos, [c.id]: ph })}
+                    />
+                  </>
+                )}
+                {failed && c.kind !== "photo" && <p className="mt-3 text-sm text-pop">{c.failAlert}. Your supervisor will be alerted.</p>}
+              </div>
+            );
+          })}
+        </div>
+        <Err>{error}</Err>
+        <div className="mt-6">
+          <Button variant="volt" size="lg" onClick={submitChecks}>
+            Continue
+          </Button>
+        </div>
+      </Shell>
+    );
+
   if (step === "ppe")
     return (
       <Shell site={site.name} progress={progress} onBack={back}>
-        <Title sub="Field Level Hazard Assessment · 3 of 3">PPE check</Title>
+        <Title sub={partOf("ppe")}>PPE check</Title>
         <div className="grid grid-cols-2 gap-2">
-          {PPE_ITEMS.map((p) => {
+          {t.ppe.map((p) => {
             const on = flha.ppe.includes(p);
             return (
               <Choice key={p} selected={on} onClick={() => setFlha({ ...flha, ppe: on ? flha.ppe.filter((x) => x !== p) : [...flha.ppe, p] })}>
@@ -613,7 +780,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
           })}
         </div>
         <div className="mt-6">
-          <PhotoCapture kind="compliance" label="PPE" prompt={PPE_PHOTO_PROMPT} facing="environment" value={ppePhoto} onChange={setPpePhoto} />
+          <PhotoCapture kind="compliance" label="PPE" prompt={t.ppePhotoPrompt} facing="environment" value={ppePhoto} onChange={setPpePhoto} />
         </div>
         <Err>{error}</Err>
         <div className="mt-6">
@@ -627,15 +794,15 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
   if (step === "visitor")
     return (
       <Shell site={site.name} progress={progress} onBack={back}>
-        <Title sub="Visitors don't do the full FLHA, but you'll be on the muster list until you check out.">Visitor details</Title>
+        <Title sub={`Visitors don't do the full ${t.formShort}, but you'll be on the muster list until you check out.`}>Visitor details</Title>
         <div className="space-y-5">
           <Field dark label="Who are you here to see?" value={visiting} onChange={(e) => setVisiting(e.target.value)} placeholder="Priya Shah" />
           <Field dark label="Purpose of visit (optional)" value={purpose} onChange={(e) => setPurpose(e.target.value)} placeholder="Inspection" />
-          <div className="rounded-2xl bg-graphite p-4 text-sm text-smoke">
-            Stay with your host, wear the PPE you&apos;re given, keep out of marked zones, and go to the muster point if the alarm sounds.
+          <div className="rounded-2xl bg-graphite p-4 text-sm text-bone/70">
+            {t.visitorRules}
             <div className="mt-3">
               <Choice selected={rulesAck} onClick={() => setRulesAck(!rulesAck)}>
-                I&apos;ll follow the site rules
+                I&apos;ll follow the {t.siteNoun} rules
               </Choice>
             </div>
           </div>
@@ -650,7 +817,10 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
     );
 
   if (step === "sign") {
-    const hazards = flha.hazards.map((id) => hazardById(id)!.label);
+    const hazards = flha.hazards.map((id) => hazardById(t, id)!.label);
+    const failedChecks = t.checks.filter((c) => checkFailed(t, c.id, flha.checks[c.id])).map((c) => c.label);
+    const photoCount =
+      1 + [...flha.hazards.map((id) => hazardPhotos[id]), ...t.checks.map((c) => checkPhotos[c.id]), ppePhoto].filter(Boolean).length;
     return (
       <Shell site={site.name} progress={progress} onBack={back}>
         <Title sub="Check your answers, then sign.">Sign and check in</Title>
@@ -664,8 +834,11 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
             <>
               <Row k="Task">{flha.task}</Row>
               <Row k="Hazards">{[...hazards, flha.otherHazard.trim()].filter(Boolean).join(", ") || "None"}</Row>
+              {t.checks.length > 0 && (
+                <Row k="Checks">{failedChecks.length ? <span className="text-pop">Failed: {failedChecks.join(", ")}</span> : "All passed"}</Row>
+              )}
               <Row k="PPE">{flha.ppe.join(", ")}</Row>
-              <Row k="Photos">{1 + flha.hazards.filter((id) => hazardPhotos[id]).length + (ppePhoto ? 1 : 0)} taken</Row>
+              <Row k="Photos">{photoCount} taken</Row>
             </>
           )}
         </dl>
@@ -750,7 +923,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
 function Row({ k, children }: { k: string; children: ReactNode }) {
   return (
     <div className="flex gap-3">
-      <dt className="w-20 shrink-0 text-smoke">{k}</dt>
+      <dt className="w-20 shrink-0 text-bone/70">{k}</dt>
       <dd>{children}</dd>
     </div>
   );

@@ -11,7 +11,7 @@ const PLANS: { id: Exclude<Plan, "trial">; name: string; price: string; sites: s
     name: "Crew",
     price: "$149",
     sites: "1 active site",
-    features: ["Unlimited workers, subs and visitors", "FLHA and visitor forms", "Photo evidence", "Live roster and muster list"],
+    features: ["Unlimited workers, subs and visitors", "Industry safety form and visitor form", "Photo evidence", "Live roster and muster list"],
   },
   {
     id: "company",

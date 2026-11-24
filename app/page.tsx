@@ -4,7 +4,7 @@ import Wordmark from "@/components/Wordmark";
 const steps = [
   { n: "1", title: "Scan", body: "Everyone scans the gate poster with their phone camera. No app." },
   { n: "2", title: "Selfie + site check", body: "A live selfie and location check prove who is on site." },
-  { n: "3", title: "FLHA with photos", body: "Today's hazards, controls and PPE, with photo evidence." },
+  { n: "3", title: "Safety check with photos", body: "Your industry's daily form: hazards, controls, checks and PPE, with photo evidence." },
   { n: "4", title: "Sign and go", body: "Signed, checked in and clocked in. The safety team sees it instantly." },
 ];
 
@@ -31,7 +31,7 @@ export default function Home() {
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-smoke">
           Musterpass replaces the clipboard at the gate. Workers, subcontractors and visitors check in on their own
-          phones, complete today&apos;s Field Level Hazard Assessment with photo evidence, and sign off in about a
+          phones, complete today&apos;s safety check for their industry with photo evidence, and sign off in about a
           minute. You get a live roster and records that stand up when it matters.
         </p>
         <div className="mt-10 flex flex-wrap gap-3">

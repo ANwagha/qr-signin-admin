@@ -3,7 +3,7 @@
 import { useState } from "react";
 import RecordDetail, { personFor } from "@/components/RecordDetail";
 import { Button, Card, PageHeader, Pill } from "@/components/ui";
-import { hazardById } from "@/lib/flha";
+import { checkFailed, hazardById, templateFor } from "@/lib/templates";
 import { flagsFor, needsReview, roleLabel, useStore, type CheckIn, type State } from "@/lib/store";
 import { formatTime, useNow } from "@/lib/time";
 
@@ -13,10 +13,11 @@ function csvCell(v: string) {
 }
 
 function toCsv(s: State, rows: CheckIn[]) {
-  const header = ["Checked in", "Checked out", "Name", "Company", "Role", "Site", "Location check", "Form", "Task", "Hazards", "PPE", "Selfie review", "Countersigned by", "Flags"];
+  const t = templateFor(s.company?.industry);
+  const header = ["Checked in", "Checked out", "Name", "Company", "Role", "Site", "Location check", "Form", "Task", "Readiness", "Hazards", "Checks", "PPE", "Selfie review", "Countersigned by", "Flags"];
   const lines = rows.map((c) => {
     const p = personFor(s, c);
-    const f = c.form.kind === "flha" ? c.form.answers : null;
+    const f = c.form.kind === "safety" ? c.form.answers : null;
     return [
       c.inAt,
       c.outAt ?? "",
@@ -25,9 +26,19 @@ function toCsv(s: State, rows: CheckIn[]) {
       p ? roleLabel(p.role) : "",
       s.sites.find((x) => x.id === c.siteId)?.name ?? "",
       `${c.presence.status}: ${c.presence.reason}`,
-      c.form.kind === "flha" ? "FLHA" : "Visitor",
+      c.form.kind === "safety" ? t.formName : "Visitor",
       f?.task ?? "",
-      f ? f.hazards.map((h) => hazardById(h)?.label).join("; ") : "",
+      f ? t.readiness.map((q) => `${q.question} ${f.readiness[q.id] ? "Yes" : "No"}`).join("; ") : "",
+      f ? f.hazards.map((h) => hazardById(t, h)?.label ?? h).join("; ") : "",
+      f
+        ? t.checks
+            .map((ch) => {
+              const a = f.checks[ch.id];
+              const v = ch.kind === "number" ? `${a?.value ?? "—"} ${ch.unit}` : ch.kind === "passfail" ? (a?.pass ? "pass" : "fail") : "photo";
+              return `${ch.label}: ${v}${checkFailed(t, ch.id, a) ? " (FAILED)" : ""}`;
+            })
+            .join("; ")
+        : "",
       f ? f.ppe.join("; ") : "",
       c.review.selfie,
       c.review.countersignedBy ?? "",
@@ -134,7 +145,7 @@ export default function RecordsPage() {
                         </p>
                       </td>
                       <td className="px-6 py-3 text-graphite">{s.sites.find((x) => x.id === c.siteId)?.name}</td>
-                      <td className="px-6 py-3 text-graphite">{c.form.kind === "flha" ? "FLHA" : "Visitor"}</td>
+                      <td className="px-6 py-3 text-graphite">{c.form.kind === "safety" ? templateFor(s.company?.industry).formShort : "Visitor"}</td>
                       <td className="whitespace-nowrap px-6 py-3 tabular-nums text-graphite">
                         {formatTime(c.inAt)} – {c.outAt ? formatTime(c.outAt) : "on site"}
                       </td>

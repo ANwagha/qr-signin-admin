@@ -117,7 +117,7 @@ a{color:inherit}
       <li><strong>Photo verification</strong> in three separate roles: identity, presence and compliance.</li>
       <li><strong>The first form is the Field Level Hazard Assessment (FLHA),</strong> the daily pre-task hazard check used across Canadian construction.</li>
       <li><strong>A full SaaS journey</strong> from company sign-up to daily use, with per-company pricing and a Billing page.</li>
-      <li><strong>Construction first, food service second.</strong> Everyone on site checks in: employees, subcontractors and visitors.</li>
+      <li><strong>Six industries at sign-up</strong> (construction, warehouse, kitchen, manufacturing, cleaning, general), each with its own daily form. Construction is the first market. Everyone on site checks in: employees, subcontractors and visitors.</li>
       <li><strong>Supabase and Vercel</strong> are now planned in detail, including how photos and personal data are protected.</li>
       <li><strong>A new name: Musterpass.</strong> It replaces the working name "Tock" (see section 07).</li>
     </ul>
@@ -128,7 +128,7 @@ a{color:inherit}
     <div class="card"><h4>For safety managers</h4>Live list of who is on site and cleared. Hazards flagged the moment they are reported. Records exported in one click.</div>
   </div>
   <h3>Where we start</h3>
-  <p><strong>Construction in British Columbia,</strong> then Alberta and the rest of Canada. <strong>Food service</strong> (commercial kitchens) is the second industry, using the same engine with its own forms.</p>
+  <p><strong>Construction in British Columbia,</strong> then Alberta and the rest of Canada. Warehouses, kitchens, manufacturing plants, cleaning and facilities teams, and any other workplace can sign up from day one with a template written for their work.</p>
 </section>
 
 <!-- 01 VISION -->
@@ -213,7 +213,23 @@ a{color:inherit}
 </section>
 
 <section class="section">
-  <p class="eyebrow">01 · The first form template</p>
+  <p class="eyebrow">01 · Industry templates</p>
+  <h2>A daily form for every industry</h2>
+  <p>At sign-up, a company picks its industry (step 2). Musterpass then loads that industry&apos;s daily safety form, photo rules, wording and visitor rules. Every template has the same four parts: <strong>job and readiness</strong> questions, <strong>hazards and controls</strong>, optional <strong>checks</strong> (pass/fail, readings or photos), and a <strong>PPE check</strong> with photo. Any answer that needs attention is flagged for the supervisor.</p>
+  <table>
+    <tr><th style="width:17%">Industry</th><th style="width:21%">Daily form</th><th style="width:22%">Readiness</th><th>Hazards (photo by default)</th><th style="width:20%">Checks</th></tr>
+    <tr><td><strong>Construction</strong></td><td>Field Level Hazard Assessment</td><td>Fit for duty; knows the muster point</td><td>12 hazards; heights, excavation and hot work need photos</td><td>None</td></tr>
+    <tr><td><strong>Warehouse and logistics</strong></td><td>Pre-shift safety check</td><td>Fit for duty; trained on today&apos;s equipment; knows exits and muster point</td><td>Forklifts and pedestrians, racking, docks and trailers (photos); lifting, conveyors, battery charging, slips, cold storage</td><td>Forklift pre-use inspection (pass/fail, photo on fail)</td></tr>
+    <tr><td><strong>Kitchen and food service</strong></td><td>Opening safety and food-safety check</td><td>No illness symptoms in 48 h; cuts covered; knows fire exits and extinguisher</td><td>Burns, knives, slips (photo), chemicals, allergens, lifting</td><td>Fridge &le; 4 &deg;C, freezer &le; &minus;18 &deg;C, hot holding &ge; 60 &deg;C; handwash station photo</td></tr>
+    <tr><td><strong>Manufacturing</strong></td><td>Pre-shift machine and safety check</td><td>Fit for duty; trained on today&apos;s machine; knows the muster point</td><td>Machine guarding and lockout (photos); pinch points, noise, hot surfaces, chemicals, forklifts, repetitive strain</td><td>Guards in place; e-stop tested (pass/fail)</td></tr>
+    <tr><td><strong>Cleaning and facilities</strong></td><td>Job-start safety check</td><td>Fit for duty; working alone today (alerts for check-ins); knows the building&apos;s exits</td><td>Chemicals/WHMIS and wet floors (photos); ladders, sharps, electrical, lifting, working alone</td><td>None</td></tr>
+    <tr><td><strong>Other / general</strong></td><td>Daily safety check-in</td><td>Fit for duty; knows exits and muster point</td><td>Slips, lifting, electrical, working alone, aggressive visitors, ergonomics</td><td>None</td></tr>
+  </table>
+  <p class="small muted">Templates were written for this product and use common Canadian practice (for example, BC food-safety temperatures). Companies can switch photo rules per hazard; later, &quot;Tailor these forms with Claude&quot; will adapt them further (needs a Claude API key).</p>
+</section>
+
+<section class="section">
+  <p class="eyebrow">01 · Construction template in detail</p>
   <h2>Field Level Hazard Assessment</h2>
   <p>The FLHA is a short pre-task check where each worker identifies the hazards of today's work and how they're controlled. It is widely used on Canadian construction sites as part of the hazard assessment that occupational safety rules require, and it must be redone when the task or conditions change.<sup><a href="#s6">6</a> <a href="#s7">7</a></sup> WorkSafeBC does not mandate one specific FLHA form, so ours is a strong default that each company can adapt.</p>
   <div class="cards c2">
@@ -224,7 +240,7 @@ a{color:inherit}
     <div class="card"><h4>5 · PPE check</h4>Hard hat · hi-vis · safety boots · eye protection · gloves · hearing protection · fall protection. One PPE photo (compliance photo).</div>
     <div class="card"><h4>6 · Sign-off</h4>Worker signs on screen. Supervisor reviews and countersigns from the dashboard. If conditions change, "Update my FLHA" creates a new version, never an overwrite.</div>
   </div>
-  <div class="note"><strong>Food service (second industry)</strong> uses the same engine with different templates: opening checklist, fridge and cooler temperature log, food-handler hygiene check, and closing checklist.</div>
+  <div class="note">The other five industries follow the same structure with their own questions, hazards, checks and PPE (see the previous page).</div>
 </section>
 
 <section class="section">
@@ -385,10 +401,12 @@ flowchart TD
     <tr><td><strong>Trigger events</strong></td><td>A COR audit, an incident or near miss, an insurer request, a new large site, a failed muster drill</td></tr>
   </table>
   <table>
-    <tr><th style="width:24%">Secondary ICP</th><th>Food service</th></tr>
-    <tr><td><strong>Company</strong></td><td>Restaurant groups, commercial kitchens, caterers with 2–20 locations</td></tr>
-    <tr><td><strong>Forms</strong></td><td>Opening and closing checklists, temperature logs, hygiene checks</td></tr>
-    <tr><td><strong>Buyer</strong></td><td>Operations manager or owner</td></tr>
+    <tr><th style="width:24%">Other industries</th><th>Supported from sign-up</th></tr>
+    <tr><td><strong>Warehouse and logistics</strong></td><td>Distribution centres and cross-docks; buyer: operations or EHS manager</td></tr>
+    <tr><td><strong>Kitchen and food service</strong></td><td>Restaurant groups, commercial kitchens, caterers with 2–20 locations; buyer: operations manager or owner</td></tr>
+    <tr><td><strong>Manufacturing</strong></td><td>Plants and fabrication shops; buyer: plant or EHS manager</td></tr>
+    <tr><td><strong>Cleaning and facilities</strong></td><td>Janitorial and building-services contractors across many buildings; buyer: operations manager</td></tr>
+    <tr><td><strong>Other / general</strong></td><td>Any workplace that wants a daily check-in and visitor log</td></tr>
   </table>
   <h3>Not a fit (for now)</h3>
   <ul>
@@ -575,11 +593,11 @@ audit_log        (id, company_id, actor_id, action, target, at, details_json)  -
     <tr><td><strong>Founding document v0.3</strong></td><td>This document: the site-safety pivot</td><td><span class="badge done">Done</span></td></tr>
     <tr><td><strong>1. Check-in prototype</strong></td><td>Clickable flow: scan → identify → selfie → site check → FLHA with compliance photos → sign. Dashboard with roster, FLHAs, hazards and selfie review. Billing page linked next to Admin. Visitor form. Demo data: Northshore Builders</td><td><span class="badge done">Done</span></td></tr>
     <tr><td><strong>2. Vercel deployment</strong></td><td>Live at musterpass.vercel.app, deploying from <code>main</code> with preview links per branch. HTTPS for real phone testing (camera, location, hashing). Environment variables added when Supabase arrives</td><td><span class="badge done">Done</span></td></tr>
+    <tr><td><strong>Industry templates</strong></td><td>Six industries at sign-up, each with its own daily form, checks, photo rules and demo company</td><td><span class="badge done">Done</span></td></tr>
     <tr><td><strong>3. Supabase foundation</strong></td><td>Projects (dev, staging, prod) in Canada; schema, RLS and isolation tests; auth (admins, workers, walk-ons); private photo storage with hashing; audit log</td><td><span class="badge next">Next</span></td></tr>
     <tr><td><strong>4. SaaS onboarding</strong></td><td>Sign-up, industry auto-setup, sites, invites, subcontractor companies</td><td><span class="badge">Later</span></td></tr>
     <tr><td><strong>5. Trust</strong></td><td>Geofence and QR tokens enforced server-side; supervisor countersign; exports (PDF, CSV)</td><td><span class="badge">Later</span></td></tr>
     <tr><td><strong>6. Billing</strong></td><td>Stripe subscriptions per company, trial, plans, customer portal</td><td><span class="badge">Later</span></td></tr>
-    <tr><td><strong>7. Food service</strong></td><td>Templates and dashboard for kitchens</td><td><span class="badge">Later</span></td></tr>
     <tr><td><strong>Future</strong></td><td>Upload a paper form to convert it (AI); face matching (after legal review); proximity prompts; offline-first native wrapper</td><td><span class="badge">Future</span></td></tr>
   </table>
   <div class="cards c2">
@@ -625,7 +643,7 @@ first. It is the source of truth for vision, brand, privacy and architecture.
 
 Context
 - Product: one QR scan at a site entrance -> identify -> selfie -> site check -> FLHA with
-  compliance photos -> sign -> checked in (and clocked in). Construction first, food second.
+  compliance photos -> sign -> checked in (and clocked in). Six industry templates in lib/templates/.
   Everyone on site checks in: employees, subcontractors and visitors.
 - Stack: Next.js 16 App Router, React 19, Tailwind 4, TypeScript. Vercel. Supabase (Canada
   Central): Postgres + Auth + Storage + Realtime, with RLS on every table. Stripe for billing.

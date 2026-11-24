@@ -46,12 +46,12 @@ export function Field({
         aria-describedby={error ? `${id}-error` : undefined}
         className={`w-full rounded-2xl border px-4 py-3.5 text-base outline-none ${
           dark
-            ? "border-graphite bg-graphite text-bone placeholder:text-smoke focus:border-bone"
+            ? "border-graphite bg-graphite text-bone placeholder:text-bone/55 focus:border-bone"
             : "border-line bg-white text-ink focus:border-ink"
         }`}
         {...props}
       />
-      {hint && !error && <p className={`mt-1.5 text-xs ${dark ? "text-smoke" : "text-graphite/70"}`}>{hint}</p>}
+      {hint && !error && <p className={`mt-1.5 text-xs ${dark ? "text-bone/70" : "text-graphite/70"}`}>{hint}</p>}
       {error && (
         <p id={`${id}-error`} role="alert" className={`mt-1.5 text-sm ${dark ? "text-pop" : "text-pop-deep"}`}>
           {error}

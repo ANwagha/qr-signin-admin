@@ -3,7 +3,7 @@
 
 import { useEffect, type ReactNode } from "react";
 import { Button, Pill } from "@/components/ui";
-import { hazardById } from "@/lib/flha";
+import { checkFailed, hazardById, templateFor } from "@/lib/templates";
 import {
   countersign,
   flagsFor,
@@ -87,6 +87,7 @@ export default function RecordDetail({ s, c, onClose }: { s: State; c: CheckIn; 
   const person = personFor(s, c);
   const site = s.sites.find((x) => x.id === c.siteId);
   const flags = flagsFor(c);
+  const t = templateFor(c.form.kind === "safety" ? c.form.answers.templateId : s.company?.industry);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -155,28 +156,52 @@ export default function RecordDetail({ s, c, onClose }: { s: State; c: CheckIn; 
             </p>
           </Section>
 
-          <Section title={c.form.kind === "flha" ? "3 · Field Level Hazard Assessment" : "3 · Visitor form"}>
-            {c.form.kind === "flha" ? (
+          <Section title={c.form.kind === "safety" ? `3 · ${t.formName}` : "3 · Visitor form"}>
+            {c.form.kind === "safety" ? (
               <dl className="grid gap-x-4 gap-y-1.5 text-sm sm:grid-cols-[9rem_1fr]">
                 <dt className="text-graphite/70">Task</dt>
                 <dd>{c.form.answers.task} {c.form.answers.workArea && `· ${c.form.answers.workArea}`}</dd>
                 <dt className="text-graphite/70">Supervisor</dt>
                 <dd>{c.form.answers.supervisor}</dd>
-                <dt className="text-graphite/70">Fit for duty</dt>
-                <dd>{c.form.answers.fitForDuty ? "Yes" : <strong className="text-pop-deep">No</strong>}</dd>
-                <dt className="text-graphite/70">Knows muster point</dt>
-                <dd>{c.form.answers.knowsMuster ? "Yes" : <strong className="text-pop-deep">No</strong>}</dd>
+                {t.readiness.map((q) => {
+                  const v = c.form.kind === "safety" ? c.form.answers.readiness[q.id] : undefined;
+                  return (
+                    <div key={q.id} className="contents">
+                      <dt className="text-graphite/70">{q.question}</dt>
+                      <dd>{v === q.expected ? (v ? "Yes" : "No") : <strong className="text-pop-deep">{v ? "Yes" : "No"}</strong>}</dd>
+                    </div>
+                  );
+                })}
                 <dt className="text-graphite/70">Hazards and controls</dt>
                 <dd>
                   <ul className="space-y-0.5">
                     {c.form.answers.hazards.map((id) => (
                       <li key={id}>
-                        <strong>{hazardById(id)?.label}</strong>: {(c.form.kind === "flha" && c.form.answers.controls[id]?.join(", ")) || "—"}
+                        <strong>{hazardById(t, id)?.label ?? id}</strong>: {(c.form.kind === "safety" && c.form.answers.controls[id]?.join(", ")) || "—"}
                       </li>
                     ))}
                     {c.form.answers.otherHazard && <li><strong>Other</strong>: {c.form.answers.otherHazard}</li>}
                   </ul>
                 </dd>
+                {t.checks.length > 0 && (
+                  <>
+                    <dt className="text-graphite/70">{t.checksTitle}</dt>
+                    <dd>
+                      <ul className="space-y-0.5">
+                        {t.checks.map((ch) => {
+                          const a = c.form.kind === "safety" ? c.form.answers.checks[ch.id] : undefined;
+                          const bad = checkFailed(t, ch.id, a);
+                          const v = ch.kind === "number" ? `${a?.value ?? "—"} ${ch.unit}` : ch.kind === "passfail" ? (a?.pass ? "Pass" : "Fail") : "Photo taken";
+                          return (
+                            <li key={ch.id} className={bad ? "font-semibold text-pop-deep" : ""}>
+                              {ch.label}: {v}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </dd>
+                  </>
+                )}
                 <dt className="text-graphite/70">PPE</dt>
                 <dd>{c.form.answers.ppe.join(", ")}</dd>
               </dl>
@@ -208,14 +233,14 @@ export default function RecordDetail({ s, c, onClose }: { s: State; c: CheckIn; 
                 <img src={c.signature} alt="Worker signature" className="h-20 rounded-xl border border-line bg-white" />
                 <figcaption className="mt-1 text-xs text-graphite/70">Signed {formatTime(c.inAt)}</figcaption>
               </figure>
-              {c.form.kind === "flha" &&
+              {c.form.kind === "safety" &&
                 (c.review.countersignedAt ? (
                   <p className="text-sm">
                     Countersigned by <strong>{c.review.countersignedBy}</strong> at {formatTime(c.review.countersignedAt)}
                   </p>
                 ) : (
                   <Button size="sm" variant="ink" className="no-print" onClick={() => countersign(c.id, s.company!.ownerName)}>
-                    Countersign FLHA
+                    Countersign
                   </Button>
                 ))}
             </div>

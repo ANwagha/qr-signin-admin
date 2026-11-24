@@ -8,6 +8,7 @@ import { Button, Choice, Field } from "@/components/ui";
 import Wordmark from "@/components/Wordmark";
 import { loadDemo } from "@/lib/demo-seed";
 import { createCompany, roleLabel, useStore, type Industry, type Role, type Site } from "@/lib/store";
+import { TEMPLATES, templateFor } from "@/lib/templates";
 
 const STEPS = ["Company", "Industry", "First site", "Your team", "Ready"];
 
@@ -29,6 +30,9 @@ export default function SignupWizard() {
   const [inviteText, setInviteText] = useState("");
   const [inviteRole, setInviteRole] = useState<Role>("supervisor");
   const [created, setCreated] = useState<Site | null>(null);
+  const [demoOpen, setDemoOpen] = useState(false);
+  const t = templateFor(industry);
+  const Noun = t.siteNoun.charAt(0).toUpperCase() + t.siteNoun.slice(1);
 
   function next(e?: FormEvent) {
     e?.preventDefault();
@@ -39,7 +43,7 @@ export default function SignupWizard() {
       if (!/^\S+@\S+\.\S+$/.test(ownerEmail.trim())) errs.ownerEmail = "Add a valid work email.";
     }
     if (step === 2) {
-      if (!siteName.trim()) errs.siteName = "Name the site, like Lonsdale Tower.";
+      if (!siteName.trim()) errs.siteName = `Name the ${t.siteNoun}, like ${t.siteExample}.`;
       if (!Number(radius) || Number(radius) < 25) errs.radius = "Use at least 25 metres.";
     }
     if (step === 3) {
@@ -86,8 +90,8 @@ export default function SignupWizard() {
     );
   }
 
-  async function exploreDemo() {
-    await loadDemo();
+  async function exploreDemo(id: Industry) {
+    await loadDemo(id);
     router.push("/admin");
   }
 
@@ -98,10 +102,26 @@ export default function SignupWizard() {
           <Link href="/" aria-label="Musterpass home">
             <Wordmark tone="bone" />
           </Link>
-          <button onClick={exploreDemo} className="text-sm text-smoke hover:text-bone">
-            Explore the demo instead
+          <button onClick={() => setDemoOpen((o) => !o)} aria-expanded={demoOpen} className="text-sm text-smoke hover:text-bone">
+            Explore a demo instead
           </button>
         </div>
+        {demoOpen && (
+          <div className="mx-auto max-w-3xl px-4 pb-4">
+            <p className="mb-2 text-sm text-smoke">Pick an industry to load a demo company with check-ins already in it:</p>
+            <div className="flex flex-wrap gap-2">
+              {TEMPLATES.map((x) => (
+                <button
+                  key={x.id}
+                  onClick={() => exploreDemo(x.id)}
+                  className="min-h-10 rounded-full border border-graphite px-4 text-sm font-medium text-bone hover:border-bone"
+                >
+                  {x.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </header>
 
       <div className="mx-auto max-w-xl px-4 py-10">
@@ -138,36 +158,39 @@ export default function SignupWizard() {
             <>
               <h1 className="font-display text-3xl font-bold">What industry are you in?</h1>
               <p className="text-graphite/70">We set up your forms, dashboard and wording to match.</p>
-              <div className="grid gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIndustry("construction")}
-                  aria-pressed={industry === "construction"}
-                  className={`rounded-3xl border p-5 text-left transition ${industry === "construction" ? "border-ink bg-ink text-bone" : "border-line bg-white"}`}
-                >
-                  <p className="font-display text-xl font-bold">Construction</p>
-                  <p className={`mt-1 text-sm ${industry === "construction" ? "text-smoke" : "text-graphite/70"}`}>
-                    Daily Field Level Hazard Assessment, PPE check, visitor sign-in, muster list.
-                  </p>
-                </button>
-                <div className="rounded-3xl border border-dashed border-line p-5 text-graphite/60">
-                  <p className="font-display text-xl font-bold">Food service</p>
-                  <p className="mt-1 text-sm">Opening checklist, temperature logs, hygiene checks. Coming next.</p>
-                </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {TEMPLATES.map((x) => {
+                  const on = industry === x.id;
+                  return (
+                    <button
+                      key={x.id}
+                      type="button"
+                      onClick={() => setIndustry(x.id)}
+                      aria-pressed={on}
+                      className={`rounded-3xl border p-5 text-left transition ${on ? "border-ink bg-ink text-bone" : "border-line bg-white hover:border-ink"}`}
+                    >
+                      <p className="font-display text-xl font-bold">{x.label}</p>
+                      <p className={`mt-1 text-sm ${on ? "text-smoke" : "text-graphite/70"}`}>{x.blurb}</p>
+                      <p className={`mt-3 text-xs font-medium ${on ? "text-bone" : "text-graphite"}`}>
+                        Loads: {x.formName} · {x.hazards.length} hazards{x.checks.length ? ` · ${x.checks.length} checks` : ""}
+                      </p>
+                    </button>
+                  );
+                })}
               </div>
             </>
           )}
 
           {step === 2 && (
             <>
-              <h1 className="font-display text-3xl font-bold">Add your first site</h1>
-              <p className="text-graphite/70">Each site gets its own QR poster and boundary for the on-site check.</p>
-              <Field label="Site name" value={siteName} onChange={(e) => setSiteName(e.target.value)} placeholder="Lonsdale Tower" error={errors.siteName} autoFocus />
-              <Field label="Address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="1200 Lonsdale Ave, North Vancouver, BC" />
+              <h1 className="font-display text-3xl font-bold">Add your first {t.siteNoun}</h1>
+              <p className="text-graphite/70">Each {t.siteNoun} gets its own QR poster and boundary for the on-site check.</p>
+              <Field label={`${Noun} name`} value={siteName} onChange={(e) => setSiteName(e.target.value)} placeholder={t.siteExample} error={errors.siteName} autoFocus />
+              <Field label="Address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder={t.addressExample} />
               <div className="rounded-2xl border border-line bg-white p-4">
-                <p className="text-sm font-medium">Site location</p>
+                <p className="text-sm font-medium">{Noun} location</p>
                 <p className="mt-1 text-xs text-graphite/70">
-                  Standing on site? Use your location to set the boundary centre. In the full product we&apos;ll look up the address instead.
+                  Standing at the {t.siteNoun}? Use your location to set the boundary centre. In the full product we&apos;ll look up the address instead.
                 </p>
                 <div className="mt-3 flex flex-wrap items-center gap-3">
                   <Button type="button" variant="outline" size="sm" onClick={locateMe}>
@@ -217,7 +240,7 @@ export default function SignupWizard() {
               <h1 className="font-display text-3xl font-bold">{company} is ready</h1>
               <ul className="space-y-2 text-sm">
                 {[
-                  "Construction setup loaded: FLHA, PPE check and visitor form",
+                  `${t.label} setup loaded: ${t.formName}, PPE check and visitor form`,
                   "Safety dashboard with roster, reviews and muster list",
                   `${created.name} added with a ${radius} m boundary`,
                   emails().length ? `${emails().length} invite${emails().length > 1 ? "s" : ""} queued` : "Invite people any time from People",
