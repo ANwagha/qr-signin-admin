@@ -1,29 +1,7 @@
 import Link from "next/link";
 import HeroCarousel from "@/components/HeroCarousel";
+import HowItWorks from "@/components/HowItWorks";
 import Wordmark from "@/components/Wordmark";
-
-const steps = [
-  {
-    n: "1",
-    title: "Scan",
-    body: "Everyone scans the gate poster with their phone camera. No app.",
-  },
-  {
-    n: "2",
-    title: "Selfie + location",
-    body: "A live selfie and a one-time location check prove who is really there.",
-  },
-  {
-    n: "3",
-    title: "Your forms, if any",
-    body: "Add your own quick questions, checklists or photos, or skip forms entirely.",
-  },
-  {
-    n: "4",
-    title: "Clocked in",
-    body: "Hours, attendance and the emergency list update instantly.",
-  },
-];
 
 export default function Home() {
   return (
@@ -75,17 +53,7 @@ export default function Home() {
           </div>
         </div>
 
-        <ol className="mt-16 grid gap-3 sm:grid-cols-4">
-          {steps.map((s) => (
-            <li key={s.n} className="rounded-3xl bg-raised p-5">
-              <span className="font-display text-sm font-bold text-muted">
-                {s.n}
-              </span>
-              <h2 className="mt-1 font-display text-lg font-bold">{s.title}</h2>
-              <p className="mt-1 text-sm text-muted">{s.body}</p>
-            </li>
-          ))}
-        </ol>
+        <HowItWorks />
       </section>
 
       <footer className="mx-auto w-full max-w-5xl text-xs text-muted">

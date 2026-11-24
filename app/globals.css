@@ -100,6 +100,66 @@ body {
   .animate-tock-pulse, .animate-tock-in { animation: none; }
 }
 
+/* ---------- Homepage "how it works" steps (components/HowItWorks.tsx) ----------
+   Cards fade up once when first scrolled into view. Each illustration loops every 4 s,
+   but only while the section is on screen ([data-play]). All of it is off for reduced motion. */
+.hiw [class*="hiw-"] { transform-box: fill-box; transform-origin: center; }
+.hiw[data-reveal="waiting"] .hiw-card { opacity: 0; transform: translateY(16px); }
+.hiw[data-reveal="shown"] .hiw-card { animation: hiw-rise 600ms cubic-bezier(.2,.8,.2,1) both; }
+@keyframes hiw-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+.hiw[data-play] .hiw-nudge { animation: hiw-nudge 4s ease-in-out infinite; }
+.hiw[data-play] .hiw-scanline { animation: hiw-scan 4s ease-in-out infinite; }
+.hiw[data-play] .hiw-pop { animation: hiw-pop 4s ease-out infinite; }
+.hiw .hiw-pop { transform: scale(0); }
+@keyframes hiw-nudge { 0%, 100% { transform: translateX(8px) rotate(4deg); } 25%, 80% { transform: none; } }
+@keyframes hiw-scan { 0%, 20% { transform: translateY(0); opacity: 0; } 25% { opacity: 1; } 45% { transform: translateY(42px); } 55% { transform: translateY(0); opacity: 1; } 60%, 100% { opacity: 0; } }
+@keyframes hiw-pop { 0%, 58% { transform: scale(0); } 66% { transform: scale(1.2); } 72%, 88% { transform: scale(1); } 95%, 100% { transform: scale(0); } }
+
+.hiw[data-play] .hiw-focus { animation: hiw-focus 4s ease-out infinite; }
+.hiw[data-play] .hiw-drop { animation: hiw-drop 4s cubic-bezier(.3,1.4,.5,1) infinite; }
+.hiw[data-play] .hiw-ripple { animation: hiw-ripple 4s ease-out infinite; }
+.hiw .hiw-ripple { opacity: 0; }
+@keyframes hiw-focus { 0% { transform: scale(1.25); opacity: 0; } 15%, 85% { transform: scale(1); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+@keyframes hiw-drop { 0%, 30% { transform: translateY(-36px); opacity: 0; } 32% { opacity: 1; } 45%, 90% { transform: none; opacity: 1; } 100% { transform: none; opacity: 0; } }
+@keyframes hiw-ripple { 0%, 45% { transform: scale(0.3); opacity: 0; } 48% { opacity: 1; } 75%, 100% { transform: scale(1.5); opacity: 0; } }
+
+.hiw[data-play] .hiw-fill { animation: hiw-fill 4s ease infinite; }
+.hiw[data-play] .hiw-yes { animation: hiw-yes 4s ease infinite; }
+.hiw .hiw-fill { opacity: 0; }
+.hiw .hiw-tick { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.hiw[data-play] .hiw-tick { animation: hiw-tick 4s ease-out infinite; }
+.hiw[data-play] .hiw-tick-2 { animation-name: hiw-tick-2; }
+.hiw[data-play] .hiw-tick-3 { animation-name: hiw-tick-3; }
+.hiw[data-play] .hiw-flash { animation: hiw-flash 4s ease-out infinite; }
+@keyframes hiw-fill { 0%, 8% { opacity: 0; } 14%, 90% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes hiw-yes { 0%, 8% { fill: #8a8a85; } 14%, 90% { fill: #f5f5f0; } 100% { fill: #8a8a85; } }
+@keyframes hiw-tick { 0%, 22% { stroke-dashoffset: 1; } 30%, 90% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+@keyframes hiw-tick-2 { 0%, 34% { stroke-dashoffset: 1; } 42%, 90% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+@keyframes hiw-tick-3 { 0%, 46% { stroke-dashoffset: 1; } 54%, 90% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+@keyframes hiw-flash { 0%, 60% { transform: scale(1); } 66% { transform: scale(1.18); } 72%, 100% { transform: scale(1); } }
+
+.hiw[data-play] .hiw-roll { animation: hiw-roll 4s cubic-bezier(.5,0,.2,1) infinite; }
+.hiw[data-play] .hiw-hand { animation: hiw-hand 4s linear infinite; }
+.hiw[data-play] .hiw-blink { animation: hiw-blink 4s ease infinite; }
+.hiw .hiw-hand { transform-box: view-box; transform-origin: 146px 53px; }
+.hiw .hiw-roll { transform-box: view-box; }
+.hiw .hiw-blink { opacity: 0; }
+@keyframes hiw-roll { 0%, 30% { transform: translateY(0); } 45%, 92% { transform: translateY(-40px); } 100% { transform: translateY(0); } }
+@keyframes hiw-hand { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes hiw-blink { 0%, 38% { opacity: 0; transform: scale(0.2); } 46% { opacity: 1; transform: scale(1.6); } 54%, 92% { opacity: 1; transform: scale(1); } 100% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  /* Show every illustration in its finished state, with no movement. */
+  .hiw .hiw-card, .hiw [class*="hiw-"] { animation: none !important; }
+  .hiw[data-reveal="waiting"] .hiw-card { opacity: 1; transform: none; }
+  .hiw .hiw-pop, .hiw .hiw-blink { transform: none; opacity: 1; }
+  .hiw .hiw-fill { opacity: 1; }
+  .hiw .hiw-yes { fill: #f5f5f0; }
+  .hiw .hiw-tick { stroke-dashoffset: 0; }
+  .hiw .hiw-roll { transform: translateY(-40px); }
+}
+
 @media print {
   @page { margin: 12mm; }
   /* Always print in light colours, whatever the screen theme. */
