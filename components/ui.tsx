@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
 
 // Shared building blocks. Colours use the theme roles (bg, surface, raised, fg, muted, line, alert)
-// so everything follows light and dark mode. Volt and pop stay fixed: text on them is always ink.
+// so everything follows light and dark mode. Volt and pop stay fixed: text on volt is ink, text on pop (alert red) is white.
 
 type Variant = "volt" | "ink" | "outline" | "outline-dark" | "ghost" | "danger";
 
@@ -11,7 +11,7 @@ const variants: Record<Variant, string> = {
   outline: "border border-line text-fg hover:border-fg",
   "outline-dark": "border border-line text-fg hover:border-fg",
   ghost: "text-muted hover:text-fg",
-  danger: "bg-pop text-ink hover:brightness-95",
+  danger: "bg-pop text-white hover:brightness-90",
 };
 
 export function Button({
@@ -70,7 +70,7 @@ export function Pill({ tone = "neutral", children }: { tone?: "neutral" | "ink" 
   const tones = {
     neutral: "bg-line/70 text-fg/85",
     ink: "bg-fg text-bg",
-    pop: "bg-pop text-ink",
+    pop: "bg-pop text-white",
     volt: "bg-volt text-ink",
     outline: "border border-line text-fg/85",
   };

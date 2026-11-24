@@ -3,13 +3,13 @@
 /* Musterpass "Electric" palette — see docs/Musterpass-Founding-Document.pdf, section 07.
    Fixed brand colours (ink, volt, bone, pop…) are for brand moments: the top bar, posters, the
    main action button. Everything else uses the theme roles below, which flip for dark mode.
-   Rules: one volt element per screen; text on volt is ink; never volt text on a light background. */
+   Rules: one volt element per screen; text on volt is ink; text on alert red is white; never volt text on a light background. */
 @theme inline {
   --color-ink: #141414;
   --color-volt: #c6f432;
   --color-bone: #f5f5f0;
-  --color-pop: #ff3b30; /* alert red: fills, borders, dots. Text on it is ink (5.2:1). */
-  --color-pop-deep: #d70015;
+  --color-pop: #ca2a30; /* alert red: fills, borders, dots. Text on it is white (5.4:1). */
+  --color-pop-deep: #ca2a30;
   --color-graphite: #2a2a2a;
   --color-smoke: #8a8a85;
 
@@ -36,12 +36,12 @@
   --fg: #141414;
   --muted: #5e5e59;
   --line: #dddcd3;
-  --alert: #d70015;
+  --alert: #ca2a30;
   --accent-fg: #4f6600;
 }
 
 /* Dark: follows the device unless the person picked Light, or forced with data-theme="dark".
-   Contrast on bg/surface/raised: fg ≥ 13:1, muted ≥ 5.6:1, alert ≥ 4.6:1, accent-fg ≥ 11:1. */
+   Contrast on bg/surface/raised: fg ≥ 13:1, muted ≥ 5.6:1, alert ≥ 4.9:1, accent-fg ≥ 11:1. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
@@ -51,7 +51,7 @@
     --fg: #f5f5f0;
     --muted: #a3a39e;
     --line: #3a3a38;
-    --alert: #ff5a50;
+    --alert: #ff6369;
     --accent-fg: #c6f432;
   }
 }
@@ -64,7 +64,7 @@
   --fg: #f5f5f0;
   --muted: #a3a39e;
   --line: #3a3a38;
-  --alert: #ff5a50;
+  --alert: #ff6369;
   --accent-fg: #c6f432;
 }
 
@@ -106,7 +106,7 @@ body {
     --fg: #141414;
     --muted: #5e5e59;
     --line: #dddcd3;
-    --alert: #d70015;
+    --alert: #ca2a30;
     --accent-fg: #4f6600;
   }
   html, body { background: #fff; }

@@ -99,7 +99,7 @@ function QuestionEditor({
                           const next = on ? cur.filter((x) => x !== o) : [...cur, o];
                           onChange({ ...q, flag: next.length ? { options: next } : undefined });
                         }}
-                        className={`min-h-9 rounded-full border px-3 text-xs font-medium ${on ? "border-pop bg-pop text-ink" : "border-line bg-raised"}`}
+                        className={`min-h-9 rounded-full border px-3 text-xs font-medium ${on ? "border-pop bg-pop text-white" : "border-line bg-raised"}`}
                       >
                         {o}
                       </button>
@@ -125,7 +125,7 @@ function QuestionEditor({
                     type="button"
                     aria-pressed={on}
                     onClick={() => onChange({ ...q, flag: v === undefined ? undefined : { yesno: v } })}
-                    className={`min-h-9 rounded-full border px-3 text-xs font-medium ${on ? (v === undefined ? "border-fg bg-fg text-bg" : "border-pop bg-pop text-ink") : "border-line bg-raised"}`}
+                    className={`min-h-9 rounded-full border px-3 text-xs font-medium ${on ? (v === undefined ? "border-fg bg-fg text-bg" : "border-pop bg-pop text-white") : "border-line bg-raised"}`}
                   >
                     {l}
                   </button>

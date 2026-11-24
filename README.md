@@ -52,4 +52,4 @@ The app follows the device's light or dark setting, and a sun/moon switch in the
 
 ## Brand tokens
 
-Defined in `app/globals.css` as Tailwind classes (`bg-ink`, `text-volt`, …): `ink` #141414, `volt` #C6F432 (the one primary action per screen; ink text on it), `bone` #F5F5F0, `pop` #FF3B30 (alert red: flags, clock-out, alert borders; ink text on it), `pop-deep` #D70015 (red text on light backgrounds), `graphite` #2A2A2A, `smoke` #8A8A85, `line` #DDDCD3.
+Defined in `app/globals.css` as Tailwind classes (`bg-ink`, `text-volt`, …): `ink` #141414, `volt` #C6F432 (the one primary action per screen; ink text on it), `bone` #F5F5F0, `pop` #CA2A30 (alert red: flags, clock-out, alert borders; white text on it), `pop-deep` #CA2A30 (red text on light backgrounds; #FF6369 in dark mode), `graphite` #2A2A2A, `smoke` #8A8A85, `line` #DDDCD3.
