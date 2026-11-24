@@ -1,6 +1,9 @@
 type Props = {
-  /** "volt" for brand moments on ink; "bone" where another element is the screen's one volt accent. */
-  tone?: "volt" | "bone" | "ink";
+  /**
+   * "volt" for brand moments on ink (posters); "bone" on the fixed black top bar;
+   * "fg" on themed pages, so it follows light and dark mode.
+   */
+  tone?: "volt" | "bone" | "ink" | "fg";
   className?: string;
 };
 
@@ -8,6 +11,7 @@ const toneClass = {
   volt: "text-volt",
   bone: "text-bone",
   ink: "text-ink",
+  fg: "text-fg",
 } as const;
 
 export default function Wordmark({ tone = "volt", className = "" }: Props) {

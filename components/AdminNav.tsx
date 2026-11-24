@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
+import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui";
 import Wordmark from "@/components/Wordmark";
 import { loadDemo } from "@/lib/demo-seed";
@@ -22,7 +23,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
   const store = useStore();
 
   return (
-    <div className="min-h-screen bg-bone text-ink">
+    <div className="min-h-screen bg-bg text-fg">
       <header className="no-print bg-ink text-bone">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
           <div className="flex items-center gap-3">
@@ -46,6 +47,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
               );
             })}
           </nav>
+          <ThemeToggle onDark />
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-8">
@@ -64,7 +66,7 @@ function NoCompany() {
   return (
     <div className="mx-auto max-w-lg py-16 text-center">
       <h1 className="font-display text-3xl font-bold">No company set up yet</h1>
-      <p className="mt-2 text-graphite/70">
+      <p className="mt-2 text-muted">
         Sign up your company to get your dashboard, or explore Northshore Builders, a demo construction company with
         check-ins already in it.
       </p>

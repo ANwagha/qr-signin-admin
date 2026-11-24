@@ -46,6 +46,10 @@ Then open http://localhost:3000.
 
 Next.js 16 (App Router, `cacheComponents`), React 19, Tailwind CSS 4, TypeScript, `qrcode.react`. Fonts: Space Grotesk and Inter. Planned: Supabase (Canada region), Vercel, Stripe.
 
+## Light and dark mode
+
+The app follows the device's light or dark setting, and a sun/moon switch in the header (Auto, Light, Dark) overrides it per browser. Pages use theme roles defined in `app/globals.css` as Tailwind classes: `bg`, `surface`, `raised`, `fg`, `muted`, `line`, `alert` and `accent-fg`. Each has a light and a dark value, all at 4.5:1 contrast or better. Printing always uses light colours. The black top bar, posters and the lime and pink buttons keep their fixed brand colours.
+
 ## Brand tokens
 
-Defined in `app/globals.css` as Tailwind classes (`bg-ink`, `text-volt`, …): `ink` #141414, `volt` #C6F432 (the one primary action per screen; ink text on it), `bone` #F5F5F0, `pop` #FF5C8A (flags, check-out), `pop-deep` #B8154F (pink text on light backgrounds), `graphite` #2A2A2A, `smoke` #8A8A85, `line` #DDDCD3.
+Defined in `app/globals.css` as Tailwind classes (`bg-ink`, `text-volt`, …): `ink` #141414, `volt` #C6F432 (the one primary action per screen; ink text on it), `bone` #F5F5F0, `pop` #FF3B30 (alert red: flags, clock-out, alert borders; ink text on it), `pop-deep` #D70015 (red text on light backgrounds), `graphite` #2A2A2A, `smoke` #8A8A85, `line` #DDDCD3.

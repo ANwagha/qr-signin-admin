@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button, Card, Field } from "@/components/ui";
 import { QUESTION_TYPES, newId, type FormDef, type Question, type QuestionType } from "@/lib/forms";
 
-const inputCls = "w-full rounded-xl border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink";
+const inputCls = "w-full rounded-xl border border-line bg-raised px-3 py-2 text-sm outline-none focus:border-fg";
 
 function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boolean) => void; label: string }) {
   return (
@@ -15,9 +15,9 @@ function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boolean) =
         aria-checked={on}
         aria-label={label}
         onClick={() => onChange(!on)}
-        className={`relative h-7 w-12 shrink-0 rounded-full transition ${on ? "bg-ink" : "bg-line"}`}
+        className={`relative h-7 w-12 shrink-0 rounded-full transition ${on ? "bg-fg" : "bg-line"}`}
       >
-        <span className={`absolute top-1 size-5 rounded-full bg-bone transition-all ${on ? "left-6" : "left-1"}`} />
+        <span className={`absolute top-1 size-5 rounded-full bg-bg transition-all ${on ? "left-6" : "left-1"}`} />
       </button>
       <span aria-hidden>{label}</span>
     </label>
@@ -50,9 +50,9 @@ function QuestionEditor({
     });
 
   return (
-    <li className="rounded-2xl border border-line bg-white p-4">
+    <li className="rounded-2xl border border-line bg-raised p-4">
       <div className="flex items-start gap-3">
-        <span className="mt-2 text-sm font-semibold text-graphite/60">{index + 1}</span>
+        <span className="mt-2 text-sm font-semibold text-muted">{index + 1}</span>
         <div className="flex-1 space-y-3">
           <input aria-label="Question" value={q.label} onChange={(e) => onChange({ ...q, label: e.target.value })} className={`${inputCls} font-medium`} />
           <div className="flex flex-wrap items-center gap-3">
@@ -69,7 +69,7 @@ function QuestionEditor({
           {(q.type === "choice" || q.type === "multi") && (
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="mb-1 block text-xs font-medium text-graphite/80" htmlFor={`opt-${q.id}`}>
+                <label className="mb-1 block text-xs font-medium text-muted" htmlFor={`opt-${q.id}`}>
                   Options (one per line)
                 </label>
                 <textarea
@@ -85,7 +85,7 @@ function QuestionEditor({
                 />
               </div>
               <div>
-                <p className="mb-1 text-xs font-medium text-graphite/80">Alert the supervisor when picked</p>
+                <p className="mb-1 text-xs font-medium text-muted">Alert the supervisor when picked</p>
                 <div className="flex flex-wrap gap-1.5">
                   {(q.options ?? []).map((o) => {
                     const on = !!q.flag?.options?.includes(o);
@@ -99,7 +99,7 @@ function QuestionEditor({
                           const next = on ? cur.filter((x) => x !== o) : [...cur, o];
                           onChange({ ...q, flag: next.length ? { options: next } : undefined });
                         }}
-                        className={`min-h-9 rounded-full border px-3 text-xs font-medium ${on ? "border-pop bg-pop text-ink" : "border-line bg-white"}`}
+                        className={`min-h-9 rounded-full border px-3 text-xs font-medium ${on ? "border-pop bg-pop text-ink" : "border-line bg-raised"}`}
                       >
                         {o}
                       </button>
@@ -112,7 +112,7 @@ function QuestionEditor({
 
           {q.type === "yesno" && (
             <div className="flex flex-wrap items-center gap-2 text-sm">
-              <span className="text-graphite/80">Alert the supervisor on</span>
+              <span className="text-muted">Alert the supervisor on</span>
               {[
                 { v: undefined, l: "Never" },
                 { v: true, l: "Yes" },
@@ -125,7 +125,7 @@ function QuestionEditor({
                     type="button"
                     aria-pressed={on}
                     onClick={() => onChange({ ...q, flag: v === undefined ? undefined : { yesno: v } })}
-                    className={`min-h-9 rounded-full border px-3 text-xs font-medium ${on ? (v === undefined ? "border-ink bg-ink text-bone" : "border-pop bg-pop text-ink") : "border-line bg-white"}`}
+                    className={`min-h-9 rounded-full border px-3 text-xs font-medium ${on ? (v === undefined ? "border-fg bg-fg text-bg" : "border-pop bg-pop text-ink") : "border-line bg-raised"}`}
                   >
                     {l}
                   </button>
@@ -137,14 +137,14 @@ function QuestionEditor({
           {q.type === "number" && (
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="mb-1 block text-xs font-medium text-graphite/80" htmlFor={`unit-${q.id}`}>
+                <label className="mb-1 block text-xs font-medium text-muted" htmlFor={`unit-${q.id}`}>
                   Unit
                 </label>
                 <input id={`unit-${q.id}`} value={q.unit ?? ""} placeholder="°C" onChange={(e) => onChange({ ...q, unit: e.target.value || undefined })} className={inputCls} />
               </div>
               {(["min", "max"] as const).map((k) => (
                 <div key={k}>
-                  <label className="mb-1 block text-xs font-medium text-graphite/80" htmlFor={`${k}-${q.id}`}>
+                  <label className="mb-1 block text-xs font-medium text-muted" htmlFor={`${k}-${q.id}`}>
                     Alert if {k === "min" ? "below" : "above"}
                   </label>
                   <input
@@ -170,7 +170,7 @@ function QuestionEditor({
           <button type="button" aria-label="Move question down" disabled={index === count - 1} onClick={() => onMove(1)} className="size-9 rounded-lg border border-line text-sm disabled:opacity-30">
             ↓
           </button>
-          <button type="button" aria-label="Delete question" onClick={onDelete} className="size-9 rounded-lg border border-line text-sm text-pop-deep">
+          <button type="button" aria-label="Delete question" onClick={onDelete} className="size-9 rounded-lg border border-line text-sm text-alert">
             ✕
           </button>
         </div>
@@ -201,14 +201,14 @@ export default function FormEditor({ initial, onSave, onCancel }: { initial: For
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-graphite/80">Ask it when people</span>
+          <span className="text-muted">Ask it when people</span>
           {(["check-in", "check-out"] as const).map((w) => (
             <button
               key={w}
               type="button"
               aria-pressed={f.when === w}
               onClick={() => setF({ ...f, when: w })}
-              className={`min-h-9 rounded-full px-3.5 text-sm font-medium ${f.when === w ? "bg-ink text-bone" : "border border-line bg-white"}`}
+              className={`min-h-9 rounded-full px-3.5 text-sm font-medium ${f.when === w ? "bg-fg text-bg" : "border border-line bg-raised"}`}
             >
               {w === "check-in" ? "clock in" : "clock out"}
             </button>
@@ -246,7 +246,7 @@ export default function FormEditor({ initial, onSave, onCancel }: { initial: For
       </Button>
 
       {error && !error.startsWith("Give") && (
-        <p role="alert" className="mt-4 text-sm text-pop-deep">
+        <p role="alert" className="mt-4 text-sm text-alert">
           {error}
         </p>
       )}

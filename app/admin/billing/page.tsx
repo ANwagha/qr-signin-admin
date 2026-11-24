@@ -42,10 +42,10 @@ export default function BillingPage() {
     <div className="space-y-6">
       <PageHeader title="Billing" subtitle={`${c.name} · one price per company, never per worker`} />
 
-      <div className="rounded-3xl bg-ink p-6 text-bone">
-        <p className="text-sm text-smoke">Current plan</p>
+      <div className="rounded-3xl bg-fg p-6 text-bg">
+        <p className="text-sm text-bg/70">Current plan</p>
         <p className="mt-2 font-display text-3xl font-bold">{current ? current.name : "Free trial"}</p>
-        <p className="mt-1 text-smoke">
+        <p className="mt-1 text-bg/70">
           {current
             ? `${current.price === "Custom" ? "Custom pricing" : `${current.price} CAD per month`} · ${current.sites}`
             : `${daysLeft} days left · all features included · ${s.sites.length} site${s.sites.length === 1 ? "" : "s"} set up`}
@@ -56,20 +56,20 @@ export default function BillingPage() {
         {PLANS.map((p) => {
           const active = c.plan === p.id;
           return (
-            <Card key={p.id} className={`flex flex-col p-6 ${active ? "border-ink! border-2" : ""}`}>
+            <Card key={p.id} className={`flex flex-col p-6 ${active ? "border-fg! border-2" : ""}`}>
               <div className="flex items-start justify-between">
                 <h2 className="font-display text-xl font-bold">{p.name}</h2>
                 {active && <Pill tone="ink">Current</Pill>}
               </div>
               <p className="mt-3 font-display text-4xl font-bold">
                 {p.price}
-                {p.price !== "Custom" && <span className="text-base font-semibold text-graphite/70"> CAD / month</span>}
+                {p.price !== "Custom" && <span className="text-base font-semibold text-muted"> CAD / month</span>}
               </p>
               <p className="mt-1 text-sm font-medium">{p.sites}</p>
-              <ul className="mt-4 flex-1 space-y-1.5 text-sm text-graphite">
+              <ul className="mt-4 flex-1 space-y-1.5 text-sm text-fg/85">
                 {p.features.map((f) => (
                   <li key={f} className="flex gap-2">
-                    <span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-ink" />
+                    <span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-fg" />
                     {f}
                   </li>
                 ))}
@@ -89,12 +89,12 @@ export default function BillingPage() {
           );
         })}
       </div>
-      <p className="text-sm text-graphite/70">Prices are placeholders to test with pilot customers. Annual billing gets a discount.</p>
+      <p className="text-sm text-muted">Prices are placeholders to test with pilot customers. Annual billing gets a discount.</p>
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="p-6">
           <h2 className="font-display text-lg font-semibold">Payment method</h2>
-          <p className="mt-1 text-sm text-graphite/70">
+          <p className="mt-1 text-sm text-muted">
             Card details are handled by Stripe, never stored by Musterpass. Connected in the billing step of the roadmap.
           </p>
           <Button className="mt-4" variant="outline" disabled>
@@ -103,7 +103,7 @@ export default function BillingPage() {
         </Card>
         <Card className="p-6">
           <h2 className="font-display text-lg font-semibold">Invoices</h2>
-          <p className="mt-1 text-sm text-graphite/70">No invoices yet. They appear here once your trial ends.</p>
+          <p className="mt-1 text-sm text-muted">No invoices yet. They appear here once your trial ends.</p>
           <p className="mt-4 text-sm">
             Billing contact: <strong>{c.ownerName}</strong> · {c.ownerEmail}
           </p>
@@ -112,7 +112,7 @@ export default function BillingPage() {
 
       <Card className="p-6">
         <h2 className="font-display text-lg font-semibold">Prototype data</h2>
-        <p className="mt-1 text-sm text-graphite/70">
+        <p className="mt-1 text-sm text-muted">
           Everything here is stored in this browser only{c.demo ? ", using the Northshore Builders demo" : ""}. Resetting clears the company, people,
           check-ins and photos.
         </p>

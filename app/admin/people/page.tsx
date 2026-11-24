@@ -46,7 +46,7 @@ export default function PeoplePage() {
             key={f.key}
             onClick={() => setFilter(f.key)}
             aria-pressed={filter === f.key}
-            className={`min-h-10 rounded-full px-4 text-sm font-medium ${filter === f.key ? "bg-ink text-bone" : "border border-line bg-white"}`}
+            className={`min-h-10 rounded-full px-4 text-sm font-medium ${filter === f.key ? "bg-fg text-bg" : "border border-line bg-raised"}`}
           >
             {f.label}
           </button>
@@ -56,7 +56,7 @@ export default function PeoplePage() {
       <Card>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="text-xs text-graphite/70">
+            <thead className="text-xs text-muted">
               <tr className="border-b border-line">
                 <th className="px-6 py-3 font-medium">Name</th>
                 <th className="px-6 py-3 font-medium">Company</th>
@@ -69,12 +69,12 @@ export default function PeoplePage() {
               {people.map(({ p, count, last }) => (
                 <tr key={p.id}>
                   <td className="px-6 py-3 font-medium">{p.name}</td>
-                  <td className="px-6 py-3 text-graphite">{p.employer}</td>
+                  <td className="px-6 py-3 text-fg/85">{p.employer}</td>
                   <td className="px-6 py-3">
                     <Pill tone={p.role === "subcontractor" || p.role === "visitor" ? "outline" : "neutral"}>{roleLabel(p.role)}</Pill>
                   </td>
-                  <td className="px-6 py-3 tabular-nums text-graphite">{count}</td>
-                  <td className="px-6 py-3 text-graphite">
+                  <td className="px-6 py-3 tabular-nums text-fg/85">{count}</td>
+                  <td className="px-6 py-3 text-fg/85">
                     {last ? new Date(last).toLocaleDateString([], { month: "short", day: "numeric" }) : "—"}
                   </td>
                 </tr>
@@ -87,7 +87,7 @@ export default function PeoplePage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="p-6">
           <h2 className="font-display text-lg font-semibold">Invite dashboard users</h2>
-          <p className="mt-1 text-sm text-graphite/70">
+          <p className="mt-1 text-sm text-muted">
             Supervisors and safety staff. Workers, subs and visitors don&apos;t need invites: they scan the poster.
           </p>
           <form onSubmit={invite} className="mt-4 space-y-3">
@@ -99,7 +99,7 @@ export default function PeoplePage() {
                   type="button"
                   aria-pressed={role === r}
                   onClick={() => setRole(r)}
-                  className={`min-h-10 rounded-full px-4 text-sm font-medium ${role === r ? "bg-ink text-bone" : "border border-line bg-white"}`}
+                  className={`min-h-10 rounded-full px-4 text-sm font-medium ${role === r ? "bg-fg text-bg" : "border border-line bg-raised"}`}
                 >
                   {roleLabel(r)}
                 </button>
@@ -114,7 +114,7 @@ export default function PeoplePage() {
               {s.invites.map((i) => (
                 <li key={i.id} className="flex justify-between gap-3">
                   <span>{i.email}</span>
-                  <span className="text-graphite/70">{roleLabel(i.role)} · invited (prototype: no email sent)</span>
+                  <span className="text-muted">{roleLabel(i.role)} · invited (prototype: no email sent)</span>
                 </li>
               ))}
             </ul>
@@ -122,18 +122,18 @@ export default function PeoplePage() {
         </Card>
         <Card className="p-6">
           <h2 className="font-display text-lg font-semibold">Subcontractor companies</h2>
-          <p className="mt-1 text-sm text-graphite/70">Companies whose crews have checked in on your sites.</p>
+          <p className="mt-1 text-sm text-muted">Companies whose crews have checked in on your sites.</p>
           {subcontractorCompanies.length ? (
             <ul className="mt-4 space-y-2">
               {subcontractorCompanies.map((c) => (
-                <li key={c} className="flex items-center justify-between rounded-2xl border border-line bg-white px-4 py-3 text-sm">
+                <li key={c} className="flex items-center justify-between rounded-2xl border border-line bg-raised px-4 py-3 text-sm">
                   <span className="font-medium">{c}</span>
-                  <span className="text-graphite/70">{s.people.filter((p) => p.employer === c).length} people</span>
+                  <span className="text-muted">{s.people.filter((p) => p.employer === c).length} people</span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="mt-4 text-sm text-graphite/70">None yet. They appear here after their first check-in.</p>
+            <p className="mt-4 text-sm text-muted">None yet. They appear here after their first check-in.</p>
           )}
         </Card>
       </div>

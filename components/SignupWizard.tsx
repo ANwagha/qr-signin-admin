@@ -92,7 +92,7 @@ export default function SignupWizard() {
   }
 
   return (
-    <main className="min-h-dvh bg-bone text-ink">
+    <main className="min-h-dvh bg-bg text-fg">
       <header className="bg-ink">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
           <Link href="/" aria-label="Musterpass home">
@@ -108,14 +108,14 @@ export default function SignupWizard() {
         <ol className="mb-8 flex gap-1.5" aria-label="Sign-up steps">
           {STEPS.map((s, i) => (
             <li key={s} className="flex-1">
-              <div className={`h-1.5 rounded-full ${i <= step ? "bg-ink" : "bg-line"}`} />
-              <p className={`mt-1.5 text-xs ${i === step ? "font-semibold" : "text-graphite/60"}`}>{s}</p>
+              <div className={`h-1.5 rounded-full ${i <= step ? "bg-fg" : "bg-line"}`} />
+              <p className={`mt-1.5 text-xs ${i === step ? "font-semibold" : "text-muted"}`}>{s}</p>
             </li>
           ))}
         </ol>
 
         {store?.company && step === 0 && (
-          <p className="mb-6 rounded-2xl border border-line bg-white/60 p-4 text-sm">
+          <p className="mb-6 rounded-2xl border border-line bg-surface p-4 text-sm">
             This browser already has <strong>{store.company.name}</strong>. Signing up again replaces it.{" "}
             <Link href="/admin" className="underline">
               Go to its dashboard
@@ -127,7 +127,7 @@ export default function SignupWizard() {
           {step === 0 && (
             <>
               <h1 className="font-display text-3xl font-bold">Start your free trial</h1>
-              <p className="text-graphite/70">30 days free. One price per company after that, with unlimited staff, contractors and visitors.</p>
+              <p className="text-muted">30 days free. One price per company after that, with unlimited staff, contractors and visitors.</p>
               <Field label="Company name" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Northshore Builders" error={errors.company} autoFocus />
               <Field label="Your name" value={ownerName} onChange={(e) => setOwnerName(e.target.value)} placeholder="Priya Shah" autoComplete="name" error={errors.ownerName} />
               <Field label="Work email" type="email" value={ownerEmail} onChange={(e) => setOwnerEmail(e.target.value)} placeholder="priya@northshore.ca" autoComplete="email" error={errors.ownerEmail} />
@@ -137,19 +137,19 @@ export default function SignupWizard() {
           {step === 1 && (
             <>
               <h1 className="font-display text-3xl font-bold">Add your first site</h1>
-              <p className="text-graphite/70">Each site or location gets its own QR poster and boundary for the location check.</p>
+              <p className="text-muted">Each site or location gets its own QR poster and boundary for the location check.</p>
               <Field label="Site name" value={siteName} onChange={(e) => setSiteName(e.target.value)} placeholder="Main Street office" error={errors.siteName} autoFocus />
               <Field label="Address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="1200 Main St, Vancouver, BC" />
-              <div className="rounded-2xl border border-line bg-white p-4">
+              <div className="rounded-2xl border border-line bg-raised p-4">
                 <p className="text-sm font-medium">Site location</p>
-                <p className="mt-1 text-xs text-graphite/70">
+                <p className="mt-1 text-xs text-muted">
                   Standing at the site? Use your location to set the boundary centre. In the full product we&apos;ll look up the address instead.
                 </p>
                 <div className="mt-3 flex flex-wrap items-center gap-3">
                   <Button type="button" variant="outline" size="sm" onClick={locateMe}>
                     Use my current location
                   </Button>
-                  {locStatus && <span className="text-sm text-graphite/80">{locStatus}</span>}
+                  {locStatus && <span className="text-sm text-muted">{locStatus}</span>}
                 </div>
               </div>
               <Field label="Boundary radius (metres)" type="number" inputMode="numeric" value={radius} onChange={(e) => setRadius(e.target.value)} error={errors.radius} hint="Clock-ins further away than this are flagged for review." />
@@ -159,7 +159,7 @@ export default function SignupWizard() {
           {step === 2 && (
             <>
               <h1 className="font-display text-3xl font-bold">Invite your team</h1>
-              <p className="text-graphite/70">
+              <p className="text-muted">
                 Supervisors and managers get dashboard access. Staff, contractors and visitors don&apos;t need an invite: they just scan the poster.
               </p>
               <div>
@@ -172,9 +172,9 @@ export default function SignupWizard() {
                   value={inviteText}
                   onChange={(e) => setInviteText(e.target.value)}
                   placeholder="marco@northshore.ca, sana@northshore.ca"
-                  className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-base outline-none focus:border-ink"
+                  className="w-full rounded-2xl border border-line bg-raised px-4 py-3 text-base outline-none focus:border-fg"
                 />
-                {errors.invites && <p role="alert" className="mt-1.5 text-sm text-pop-deep">{errors.invites}</p>}
+                {errors.invites && <p role="alert" className="mt-1.5 text-sm text-alert">{errors.invites}</p>}
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {(["supervisor", "safety_manager"] as Role[]).map((r) => (
@@ -183,7 +183,7 @@ export default function SignupWizard() {
                   </Choice>
                 ))}
               </div>
-              <p className="text-xs text-graphite/60">Prototype: invites are listed in People but no email is sent yet.</p>
+              <p className="text-xs text-muted">Prototype: invites are listed in People but no email is sent yet.</p>
             </>
           )}
 
@@ -199,7 +199,7 @@ export default function SignupWizard() {
                   "30-day free trial started. Choose a plan any time in Billing",
                 ].map((t) => (
                   <li key={t} className="flex gap-2">
-                    <span aria-hidden className="mt-1 size-2.5 shrink-0 rounded-full bg-ink" />
+                    <span aria-hidden className="mt-1 size-2.5 shrink-0 rounded-full bg-fg" />
                     {t}
                   </li>
                 ))}

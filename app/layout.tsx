@@ -14,19 +14,29 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: { default: "Musterpass", template: "%s · Musterpass" },
-  description: "Scan in. Sign off. Proven on site. Site check-in and safety forms with photo evidence.",
+  description: "Scan in. Clock in. Proven on site. QR clock-in with selfie, location check and your own forms.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#141414",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f5f5f0" },
+    { media: "(prefers-color-scheme: dark)", color: "#141414" },
+  ],
 };
+
+// Applies the saved Light/Dark choice before the page paints, so there is no flash of the wrong theme.
+const THEME_SCRIPT = `try{var t=localStorage.getItem("musterpass.theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} h-full`}>
+    // suppressHydrationWarning: the theme script sets data-theme on <html> before React loads.
+    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} h-full`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       {/* suppressHydrationWarning: some browser extensions add attributes (e.g. style="isolation:isolate")
           to <body> before React loads. This only ignores <body>'s own attributes, not its children. */}
-      <body className="flex min-h-full flex-col bg-ink text-bone" suppressHydrationWarning>
+      <body className="flex min-h-full flex-col bg-bg text-fg" suppressHydrationWarning>
         {children}
       </body>
     </html>

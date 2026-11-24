@@ -36,20 +36,20 @@ export default function SitesPage() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h2 className="font-display text-xl font-bold">{site.name}</h2>
-                  <p className="text-sm text-graphite/70">{site.address || "No address yet"}</p>
+                  <p className="text-sm text-muted">{site.address || "No address yet"}</p>
                 </div>
                 <Pill tone={onSite ? "ink" : "outline"}>{onSite} on site</Pill>
               </div>
-              <p className="mt-3 text-sm text-graphite">
+              <p className="mt-3 text-sm text-fg/85">
                 Boundary: {site.radiusM} m{" "}
-                {site.lat === null ? <span className="text-pop-deep">· centre not set (check-ins will be flagged)</span> : `· ${site.lat.toFixed(4)}, ${site.lng?.toFixed(4)}`}
+                {site.lat === null ? <span className="text-alert">· centre not set (check-ins will be flagged)</span> : `· ${site.lat.toFixed(4)}, ${site.lng?.toFixed(4)}`}
               </p>
-              <p className="mt-1 font-mono text-xs text-graphite/70">/s/{site.slug}</p>
+              <p className="mt-1 font-mono text-xs text-muted">/s/{site.slug}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Button size="sm" variant="ink" onClick={() => setPosterId(site.id === posterId ? null : site.id)}>
                   {site.id === posterId ? "Hide poster" : "Show poster"}
                 </Button>
-                <Link href={`/s/${site.slug}`} target="_blank" className="rounded-full border border-line px-3.5 py-1.5 text-sm font-bold hover:border-ink">
+                <Link href={`/s/${site.slug}`} target="_blank" className="rounded-full border border-line px-3.5 py-1.5 text-sm font-bold hover:border-fg">
                   Open check-in
                 </Link>
               </div>
@@ -108,7 +108,7 @@ function AddSite({ onDone }: { onDone: () => void }) {
           <Button type="button" variant="outline" onClick={locate}>
             Use my current location
           </Button>
-          {status && <span className="pb-2 text-sm text-graphite/80">{status}</span>}
+          {status && <span className="pb-2 text-sm text-muted">{status}</span>}
         </div>
         <div className="flex gap-3 md:col-span-2">
           <Button type="submit" variant="ink">

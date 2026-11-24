@@ -61,10 +61,10 @@ export default function SignaturePad({ onChange }: { onChange: (dataUrl: string 
         onPointerUp={end}
         onPointerLeave={end}
       />
-      <div className="mt-2 flex items-center justify-between text-sm text-smoke">
+      <div className="mt-2 flex items-center justify-between text-sm text-muted">
         <span>{signed ? "Signed" : "Sign with your finger"}</span>
         {signed && (
-          <button type="button" onClick={clear} className="underline-offset-4 hover:text-bone hover:underline">
+          <button type="button" onClick={clear} className="underline-offset-4 hover:text-fg hover:underline">
             Clear
           </button>
         )}

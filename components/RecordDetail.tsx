@@ -28,17 +28,17 @@ export function SelfieReview({ s, c, compact = false }: { s: State; c: CheckIn; 
     <div className="flex items-start gap-3">
       <figure className="text-center">
         <img src={c.selfie.dataUrl} alt="Today's selfie" className={`${size} rounded-2xl object-cover`} />
-        <figcaption className="mt-1 text-xs text-graphite/70">Today</figcaption>
+        <figcaption className="mt-1 text-xs text-muted">Today</figcaption>
       </figure>
       <figure className="text-center">
         {ref ? (
           <img src={ref.dataUrl} alt="Earlier selfie on file" className={`${size} rounded-2xl object-cover`} />
         ) : (
-          <div className={`${size} flex items-center justify-center rounded-2xl border border-dashed border-line p-2 text-xs text-graphite/60`}>
+          <div className={`${size} flex items-center justify-center rounded-2xl border border-dashed border-line p-2 text-xs text-muted`}>
             First clock-in
           </div>
         )}
-        <figcaption className="mt-1 text-xs text-graphite/70">On file</figcaption>
+        <figcaption className="mt-1 text-xs text-muted">On file</figcaption>
       </figure>
       <div className="flex flex-col gap-2">
         {c.review.selfie === "pending" ? (
@@ -60,12 +60,12 @@ export function SelfieReview({ s, c, compact = false }: { s: State; c: CheckIn; 
 
 function PhotoTile({ p }: { p: Photo }) {
   return (
-    <figure className="rounded-2xl border border-line bg-white p-2">
+    <figure className="rounded-2xl border border-line bg-raised p-2">
       <img src={p.dataUrl} alt={p.label} className="aspect-square w-full rounded-xl object-cover" />
       <figcaption className="mt-1.5 space-y-0.5 text-xs">
         <p className="font-semibold">{p.label}</p>
-        <p className="text-graphite/70">{formatTime(p.capturedAt)}</p>
-        <p className="truncate font-mono text-[10px] text-graphite/60" title={p.sha256 ?? undefined}>
+        <p className="text-muted">{formatTime(p.capturedAt)}</p>
+        <p className="truncate font-mono text-[10px] text-muted" title={p.sha256 ?? undefined}>
           {p.sha256 ? `sha256 ${p.sha256.slice(0, 16)}…` : "hash needs https"}
         </p>
       </figcaption>
@@ -94,8 +94,8 @@ function Responses({ responses, photos }: { responses: FormResponse[]; photos: P
               const photo = q.type === "photo" ? photos.find((p) => p.id === v) : undefined;
               return (
                 <div key={q.id} className="contents">
-                  <dt className="text-graphite/70">{q.label}</dt>
-                  <dd className={isFlagged(q, v) ? "font-semibold text-pop-deep" : ""}>
+                  <dt className="text-muted">{q.label}</dt>
+                  <dd className={isFlagged(q, v) ? "font-semibold text-alert" : ""}>
                     {photo ? <img src={photo.dataUrl} alt={q.label} className="h-20 w-20 rounded-xl object-cover" /> : answerText(q, v)}
                   </dd>
                 </div>
@@ -126,15 +126,15 @@ export default function RecordDetail({ s, c, onClose }: { s: State; c: CheckIn; 
         aria-modal="true"
         aria-label={`Time record for ${person?.name}`}
         onClick={(e) => e.stopPropagation()}
-        className="print-area h-full w-full max-w-2xl overflow-y-auto bg-bone p-6 text-ink"
+        className="print-area h-full w-full max-w-2xl overflow-y-auto bg-bg p-6 text-fg"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm text-graphite/70">
+            <p className="text-sm text-muted">
               {site?.name} · {new Date(c.inAt).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })}
             </p>
             <h2 className="font-display text-2xl font-bold">{person?.name}</h2>
-            <p className="text-sm text-graphite/80">
+            <p className="text-sm text-muted">
               {person && roleLabel(person.role)} · {person?.employer}
             </p>
           </div>
@@ -150,7 +150,7 @@ export default function RecordDetail({ s, c, onClose }: { s: State; c: CheckIn; 
 
         <div className="mt-5 space-y-5">
           {flags.length > 0 && (
-            <div className="rounded-2xl border border-pop bg-white p-4 text-sm">
+            <div className="rounded-2xl border border-pop bg-raised p-4 text-sm">
               <p className="font-semibold">Needs attention</p>
               <ul className="mt-1 list-disc pl-5">
                 {flags.map((f) => (
@@ -214,8 +214,8 @@ export default function RecordDetail({ s, c, onClose }: { s: State; c: CheckIn; 
             <Section title="Signatures">
               <div className="flex flex-wrap items-end gap-6">
                 <figure>
-                  <img src={c.signature} alt="Signature" className="h-20 rounded-xl border border-line bg-white" />
-                  <figcaption className="mt-1 text-xs text-graphite/70">Signed {formatTime(c.inAt)}</figcaption>
+                  <img src={c.signature} alt="Signature" className="h-20 rounded-xl border border-line bg-raised" />
+                  <figcaption className="mt-1 text-xs text-muted">Signed {formatTime(c.inAt)}</figcaption>
                 </figure>
                 {c.review.countersignedAt ? (
                   <p className="text-sm">
@@ -230,7 +230,7 @@ export default function RecordDetail({ s, c, onClose }: { s: State; c: CheckIn; 
             </Section>
           )}
 
-          <p className="text-xs text-graphite/60">Record {c.id} · Prototype data is stored in this browser.</p>
+          <p className="text-xs text-muted">Record {c.id} · Prototype data is stored in this browser.</p>
         </div>
       </div>
     </div>

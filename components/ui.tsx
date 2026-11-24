@@ -1,13 +1,16 @@
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
 
+// Shared building blocks. Colours use the theme roles (bg, surface, raised, fg, muted, line, alert)
+// so everything follows light and dark mode. Volt and pop stay fixed: text on them is always ink.
+
 type Variant = "volt" | "ink" | "outline" | "outline-dark" | "ghost" | "danger";
 
 const variants: Record<Variant, string> = {
   volt: "bg-volt text-ink hover:brightness-95",
-  ink: "bg-ink text-bone hover:bg-graphite",
-  outline: "border border-line text-ink hover:border-ink",
-  "outline-dark": "border border-graphite text-bone hover:border-bone",
-  ghost: "text-smoke hover:text-current",
+  ink: "bg-fg text-bg hover:opacity-90",
+  outline: "border border-line text-fg hover:border-fg",
+  "outline-dark": "border border-line text-fg hover:border-fg",
+  ghost: "text-muted hover:text-fg",
   danger: "bg-pop text-ink hover:brightness-95",
 };
 
@@ -30,30 +33,28 @@ export function Field({
   label,
   hint,
   error,
-  dark = false,
+  // `dark` is kept so existing callers compile; fields now follow the theme everywhere.
+  dark: _dark = false,
   className = "",
   ...props
 }: InputHTMLAttributes<HTMLInputElement> & { label: string; hint?: string; error?: string | null; dark?: boolean }) {
+  void _dark;
   const id = props.id ?? props.name ?? label.toLowerCase().replace(/\W+/g, "-");
   return (
     <div className={className}>
-      <label htmlFor={id} className={`mb-1.5 block text-sm font-medium ${dark ? "text-bone" : "text-ink"}`}>
+      <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-fg">
         {label}
       </label>
       <input
         id={id}
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
-        className={`w-full rounded-2xl border px-4 py-3.5 text-base outline-none ${
-          dark
-            ? "border-graphite bg-graphite text-bone placeholder:text-bone/55 focus:border-bone"
-            : "border-line bg-white text-ink focus:border-ink"
-        }`}
+        className="w-full rounded-2xl border border-line bg-raised px-4 py-3.5 text-base text-fg outline-none placeholder:text-muted focus:border-fg"
         {...props}
       />
-      {hint && !error && <p className={`mt-1.5 text-xs ${dark ? "text-bone/70" : "text-graphite/70"}`}>{hint}</p>}
+      {hint && !error && <p className="mt-1.5 text-xs text-muted">{hint}</p>}
       {error && (
-        <p id={`${id}-error`} role="alert" className={`mt-1.5 text-sm ${dark ? "text-pop" : "text-pop-deep"}`}>
+        <p id={`${id}-error`} role="alert" className="mt-1.5 text-sm text-alert">
           {error}
         </p>
       )}
@@ -62,16 +63,16 @@ export function Field({
 }
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-3xl border border-line bg-white/60 ${className}`}>{children}</div>;
+  return <div className={`rounded-3xl border border-line bg-surface ${className}`}>{children}</div>;
 }
 
 export function Pill({ tone = "neutral", children }: { tone?: "neutral" | "ink" | "pop" | "volt" | "outline"; children: ReactNode }) {
   const tones = {
-    neutral: "bg-line/70 text-graphite",
-    ink: "bg-ink text-bone",
+    neutral: "bg-line/70 text-fg/85",
+    ink: "bg-fg text-bg",
     pop: "bg-pop text-ink",
     volt: "bg-volt text-ink",
-    outline: "border border-line text-graphite",
+    outline: "border border-line text-fg/85",
   };
   return <span className={`inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold ${tones[tone]}`}>{children}</span>;
 }
@@ -80,7 +81,7 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
   return (
     <div className="no-print flex flex-wrap items-end justify-between gap-4">
       <div>
-        {subtitle && <p className="text-sm text-graphite/70">{subtitle}</p>}
+        {subtitle && <p className="text-sm text-muted">{subtitle}</p>}
         <h1 className="font-display text-3xl font-bold tracking-tight">{title}</h1>
       </div>
       {action}
@@ -88,36 +89,31 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
   );
 }
 
-/** Large tappable option for gloved hands (56px+ targets). */
+/** Large tappable option for gloved hands (56px+ targets). Selected = inverted colours. */
 export function Choice({
   selected,
   onClick,
   children,
-  dark = true,
 }: {
   selected: boolean;
   onClick: () => void;
   children: ReactNode;
+  /** Ignored: kept so existing callers compile. Choices follow the theme. */
   dark?: boolean;
 }) {
-  const base = dark
-    ? selected
-      ? "border-bone bg-bone text-ink"
-      : "border-graphite bg-graphite text-bone"
-    : selected
-      ? "border-ink bg-ink text-bone"
-      : "border-line bg-white text-ink";
   return (
     <button
       type="button"
       aria-pressed={selected}
       onClick={onClick}
-      className={`flex min-h-14 w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left font-medium transition ${base}`}
+      className={`flex min-h-14 w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left font-medium transition ${
+        selected ? "border-fg bg-fg text-bg" : "border-line bg-raised text-fg"
+      }`}
     >
       <span
         aria-hidden
         className={`flex size-5 shrink-0 items-center justify-center rounded-md border-2 ${
-          selected ? (dark ? "border-ink bg-ink text-bone" : "border-bone bg-bone text-ink") : "border-current opacity-60"
+          selected ? "border-bg bg-bg text-fg" : "border-current opacity-60"
         }`}
       >
         {selected && (

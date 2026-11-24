@@ -12,7 +12,7 @@ async function Flow({ params }: { params: Promise<{ site: string }> }) {
 export default function SiteCheckInPage({ params }: PageProps<"/s/[site]">) {
   // params is request data; keep it inside <Suspense> so the shell can prerender (cacheComponents).
   return (
-    <Suspense fallback={<main className="min-h-dvh bg-ink" />}>
+    <Suspense fallback={<main className="min-h-dvh bg-bg" />}>
       <Flow params={params} />
     </Suspense>
   );

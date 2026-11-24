@@ -49,7 +49,7 @@ export default function FormsPage() {
       {libraryOpen && (
         <Card className="p-6">
           <h2 className="font-display text-lg font-semibold">Form library</h2>
-          <p className="mt-1 text-sm text-graphite/70">Start from a ready-made form, then change anything you like.</p>
+          <p className="mt-1 text-sm text-muted">Start from a ready-made form, then change anything you like.</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {FORM_LIBRARY.map((t) => (
               <button
@@ -58,11 +58,11 @@ export default function FormsPage() {
                   setLibraryOpen(false);
                   setEditing(fromLibrary(t.name, false));
                 }}
-                className="rounded-2xl border border-line bg-white p-4 text-left transition hover:border-ink"
+                className="rounded-2xl border border-line bg-raised p-4 text-left transition hover:border-fg"
               >
                 <p className="font-semibold">{t.name}</p>
-                <p className="mt-1 text-sm text-graphite/70">{t.description}</p>
-                <p className="mt-2 text-xs text-graphite/70">
+                <p className="mt-1 text-sm text-muted">{t.description}</p>
+                <p className="mt-2 text-xs text-muted">
                   {t.questions.length} questions · at clock-{t.when === "check-in" ? "in" : "out"}
                 </p>
               </button>
@@ -74,7 +74,7 @@ export default function FormsPage() {
       {s.forms.length === 0 ? (
         <Card className="p-8 text-center">
           <p className="font-display text-lg font-semibold">No forms yet</p>
-          <p className="mt-1 text-sm text-graphite/70">People will just take a selfie, pass the location check and clock in.</p>
+          <p className="mt-1 text-sm text-muted">People will just take a selfie, pass the location check and clock in.</p>
         </Card>
       ) : (
         <ul className="space-y-4">
@@ -89,7 +89,7 @@ export default function FormsPage() {
                       <Pill tone="neutral">At clock-{f.when === "check-in" ? "in" : "out"}</Pill>
                       {f.signature && f.when === "check-in" && <Pill tone="neutral">Signature</Pill>}
                     </div>
-                    {f.description && <p className="mt-1 text-sm text-graphite/70">{f.description}</p>}
+                    {f.description && <p className="mt-1 text-sm text-muted">{f.description}</p>}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <Button size="sm" variant="outline" aria-label={`Move ${f.name} up`} disabled={i === 0} onClick={() => moveForm(f.id, -1)}>
@@ -115,13 +115,13 @@ export default function FormsPage() {
                     </Button>
                   </div>
                 </div>
-                <ol className="mt-4 divide-y divide-line rounded-2xl border border-line bg-white text-sm">
+                <ol className="mt-4 divide-y divide-line rounded-2xl border border-line bg-raised text-sm">
                   {f.questions.map((q, n) => (
                     <li key={q.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5">
                       <span>
-                        <span className="mr-2 text-graphite/60">{n + 1}.</span>
+                        <span className="mr-2 text-muted">{n + 1}.</span>
                         {q.label}
-                        {!q.required && <span className="ml-1 text-graphite/60">(optional)</span>}
+                        {!q.required && <span className="ml-1 text-muted">(optional)</span>}
                       </span>
                       <span className="flex flex-wrap gap-1.5">
                         <Pill tone="outline">{typeLabel(q.type)}</Pill>
@@ -141,7 +141,7 @@ export default function FormsPage() {
           <h2 className="font-display text-lg font-bold">Build forms with Claude</h2>
           <Pill tone="outline">Coming later</Pill>
         </div>
-        <p className="mt-1 text-sm text-graphite/70">Describe what you need or upload a photo of a paper form, and Claude will build it here.</p>
+        <p className="mt-1 text-sm text-muted">Describe what you need or upload a photo of a paper form, and Claude will build it here.</p>
       </Card>
     </div>
   );

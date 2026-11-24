@@ -90,9 +90,9 @@ export default function RecordsPage() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search name or company"
-          className="min-h-11 min-w-56 flex-1 rounded-full border border-line bg-white px-4 text-sm outline-none focus:border-ink"
+          className="min-h-11 min-w-56 flex-1 rounded-full border border-line bg-raised px-4 text-sm outline-none focus:border-fg"
         />
-        <select aria-label="Site" value={siteId} onChange={(e) => setSiteId(e.target.value)} className="min-h-11 rounded-full border border-line bg-white px-4 text-sm">
+        <select aria-label="Site" value={siteId} onChange={(e) => setSiteId(e.target.value)} className="min-h-11 rounded-full border border-line bg-raised px-4 text-sm">
           <option value="all">All sites</option>
           {s.sites.map((x) => (
             <option key={x.id} value={x.id}>
@@ -100,7 +100,7 @@ export default function RecordsPage() {
             </option>
           ))}
         </select>
-        <select aria-label="Date range" value={range} onChange={(e) => setRange(e.target.value as typeof range)} className="min-h-11 rounded-full border border-line bg-white px-4 text-sm">
+        <select aria-label="Date range" value={range} onChange={(e) => setRange(e.target.value as typeof range)} className="min-h-11 rounded-full border border-line bg-raised px-4 text-sm">
           <option value="today">Today</option>
           <option value="7">Last 7 days</option>
           <option value="all">All time</option>
@@ -108,11 +108,11 @@ export default function RecordsPage() {
       </div>
       <Card>
         {rows.length === 0 ? (
-          <p className="p-8 text-center text-sm text-graphite/70">No records match.</p>
+          <p className="p-8 text-center text-sm text-muted">No records match.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="text-xs text-graphite/70">
+              <thead className="text-xs text-muted">
                 <tr className="border-b border-line">
                   <th className="px-6 py-3 font-medium">Date</th>
                   <th className="px-6 py-3 font-medium">Name</th>
@@ -126,19 +126,19 @@ export default function RecordsPage() {
                 {rows.map((c) => {
                   const p = personFor(s, c);
                   return (
-                    <tr key={c.id} onClick={() => setOpenId(c.id)} className="cursor-pointer hover:bg-white">
-                      <td className="whitespace-nowrap px-6 py-3 text-graphite">
+                    <tr key={c.id} onClick={() => setOpenId(c.id)} className="cursor-pointer hover:bg-raised">
+                      <td className="whitespace-nowrap px-6 py-3 text-fg/85">
                         {new Date(c.inAt).toLocaleDateString([], { month: "short", day: "numeric" })}
                       </td>
                       <td className="px-6 py-3">
                         <p className="font-medium">{p?.name}</p>
-                        <p className="text-xs text-graphite/70">
+                        <p className="text-xs text-muted">
                           {p && roleLabel(p.role)} · {p?.employer}
                         </p>
                       </td>
-                      <td className="px-6 py-3 text-graphite">{s.sites.find((x) => x.id === c.siteId)?.name}</td>
-                      <td className="px-6 py-3 text-graphite">{c.visitor ? "Visitor" : `${hoursWorked(c, now).toFixed(1)} h`}</td>
-                      <td className="whitespace-nowrap px-6 py-3 tabular-nums text-graphite">
+                      <td className="px-6 py-3 text-fg/85">{s.sites.find((x) => x.id === c.siteId)?.name}</td>
+                      <td className="px-6 py-3 text-fg/85">{c.visitor ? "Visitor" : `${hoursWorked(c, now).toFixed(1)} h`}</td>
+                      <td className="whitespace-nowrap px-6 py-3 tabular-nums text-fg/85">
                         {formatTime(c.inAt)} – {c.outAt ? formatTime(c.outAt) : "on site"}
                       </td>
                       <td className="px-6 py-3">

@@ -40,11 +40,11 @@ export default function PhotoCapture({ kind, label, prompt, facing, value, onCha
         <img
           src={value.dataUrl}
           alt={label}
-          className={`border-2 border-graphite object-cover ${round ? "size-48 rounded-full" : "h-48 w-full max-w-xs rounded-2xl"}`}
+          className={`border-2 border-line object-cover ${round ? "size-48 rounded-full" : "h-48 w-full max-w-xs rounded-2xl"}`}
         />
       ) : (
         <div
-          className={`flex items-center justify-center border-2 border-dashed border-graphite text-center text-sm text-smoke ${
+          className={`flex items-center justify-center border-2 border-dashed border-line text-center text-sm text-muted ${
             round ? "size-48 rounded-full" : "h-48 w-full max-w-xs rounded-2xl"
           }`}
         >
@@ -66,13 +66,13 @@ export default function PhotoCapture({ kind, label, prompt, facing, value, onCha
       <label
         htmlFor={id}
         className={`inline-flex min-h-12 cursor-pointer items-center justify-center rounded-full px-6 font-display font-bold transition active:scale-[0.98] ${
-          value ? "border border-graphite text-bone hover:border-bone" : "bg-bone text-ink"
+          value ? "border border-line text-fg hover:border-fg" : "bg-fg text-bg"
         }`}
       >
         {value ? "Retake" : busy ? "Processing…" : "Open camera"}
       </label>
       {error && (
-        <p role="alert" className="text-sm text-pop">
+        <p role="alert" className="text-sm text-alert">
           {error}
         </p>
       )}

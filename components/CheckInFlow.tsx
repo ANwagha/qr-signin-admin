@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import PhotoCapture from "@/components/PhotoCapture";
 import SignaturePad from "@/components/SignaturePad";
+import ThemeToggle from "@/components/ThemeToggle";
 import { Button, Choice, Field } from "@/components/ui";
 import Wordmark from "@/components/Wordmark";
 import { loadDemo } from "@/lib/demo-seed";
@@ -40,7 +41,7 @@ import { formatDuration, formatTime, greeting, useNow } from "@/lib/time";
 export default function CheckInFlow({ slug }: { slug: string }) {
   const store = useStore();
   const now = useNow();
-  if (!store || now === null) return <Shell><div className="h-64 animate-pulse rounded-3xl bg-graphite" /></Shell>;
+  if (!store || now === null) return <Shell><div className="h-64 animate-pulse rounded-3xl bg-raised" /></Shell>;
   const site = store.sites.find((s) => s.slug === slug);
   if (!store.company || !site) return <NotSetUp slug={slug} />;
   return <Flow key={site.id} store={store} site={site} now={now} />;
@@ -48,20 +49,23 @@ export default function CheckInFlow({ slug }: { slug: string }) {
 
 function Shell({ children, site, progress, onBack }: { children: ReactNode; site?: string; progress?: number; onBack?: () => void }) {
   return (
-    <main className="flex min-h-dvh flex-col bg-ink px-5 pb-8 pt-5 text-bone">
+    <main className="flex min-h-dvh flex-col bg-bg px-5 pb-8 pt-5 text-fg">
       <header className="mx-auto flex w-full max-w-md items-center justify-between gap-3">
         {onBack ? (
-          <button onClick={onBack} className="min-h-11 text-sm text-smoke hover:text-bone">
+          <button onClick={onBack} className="min-h-11 text-sm text-muted hover:text-fg">
             ← Back
           </button>
         ) : (
-          <Wordmark tone="bone" />
+          <Wordmark tone="fg" />
         )}
-        {site && <span className="truncate text-sm text-smoke">{site}</span>}
+        <div className="flex min-w-0 items-center gap-3">
+          {site && <span className="truncate text-sm text-muted">{site}</span>}
+          <ThemeToggle />
+        </div>
       </header>
       {progress !== undefined && (
-        <div className="mx-auto mt-4 h-1.5 w-full max-w-md overflow-hidden rounded-full bg-graphite" aria-hidden>
-          <div className="h-full rounded-full bg-bone transition-all" style={{ width: `${progress * 100}%` }} />
+        <div className="mx-auto mt-4 h-1.5 w-full max-w-md overflow-hidden rounded-full bg-raised" aria-hidden>
+          <div className="h-full rounded-full bg-fg transition-all" style={{ width: `${progress * 100}%` }} />
         </div>
       )}
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col pt-6">{children}</div>
@@ -75,7 +79,7 @@ function NotSetUp({ slug }: { slug: string }) {
     <Shell>
       <div className="flex flex-1 flex-col justify-center gap-4 text-center">
         <h1 className="font-display text-3xl font-bold">This site isn&apos;t set up here</h1>
-        <p className="text-smoke">
+        <p className="text-muted">
           The prototype keeps companies in this browser. Load the demo company to try clocking in, or sign up your own company.
         </p>
         <Button
@@ -89,10 +93,10 @@ function NotSetUp({ slug }: { slug: string }) {
         >
           {busy ? "Loading…" : "Load the demo company"}
         </Button>
-        <Link href="/signup" className="text-sm text-smoke underline underline-offset-4 hover:text-bone">
+        <Link href="/signup" className="text-sm text-muted underline underline-offset-4 hover:text-fg">
           Sign up a company instead
         </Link>
-        {slug !== "lonsdale-tower" && <p className="text-xs text-smoke">The demo&apos;s sites are lonsdale-tower and brentwood-yard.</p>}
+        {slug !== "lonsdale-tower" && <p className="text-xs text-muted">The demo&apos;s sites are lonsdale-tower and brentwood-yard.</p>}
       </div>
     </Shell>
   );
@@ -102,14 +106,14 @@ function Title({ children, sub }: { children: ReactNode; sub?: ReactNode }) {
   return (
     <div className="mb-6">
       <h1 className="font-display text-3xl font-bold leading-tight">{children}</h1>
-      {sub && <p className="mt-2 text-smoke">{sub}</p>}
+      {sub && <p className="mt-2 text-muted">{sub}</p>}
     </div>
   );
 }
 
 function Err({ children }: { children: ReactNode }) {
   return children ? (
-    <p role="alert" className="mt-3 text-sm text-pop">
+    <p role="alert" className="mt-3 text-sm text-alert">
       {children}
     </p>
   ) : null;
@@ -127,7 +131,7 @@ function YesNo({ label, value, onChange }: { label: string; value: boolean | nul
             aria-pressed={value === v}
             onClick={() => onChange(v)}
             className={`min-h-14 rounded-2xl border font-display text-lg font-bold transition ${
-              value === v ? "border-bone bg-bone text-ink" : "border-graphite bg-graphite text-bone"
+              value === v ? "border-fg bg-fg text-bg" : "border-line bg-raised text-fg"
             }`}
           >
             {v ? "Yes" : "No"}
@@ -154,7 +158,7 @@ function SignedNumber({ q, value, onChange }: { q: Question; value: AnswerValue;
       <label htmlFor={id} className="mb-1.5 block font-medium">
         {q.label}
         {q.unit && ` (${q.unit})`}
-        {!q.required && <span className="ml-1 text-sm font-normal text-smoke">(optional)</span>}
+        {!q.required && <span className="ml-1 text-sm font-normal text-muted">(optional)</span>}
       </label>
       <div className="flex gap-2">
         <button
@@ -166,7 +170,7 @@ function SignedNumber({ q, value, onChange }: { q: Question; value: AnswerValue;
             emit(text, !neg);
           }}
           className={`min-h-14 w-16 shrink-0 rounded-2xl border font-display text-2xl font-bold transition ${
-            neg ? "border-bone bg-bone text-ink" : "border-graphite bg-ink text-bone"
+            neg ? "border-fg bg-fg text-bg" : "border-line bg-bg text-fg"
           }`}
         >
           {neg ? "−" : "+"}
@@ -185,10 +189,10 @@ function SignedNumber({ q, value, onChange }: { q: Question; value: AnswerValue;
             setText(digits);
             emit(digits, isNeg);
           }}
-          className="min-h-14 w-full min-w-0 rounded-2xl border border-graphite bg-graphite px-4 text-lg text-bone outline-none placeholder:text-bone/55 focus:border-bone"
+          className="min-h-14 w-full min-w-0 rounded-2xl border border-line bg-raised px-4 text-lg text-fg outline-none placeholder:text-muted focus:border-fg"
         />
       </div>
-      <p className="mt-1.5 text-xs text-bone/70">Tap {neg ? "−" : "+"} to switch between below and above zero.</p>
+      <p className="mt-1.5 text-xs text-muted">Tap {neg ? "−" : "+"} to switch between below and above zero.</p>
     </div>
   );
 }
@@ -206,7 +210,7 @@ function QuestionField({
   photo: Photo | null;
   onPhoto: (p: Photo | null) => void;
 }) {
-  const optional = !q.required && <span className="ml-1 text-sm font-normal text-smoke">(optional)</span>;
+  const optional = !q.required && <span className="ml-1 text-sm font-normal text-muted">(optional)</span>;
   let field: ReactNode;
   if (q.type === "yesno") field = <YesNo label={q.label} value={typeof value === "boolean" ? value : null} onChange={onChange} />;
   else if (q.type === "choice" || q.type === "multi") {
@@ -216,7 +220,7 @@ function QuestionField({
         <legend className="mb-2 font-medium">
           {q.label}
           {optional}
-          {q.type === "multi" && <span className="ml-1 text-sm font-normal text-smoke">(pick any)</span>}
+          {q.type === "multi" && <span className="ml-1 text-sm font-normal text-muted">(pick any)</span>}
         </legend>
         <div className="grid gap-2">
           {(q.options ?? []).map((o) => (
@@ -259,14 +263,14 @@ function QuestionField({
           rows={2}
           value={typeof value === "string" ? value : ""}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full rounded-2xl border border-graphite bg-graphite px-4 py-3 text-base text-bone outline-none placeholder:text-bone/55 focus:border-bone"
+          className="w-full rounded-2xl border border-line bg-raised px-4 py-3 text-base text-fg outline-none placeholder:text-muted focus:border-fg"
         />
       </div>
     );
   return (
     <div>
       {field}
-      {isFlagged(q, value) && <p className="mt-2 text-sm text-pop">Your supervisor will be alerted.</p>}
+      {isFlagged(q, value) && <p className="mt-2 text-sm text-alert">Your supervisor will be alerted.</p>}
     </div>
   );
 }
@@ -433,9 +437,9 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
       return (
         <Shell site={site.name}>
           <div className="flex flex-1 flex-col justify-center text-center">
-            <p className="text-smoke">{greeting(now, firstName)}</p>
+            <p className="text-muted">{greeting(now, firstName)}</p>
             <h1 className="mt-2 font-display text-4xl font-bold">You&apos;re clocked in</h1>
-            <p className="mt-2 text-smoke">
+            <p className="mt-2 text-muted">
               At {site.name} since {formatTime(open.inAt)} · {formatDuration(new Date(open.inAt).getTime(), now)}
             </p>
             <div className="mt-10">
@@ -449,13 +453,13 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
     return (
       <Shell site={site.name}>
         <div className="flex flex-1 flex-col justify-center">
-          <p className="text-sm uppercase tracking-[0.2em] text-smoke">{company.name}</p>
+          <p className="text-sm uppercase tracking-[0.2em] text-muted">{company.name}</p>
           <h1 className="mt-2 font-display text-5xl font-bold leading-[0.95]">
             Clock in at
             <br />
             {site.name}
           </h1>
-          <p className="mt-4 text-smoke">
+          <p className="mt-4 text-muted">
             {me ? `${greeting(now, firstName)}. ` : ""}A selfie, a quick location check{inForms.length ? " and a short form" : ""}. Under a minute.
           </p>
           <div className="mt-10 space-y-3">
@@ -471,7 +475,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
                   setEmployer(company.name);
                   go("identify");
                 }}
-                className="min-h-11 w-full text-sm text-smoke hover:text-bone"
+                className="min-h-11 w-full text-sm text-muted hover:text-fg"
               >
                 Not {firstName}? Clock in as someone else
               </button>
@@ -520,7 +524,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
             placeholder={role === "visitor" ? "City of North Vancouver" : "Volt Electric Ltd."}
           />
           <Field dark label="Mobile phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" placeholder="604-555-0123" />
-          <div className="rounded-2xl bg-graphite p-4 text-sm text-bone/70">
+          <div className="rounded-2xl bg-raised p-4 text-sm text-muted">
             <p>{CONSENT_TEXT}</p>
             <div className="mt-3">
               <Choice selected={consent} onClick={() => setConsent(!consent)}>
@@ -559,13 +563,13 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
       <Shell site={site.name} progress={progress} onBack={back}>
         <Title sub={`We check your location once, right now, against the ${site.name} boundary. Never during your shift.`}>Location check</Title>
         {presence ? (
-          <div className={`rounded-3xl p-6 ${presence.status === "verified" ? "bg-graphite" : "border border-pop bg-graphite"}`}>
+          <div className={`rounded-3xl p-6 ${presence.status === "verified" ? "bg-raised" : "border border-pop bg-raised"}`}>
             <p className="font-display text-2xl font-bold">{presence.status === "verified" ? "You're on site" : "Couldn't confirm you're on site"}</p>
-            <p className="mt-1 text-bone/70">
+            <p className="mt-1 text-muted">
               {presence.reason}
               {presence.accuracyM !== null && ` · ±${presence.accuracyM} m`}
             </p>
-            {presence.status === "flagged" && <p className="mt-3 text-sm text-bone">You can still clock in. Your supervisor will review it.</p>}
+            {presence.status === "flagged" && <p className="mt-3 text-sm text-fg">You can still clock in. Your supervisor will review it.</p>}
           </div>
         ) : (
           <div className="space-y-3">
@@ -574,7 +578,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
             </Button>
             <button
               onClick={() => setPresence({ status: "verified", distanceM: 0, accuracyM: null, reason: "Simulated on site (prototype)" })}
-              className="min-h-11 w-full text-sm text-smoke underline-offset-4 hover:text-bone hover:underline"
+              className="min-h-11 w-full text-sm text-muted underline-offset-4 hover:text-fg hover:underline"
             >
               Prototype: simulate being on site
             </button>
@@ -612,7 +616,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
         <div className="space-y-5">
           <Field dark label="Who are you here to see?" value={visiting} onChange={(e) => setVisiting(e.target.value)} placeholder="Priya Shah" />
           <Field dark label="Purpose of visit (optional)" value={purpose} onChange={(e) => setPurpose(e.target.value)} placeholder="Meeting" />
-          <div className="rounded-2xl bg-graphite p-4 text-sm text-bone/70">
+          <div className="rounded-2xl bg-raised p-4 text-sm text-muted">
             Stay with your host, follow posted signs, and leave by the nearest exit if the alarm sounds.
             <div className="mt-3">
               <Choice selected={rulesAck} onClick={() => setRulesAck(!rulesAck)}>
@@ -637,7 +641,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
         <Title sub={needsSignature ? "Check your answers, then sign." : "Check your details."}>
           {isVisitor ? "Sign in" : "Clock in"}
         </Title>
-        <dl className="space-y-3 rounded-3xl bg-graphite p-5 text-sm">
+        <dl className="space-y-3 rounded-3xl bg-raised p-5 text-sm">
           <Row k="Name">{me?.name ?? name}</Row>
           <Row k="Site">{site.name}</Row>
           <Row k="Location">{presence?.status === "verified" ? "On site" : `Flagged: ${presence?.reason}`}</Row>
@@ -648,7 +652,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
           )}
           {flags.length > 0 && (
             <Row k="Alerts">
-              <span className="text-pop">{flags.length} answer{flags.length > 1 ? "s" : ""} for your supervisor</span>
+              <span className="text-alert">{flags.length} answer{flags.length > 1 ? "s" : ""} for your supervisor</span>
             </Row>
           )}
         </dl>
@@ -684,14 +688,14 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
           {flags.length > 0 && (
             <div className="mt-6 rounded-2xl border border-pop p-4 text-left text-sm">
               <p className="font-semibold">Your supervisor will review:</p>
-              <ul className="mt-1 list-disc pl-5 text-bone/70">
+              <ul className="mt-1 list-disc pl-5 text-muted">
                 {flags.map((f) => (
                   <li key={f}>{f}</li>
                 ))}
               </ul>
             </div>
           )}
-          <p className="mt-8 text-sm text-smoke">Scan the poster again when you leave to clock out.</p>
+          <p className="mt-8 text-sm text-muted">Scan the poster again when you leave to clock out.</p>
         </div>
       </Shell>
     );
@@ -736,7 +740,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
     <Shell site={site.name}>
       <div className="flex flex-1 flex-col justify-center text-center">
         <h1 className="font-display text-4xl font-bold">You&apos;re clocked out</h1>
-        <p className="mt-2 text-lg text-smoke">
+        <p className="mt-2 text-lg text-muted">
           {formatTime(now)}. Thanks, {firstName}. Get home safe.
         </p>
       </div>
@@ -747,7 +751,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
 function Row({ k, children }: { k: string; children: ReactNode }) {
   return (
     <div className="flex gap-3">
-      <dt className="w-20 shrink-0 text-bone/70">{k}</dt>
+      <dt className="w-20 shrink-0 text-muted">{k}</dt>
       <dd>{children}</dd>
     </div>
   );
