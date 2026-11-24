@@ -4,8 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import RecordDetail, { personFor, SelfieReview } from "@/components/RecordDetail";
 import { Button, Card, PageHeader, Pill } from "@/components/ui";
-import { hazardById, templateFor } from "@/lib/templates";
-import { countersign, flagsFor, isToday, needsReview, roleLabel, useStore, type CheckIn } from "@/lib/store";
+import { countersign, flagsFor, hoursWorked, isToday, needsCountersign, needsReview, roleLabel, useStore, type CheckIn } from "@/lib/store";
 import { formatTime, useNow } from "@/lib/time";
 
 export default function Dashboard() {
@@ -14,25 +13,22 @@ export default function Dashboard() {
   const [siteId, setSiteId] = useState("all");
   const [openId, setOpenId] = useState<string | null>(null);
   if (!s || !s.company || now === null) return null;
-  const t = templateFor(s.company.industry);
 
   const today = s.checkIns
     .filter((c) => isToday(c.inAt, now) && (siteId === "all" || c.siteId === siteId))
     .sort((a, b) => b.inAt.localeCompare(a.inAt));
   const onSite = today.filter((c) => !c.outAt);
-  const flhas = today.filter((c) => c.form.kind === "safety");
+  const hoursToday = today.filter((c) => !c.visitor).reduce((h, c) => h + hoursWorked(c, now), 0);
   const flagged = today.filter((c) => flagsFor(c).length > 0);
   const queue = today.filter(needsReview);
   const siteName = (id: string) => s.sites.find((x) => x.id === id)?.name ?? "";
   const open = s.checkIns.find((c) => c.id === openId);
 
-  const hazardCounts = new Map<string, number>();
-  flhas.forEach((c) => c.form.kind === "safety" && c.form.answers.hazards.forEach((h) => hazardCounts.set(h, (hazardCounts.get(h) ?? 0) + 1)));
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Safety dashboard"
+        title="Dashboard"
         subtitle={new Date(now).toLocaleDateString([], { weekday: "long", month: "long", day: "numeric" })}
         action={
           <select
@@ -55,18 +51,18 @@ export default function Dashboard() {
         <div className="rounded-3xl bg-ink p-6 text-bone">
           <p className="text-sm text-smoke">Right now</p>
           <p className="mt-3 font-display text-6xl font-bold tabular-nums leading-none">{onSite.length}</p>
-          <p className="mt-2 font-display text-lg font-semibold">on site</p>
+          <p className="mt-2 font-display text-lg font-semibold">clocked in</p>
         </div>
-        <Stat label="Today" value={flhas.length} unit={`${t.formShort}${flhas.length === 1 ? "" : "s"} signed`} />
+        <Stat label="Today" value={Math.round(hoursToday * 10) / 10} unit="hours worked" />
         <Stat label="Waiting on you" value={queue.length} unit="to review" />
-        <Stat label="Needs attention" value={flagged.length} unit={flagged.length === 1 ? "flagged check-in" : "flagged check-ins"} dot={flagged.length > 0} />
+        <Stat label="Needs attention" value={flagged.length} unit={flagged.length === 1 ? "flagged clock-in" : "flagged clock-ins"} dot={flagged.length > 0} />
       </div>
 
       {s.checkIns.length === 0 && (
         <Card className="no-print p-6">
-          <h2 className="font-display text-lg font-semibold">Your first check-in</h2>
+          <h2 className="font-display text-lg font-semibold">Your first clock-in</h2>
           <p className="mt-1 text-sm text-graphite/70">
-            Print a site poster from Sites, then scan it with your phone, or open the check-in in this browser.
+            Print a site poster from Sites, then scan it with your phone, or open the clock-in page in this browser.
           </p>
           <div className="mt-4 flex gap-3">
             <Link href="/admin/sites" className="rounded-full bg-ink px-5 py-2.5 text-sm font-bold text-bone">
@@ -74,7 +70,7 @@ export default function Dashboard() {
             </Link>
             {s.sites[0] && (
               <Link href={`/s/${s.sites[0].slug}`} className="rounded-full border border-line px-5 py-2.5 text-sm font-bold">
-                Open check-in
+                Open clock-in page
               </Link>
             )}
           </div>
@@ -114,15 +110,15 @@ export default function Dashboard() {
                 <div className="min-w-48">
                   <p className="font-medium">{personFor(s, c)?.name}</p>
                   <p className="text-sm text-graphite/70">
-                    {siteName(c.siteId)} · {formatTime(c.inAt)} · {c.form.kind === "safety" ? t.formShort : "Visitor"}
+                    {siteName(c.siteId)} · {formatTime(c.inAt)} · {c.visitor ? "Visitor" : `${c.forms.length} form${c.forms.length === 1 ? "" : "s"}`}
                   </p>
                   <button onClick={() => setOpenId(c.id)} className="mt-1 text-sm underline underline-offset-4">
                     Full record
                   </button>
                 </div>
                 <SelfieReview s={s} c={c} compact />
-                {c.form.kind === "safety" &&
-                  (c.review.countersignedAt ? (
+                {c.signature &&
+                  (!needsCountersign(c) ? (
                     <Pill tone="ink">Countersigned</Pill>
                   ) : (
                     <Button size="sm" variant="ink" onClick={() => countersign(c.id, s.company!.ownerName)}>
@@ -138,32 +134,18 @@ export default function Dashboard() {
       <Card className="print-area">
         <div className="flex flex-wrap items-center justify-between gap-3 px-6 pt-5">
           <div>
-            <h2 className="font-display text-lg font-semibold">On site now · muster list</h2>
+            <h2 className="font-display text-lg font-semibold">Clocked in now · emergency list</h2>
             <p className="text-xs text-graphite/70">
               {s.company.name} · {siteId === "all" ? "All sites" : siteName(siteId)} · {formatTime(now)}
             </p>
           </div>
           <Button size="sm" variant="volt" className="no-print" onClick={() => window.print()}>
-            Print muster list
+            Print emergency list
           </Button>
         </div>
         <RosterTable s={s} rows={onSite} siteName={siteName} onOpen={setOpenId} />
       </Card>
 
-      {hazardCounts.size > 0 && (
-        <Card className="no-print p-6">
-          <h2 className="font-display text-lg font-semibold">Hazards reported today</h2>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {[...hazardCounts.entries()]
-              .sort((a, b) => b[1] - a[1])
-              .map(([id, n]) => (
-                <Pill key={id} tone="outline">
-                  {hazardById(t, id)?.label ?? id} · {n}
-                </Pill>
-              ))}
-          </div>
-        </Card>
-      )}
 
       {open && <RecordDetail s={s} c={open} onClose={() => setOpenId(null)} />}
     </div>

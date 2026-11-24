@@ -3,9 +3,9 @@ import Wordmark from "@/components/Wordmark";
 
 const steps = [
   { n: "1", title: "Scan", body: "Everyone scans the gate poster with their phone camera. No app." },
-  { n: "2", title: "Selfie + site check", body: "A live selfie and location check prove who is on site." },
-  { n: "3", title: "Safety check with photos", body: "Your industry's daily form: hazards, controls, checks and PPE, with photo evidence." },
-  { n: "4", title: "Sign and go", body: "Signed, checked in and clocked in. The safety team sees it instantly." },
+  { n: "2", title: "Selfie + location", body: "A live selfie and a one-time location check prove who is really there." },
+  { n: "3", title: "Your forms, if any", body: "Add your own quick questions, checklists or photos, or skip forms entirely." },
+  { n: "4", title: "Clocked in", body: "Hours, attendance and the emergency list update instantly." },
 ];
 
 export default function Home() {
@@ -25,14 +25,14 @@ export default function Home() {
 
       <section className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center py-16">
         <h1 className="font-display text-5xl font-bold leading-[0.95] tracking-tight sm:text-7xl">
-          Scan in. Sign off.
+          Scan in. Clock in.
           <br />
           <span className="text-volt">Proven on site.</span>
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-smoke">
-          Musterpass replaces the clipboard at the gate. Workers, subcontractors and visitors check in on their own
-          phones, complete today&apos;s safety check for their industry with photo evidence, and sign off in about a
-          minute. You get a live roster and records that stand up when it matters.
+          Musterpass replaces keycards and clipboards with one QR code. Staff, contractors and visitors clock in on their own
+          phones with a selfie and location check, answer any forms you add, and are done in under a
+          minute. You get accurate hours, a live roster and records that stand up when it matters.
         </p>
         <div className="mt-10 flex flex-wrap gap-3">
           <Link href="/signup" className="rounded-full bg-bone px-6 py-3.5 font-display font-bold text-ink transition hover:bg-white">
@@ -42,7 +42,7 @@ export default function Home() {
             href="/s/lonsdale-tower"
             className="rounded-full border border-graphite px-6 py-3.5 font-display font-bold text-bone transition hover:border-bone"
           >
-            Try a site check-in
+            Try clocking in
           </Link>
         </div>
 

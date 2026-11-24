@@ -3,8 +3,8 @@
 import { useState } from "react";
 import RecordDetail, { personFor } from "@/components/RecordDetail";
 import { Button, Card, PageHeader, Pill } from "@/components/ui";
-import { checkFailed, hazardById, templateFor } from "@/lib/templates";
-import { flagsFor, needsReview, roleLabel, useStore, type CheckIn, type State } from "@/lib/store";
+import { answerText, type FormResponse } from "@/lib/forms";
+import { flagsFor, hoursWorked, needsReview, roleLabel, useStore, type CheckIn, type State } from "@/lib/store";
 import { formatTime, useNow } from "@/lib/time";
 
 function csvCell(v: string) {
@@ -12,34 +12,26 @@ function csvCell(v: string) {
   return `"${safe.replace(/"/g, '""')}"`;
 }
 
+function formsText(rs: FormResponse[]) {
+  return rs.map((r) => `${r.name}: ${r.questions.map((q) => `${q.label} = ${answerText(q, r.answers[q.id])}`).join(" | ")}`).join("; ");
+}
+
 function toCsv(s: State, rows: CheckIn[]) {
-  const t = templateFor(s.company?.industry);
-  const header = ["Checked in", "Checked out", "Name", "Company", "Role", "Site", "Location check", "Form", "Task", "Readiness", "Hazards", "Checks", "PPE", "Selfie review", "Countersigned by", "Flags"];
+  const header = ["Clocked in", "Clocked out", "Hours", "Name", "Company", "Role", "Site", "Location check", "Clock-in forms", "Clock-out forms", "Visitor", "Selfie review", "Countersigned by", "Flags"];
   const lines = rows.map((c) => {
     const p = personFor(s, c);
-    const f = c.form.kind === "safety" ? c.form.answers : null;
     return [
       c.inAt,
       c.outAt ?? "",
+      hoursWorked(c).toFixed(2),
       p?.name ?? "",
       p?.employer ?? "",
       p ? roleLabel(p.role) : "",
       s.sites.find((x) => x.id === c.siteId)?.name ?? "",
       `${c.presence.status}: ${c.presence.reason}`,
-      c.form.kind === "safety" ? t.formName : "Visitor",
-      f?.task ?? "",
-      f ? t.readiness.map((q) => `${q.question} ${f.readiness[q.id] ? "Yes" : "No"}`).join("; ") : "",
-      f ? f.hazards.map((h) => hazardById(t, h)?.label ?? h).join("; ") : "",
-      f
-        ? t.checks
-            .map((ch) => {
-              const a = f.checks[ch.id];
-              const v = ch.kind === "number" ? `${a?.value ?? "—"} ${ch.unit}` : ch.kind === "passfail" ? (a?.pass ? "pass" : "fail") : "photo";
-              return `${ch.label}: ${v}${checkFailed(t, ch.id, a) ? " (FAILED)" : ""}`;
-            })
-            .join("; ")
-        : "",
-      f ? f.ppe.join("; ") : "",
+      formsText(c.forms),
+      formsText(c.outForms),
+      c.visitor ? `Visiting ${c.visitor.visiting}${c.visitor.purpose ? ` (${c.visitor.purpose})` : ""}` : "",
       c.review.selfie,
       c.review.countersignedBy ?? "",
       flagsFor(c).join("; "),
@@ -85,7 +77,7 @@ export default function RecordsPage() {
     <div className="space-y-6">
       <PageHeader
         title="Records"
-        subtitle="Every check-in, form and photo, ready for audits, COR and incident investigations"
+        subtitle="Every clock-in, form and photo, with hours, ready for payroll, audits and incidents"
         action={
           <Button variant="volt" onClick={exportCsv} disabled={rows.length === 0}>
             Export CSV
@@ -125,7 +117,7 @@ export default function RecordsPage() {
                   <th className="px-6 py-3 font-medium">Date</th>
                   <th className="px-6 py-3 font-medium">Name</th>
                   <th className="px-6 py-3 font-medium">Site</th>
-                  <th className="px-6 py-3 font-medium">Form</th>
+                  <th className="px-6 py-3 font-medium">Hours</th>
                   <th className="px-6 py-3 font-medium">In / out</th>
                   <th className="px-6 py-3 font-medium">Status</th>
                 </tr>
@@ -145,7 +137,7 @@ export default function RecordsPage() {
                         </p>
                       </td>
                       <td className="px-6 py-3 text-graphite">{s.sites.find((x) => x.id === c.siteId)?.name}</td>
-                      <td className="px-6 py-3 text-graphite">{c.form.kind === "safety" ? templateFor(s.company?.industry).formShort : "Visitor"}</td>
+                      <td className="px-6 py-3 text-graphite">{c.visitor ? "Visitor" : `${hoursWorked(c, now).toFixed(1)} h`}</td>
                       <td className="whitespace-nowrap px-6 py-3 tabular-nums text-graphite">
                         {formatTime(c.inAt)} – {c.outAt ? formatTime(c.outAt) : "on site"}
                       </td>

@@ -1,113 +1,148 @@
 "use client";
 
-import { Card, PageHeader, Pill } from "@/components/ui";
-import { setPhotoRequired, useStore } from "@/lib/store";
-import { templateFor } from "@/lib/templates";
+import { useState } from "react";
+import FormEditor from "@/components/FormEditor";
+import { Button, Card, PageHeader, Pill } from "@/components/ui";
+import { FORM_LIBRARY, QUESTION_TYPES, blankForm, flagRuleText, fromLibrary, type FormDef } from "@/lib/forms";
+import { deleteForm, moveForm, saveForm, useStore } from "@/lib/store";
 
 export default function FormsPage() {
   const s = useStore();
+  const [editing, setEditing] = useState<FormDef | null>(null);
+  const [libraryOpen, setLibraryOpen] = useState(false);
   if (!s || !s.company) return null;
-  const t = templateFor(s.company.industry);
+
+  if (editing)
+    return (
+      <div className="space-y-6">
+        <PageHeader title={s.forms.some((f) => f.id === editing.id) ? "Edit form" : "New form"} subtitle="Forms" />
+        <FormEditor
+          initial={editing}
+          onCancel={() => setEditing(null)}
+          onSave={(f) => {
+            saveForm(f);
+            setEditing(null);
+          }}
+        />
+      </div>
+    );
+
+  const typeLabel = (t: string) => QUESTION_TYPES.find((x) => x.type === t)?.label ?? t;
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Forms"
-        subtitle={`Loaded automatically for ${t.label.toLowerCase()}. Adjust them to match your safety program.`}
+        subtitle="Questions people answer when they clock in or out. Leave everything off for a plain time clock."
+        action={
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setLibraryOpen((o) => !o)} aria-expanded={libraryOpen}>
+              Add from library
+            </Button>
+            <Button variant="volt" onClick={() => setEditing(blankForm())}>
+              New form
+            </Button>
+          </div>
+        }
       />
 
-      <Card className="p-6">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h2 className="font-display text-xl font-bold">{t.formName}</h2>
-            <p className="mt-1 text-sm text-graphite/70">
-              Everyone except visitors completes it at every check-in. Supervisors countersign.
-            </p>
+      {libraryOpen && (
+        <Card className="p-6">
+          <h2 className="font-display text-lg font-semibold">Form library</h2>
+          <p className="mt-1 text-sm text-graphite/70">Start from a ready-made form, then change anything you like.</p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {FORM_LIBRARY.map((t) => (
+              <button
+                key={t.name}
+                onClick={() => {
+                  setLibraryOpen(false);
+                  setEditing(fromLibrary(t.name, false));
+                }}
+                className="rounded-2xl border border-line bg-white p-4 text-left transition hover:border-ink"
+              >
+                <p className="font-semibold">{t.name}</p>
+                <p className="mt-1 text-sm text-graphite/70">{t.description}</p>
+                <p className="mt-2 text-xs text-graphite/70">
+                  {t.questions.length} questions · at clock-{t.when === "check-in" ? "in" : "out"}
+                </p>
+              </button>
+            ))}
           </div>
-          <Pill tone="ink">In use</Pill>
-        </div>
+        </Card>
+      )}
 
-        <ol className={`mt-5 grid gap-3 text-sm ${t.checks.length ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
-          <li className="rounded-2xl border border-line bg-white p-4">
-            <p className="font-semibold">Job and readiness</p>
-            <ul className="mt-1 list-disc space-y-0.5 pl-4 text-graphite/80">
-              <li>Task, work area, supervisor</li>
-              {t.readiness.map((q) => (
-                <li key={q.id}>{q.question}</li>
-              ))}
-            </ul>
-          </li>
-          <li className="rounded-2xl border border-line bg-white p-4">
-            <p className="font-semibold">Hazards and controls</p>
-            <p className="mt-1 text-graphite/70">{t.hazards.length} hazards, each with its controls. Photo rules below.</p>
-          </li>
-          {t.checks.length > 0 && (
-            <li className="rounded-2xl border border-line bg-white p-4">
-              <p className="font-semibold">{t.checksTitle}</p>
-              <ul className="mt-1 list-disc space-y-0.5 pl-4 text-graphite/80">
-                {t.checks.map((c) => (
-                  <li key={c.id}>
-                    {c.label}
-                    {c.kind === "number" && ` (${c.max !== undefined ? `≤ ${c.max}` : `≥ ${c.min}`} ${c.unit})`}
-                    {c.kind === "passfail" && " (pass/fail)"}
-                    {c.kind === "photo" && " (photo)"}
-                  </li>
-                ))}
-              </ul>
-            </li>
-          )}
-          <li className="rounded-2xl border border-line bg-white p-4">
-            <p className="font-semibold">PPE and sign-off</p>
-            <p className="mt-1 text-graphite/70">{t.ppe.join(", ")}. A PPE photo is always required.</p>
-          </li>
-        </ol>
-
-        <h3 className="mt-6 font-display font-semibold">Which hazards need a compliance photo?</h3>
-        <p className="text-sm text-graphite/70">When a worker ticks one of these, they can&apos;t sign until they take the photo.</p>
-        <ul className="mt-3 divide-y divide-line rounded-2xl border border-line bg-white">
-          {t.hazards.map((h) => {
-            const on = !!s.photoRequired[h.id];
-            return (
-              <li key={h.id} className="flex items-center justify-between gap-4 px-4 py-3">
-                <div>
-                  <p className="font-medium">{h.label}</p>
-                  <p className="text-xs text-graphite/70">Controls: {h.controls.join(", ")}</p>
+      {s.forms.length === 0 ? (
+        <Card className="p-8 text-center">
+          <p className="font-display text-lg font-semibold">No forms yet</p>
+          <p className="mt-1 text-sm text-graphite/70">People will just take a selfie, pass the location check and clock in.</p>
+        </Card>
+      ) : (
+        <ul className="space-y-4">
+          {s.forms.map((f, i) => (
+            <li key={f.id}>
+              <Card className="p-6">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="font-display text-xl font-bold">{f.name}</h2>
+                      <Pill tone={f.active ? "ink" : "outline"}>{f.active ? "In use" : "Off"}</Pill>
+                      <Pill tone="neutral">At clock-{f.when === "check-in" ? "in" : "out"}</Pill>
+                      {f.signature && f.when === "check-in" && <Pill tone="neutral">Signature</Pill>}
+                    </div>
+                    {f.description && <p className="mt-1 text-sm text-graphite/70">{f.description}</p>}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button size="sm" variant="outline" aria-label={`Move ${f.name} up`} disabled={i === 0} onClick={() => moveForm(f.id, -1)}>
+                      ↑
+                    </Button>
+                    <Button size="sm" variant="outline" aria-label={`Move ${f.name} down`} disabled={i === s.forms.length - 1} onClick={() => moveForm(f.id, 1)}>
+                      ↓
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => saveForm({ ...f, active: !f.active })}>
+                      {f.active ? "Turn off" : "Turn on"}
+                    </Button>
+                    <Button size="sm" variant="ink" onClick={() => setEditing(f)}>
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        if (window.confirm(`Delete "${f.name}"? Past answers stay in your records.`)) deleteForm(f.id);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </div>
                 </div>
-                <button
-                  role="switch"
-                  aria-checked={on}
-                  aria-label={`Require a photo for ${h.label}`}
-                  onClick={() => setPhotoRequired(h.id, !on)}
-                  className={`relative h-8 w-14 shrink-0 rounded-full transition ${on ? "bg-ink" : "bg-line"}`}
-                >
-                  <span className={`absolute top-1 size-6 rounded-full bg-bone transition-all ${on ? "left-7" : "left-1"}`} />
-                </button>
-              </li>
-            );
-          })}
+                <ol className="mt-4 divide-y divide-line rounded-2xl border border-line bg-white text-sm">
+                  {f.questions.map((q, n) => (
+                    <li key={q.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5">
+                      <span>
+                        <span className="mr-2 text-graphite/60">{n + 1}.</span>
+                        {q.label}
+                        {!q.required && <span className="ml-1 text-graphite/60">(optional)</span>}
+                      </span>
+                      <span className="flex flex-wrap gap-1.5">
+                        <Pill tone="outline">{typeLabel(q.type)}</Pill>
+                        {flagRuleText(q) && <Pill tone="pop">{flagRuleText(q)}</Pill>}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              </Card>
+            </li>
+          ))}
         </ul>
-      </Card>
+      )}
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="p-6">
-          <div className="flex items-start justify-between gap-3">
-            <h2 className="font-display text-lg font-bold">Visitor sign-in</h2>
-            <Pill tone="ink">In use</Pill>
-          </div>
-          <p className="mt-1 text-sm text-graphite/70">
-            Who they&apos;re visiting, purpose, {t.siteNoun} rules and a selfie. Visitors stay on the muster list until they check out.
-          </p>
-        </Card>
-        <Card className="p-6">
-          <div className="flex items-start justify-between gap-3">
-            <h2 className="font-display text-lg font-bold">Tailor these forms with Claude</h2>
-            <Pill tone="outline">Coming later</Pill>
-          </div>
-          <p className="mt-1 text-sm text-graphite/70">
-            Describe your work or upload a photo of a paper form, and Claude will adapt these templates for your company.
-          </p>
-        </Card>
-      </div>
+      <Card className="p-6">
+        <div className="flex items-start justify-between gap-3">
+          <h2 className="font-display text-lg font-bold">Build forms with Claude</h2>
+          <Pill tone="outline">Coming later</Pill>
+        </div>
+        <p className="mt-1 text-sm text-graphite/70">Describe what you need or upload a photo of a paper form, and Claude will build it here.</p>
+      </Card>
     </div>
   );
 }

@@ -7,10 +7,9 @@ import SitePoster from "@/components/SitePoster";
 import { Button, Choice, Field } from "@/components/ui";
 import Wordmark from "@/components/Wordmark";
 import { loadDemo } from "@/lib/demo-seed";
-import { createCompany, roleLabel, useStore, type Industry, type Role, type Site } from "@/lib/store";
-import { TEMPLATES, templateFor } from "@/lib/templates";
+import { createCompany, roleLabel, useStore, type Role, type Site } from "@/lib/store";
 
-const STEPS = ["Company", "Industry", "First site", "Your team", "Ready"];
+const STEPS = ["Company", "First site", "Your team", "Ready"];
 
 export default function SignupWizard() {
   const router = useRouter();
@@ -21,7 +20,6 @@ export default function SignupWizard() {
   const [company, setCompany] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [ownerEmail, setOwnerEmail] = useState("");
-  const [industry, setIndustry] = useState<Industry>("construction");
   const [siteName, setSiteName] = useState("");
   const [address, setAddress] = useState("");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
@@ -30,9 +28,14 @@ export default function SignupWizard() {
   const [inviteText, setInviteText] = useState("");
   const [inviteRole, setInviteRole] = useState<Role>("supervisor");
   const [created, setCreated] = useState<Site | null>(null);
-  const [demoOpen, setDemoOpen] = useState(false);
-  const t = templateFor(industry);
-  const Noun = t.siteNoun.charAt(0).toUpperCase() + t.siteNoun.slice(1);
+  const [demoBusy, setDemoBusy] = useState(false);
+
+  function emails() {
+    return inviteText
+      .split(/[\s,;]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
 
   function next(e?: FormEvent) {
     e?.preventDefault();
@@ -42,21 +45,20 @@ export default function SignupWizard() {
       if (!ownerName.trim()) errs.ownerName = "Add your name.";
       if (!/^\S+@\S+\.\S+$/.test(ownerEmail.trim())) errs.ownerEmail = "Add a valid work email.";
     }
-    if (step === 2) {
-      if (!siteName.trim()) errs.siteName = `Name the ${t.siteNoun}, like ${t.siteExample}.`;
+    if (step === 1) {
+      if (!siteName.trim()) errs.siteName = "Name the site, like Main Street office.";
       if (!Number(radius) || Number(radius) < 25) errs.radius = "Use at least 25 metres.";
     }
-    if (step === 3) {
+    if (step === 2) {
       const bad = emails().filter((m) => !/^\S+@\S+\.\S+$/.test(m));
       if (bad.length) errs.invites = `Check these emails: ${bad.join(", ")}`;
     }
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
-    if (step === 3) {
+    if (step === 2) {
       const site = createCompany({
         name: company.trim(),
-        industry,
         ownerName: ownerName.trim(),
         ownerEmail: ownerEmail.trim(),
         site: { name: siteName.trim(), address: address.trim(), lat: coords?.lat ?? null, lng: coords?.lng ?? null, radiusM: Number(radius) },
@@ -65,13 +67,6 @@ export default function SignupWizard() {
       setCreated(site);
     }
     setStep((s) => s + 1);
-  }
-
-  function emails() {
-    return inviteText
-      .split(/[\s,;]+/)
-      .map((s) => s.trim())
-      .filter(Boolean);
   }
 
   function locateMe() {
@@ -90,8 +85,9 @@ export default function SignupWizard() {
     );
   }
 
-  async function exploreDemo(id: Industry) {
-    await loadDemo(id);
+  async function exploreDemo() {
+    setDemoBusy(true);
+    await loadDemo();
     router.push("/admin");
   }
 
@@ -102,26 +98,10 @@ export default function SignupWizard() {
           <Link href="/" aria-label="Musterpass home">
             <Wordmark tone="bone" />
           </Link>
-          <button onClick={() => setDemoOpen((o) => !o)} aria-expanded={demoOpen} className="text-sm text-smoke hover:text-bone">
-            Explore a demo instead
+          <button onClick={exploreDemo} disabled={demoBusy} className="text-sm text-smoke hover:text-bone">
+            {demoBusy ? "Loading demo…" : "Explore the demo instead"}
           </button>
         </div>
-        {demoOpen && (
-          <div className="mx-auto max-w-3xl px-4 pb-4">
-            <p className="mb-2 text-sm text-smoke">Pick an industry to load a demo company with check-ins already in it:</p>
-            <div className="flex flex-wrap gap-2">
-              {TEMPLATES.map((x) => (
-                <button
-                  key={x.id}
-                  onClick={() => exploreDemo(x.id)}
-                  className="min-h-10 rounded-full border border-graphite px-4 text-sm font-medium text-bone hover:border-bone"
-                >
-                  {x.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </header>
 
       <div className="mx-auto max-w-xl px-4 py-10">
@@ -147,7 +127,7 @@ export default function SignupWizard() {
           {step === 0 && (
             <>
               <h1 className="font-display text-3xl font-bold">Start your free trial</h1>
-              <p className="text-graphite/70">30 days free. One price per company after that, with unlimited workers and subcontractors.</p>
+              <p className="text-graphite/70">30 days free. One price per company after that, with unlimited staff, contractors and visitors.</p>
               <Field label="Company name" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Northshore Builders" error={errors.company} autoFocus />
               <Field label="Your name" value={ownerName} onChange={(e) => setOwnerName(e.target.value)} placeholder="Priya Shah" autoComplete="name" error={errors.ownerName} />
               <Field label="Work email" type="email" value={ownerEmail} onChange={(e) => setOwnerEmail(e.target.value)} placeholder="priya@northshore.ca" autoComplete="email" error={errors.ownerEmail} />
@@ -156,41 +136,14 @@ export default function SignupWizard() {
 
           {step === 1 && (
             <>
-              <h1 className="font-display text-3xl font-bold">What industry are you in?</h1>
-              <p className="text-graphite/70">We set up your forms, dashboard and wording to match.</p>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {TEMPLATES.map((x) => {
-                  const on = industry === x.id;
-                  return (
-                    <button
-                      key={x.id}
-                      type="button"
-                      onClick={() => setIndustry(x.id)}
-                      aria-pressed={on}
-                      className={`rounded-3xl border p-5 text-left transition ${on ? "border-ink bg-ink text-bone" : "border-line bg-white hover:border-ink"}`}
-                    >
-                      <p className="font-display text-xl font-bold">{x.label}</p>
-                      <p className={`mt-1 text-sm ${on ? "text-smoke" : "text-graphite/70"}`}>{x.blurb}</p>
-                      <p className={`mt-3 text-xs font-medium ${on ? "text-bone" : "text-graphite"}`}>
-                        Loads: {x.formName} · {x.hazards.length} hazards{x.checks.length ? ` · ${x.checks.length} checks` : ""}
-                      </p>
-                    </button>
-                  );
-                })}
-              </div>
-            </>
-          )}
-
-          {step === 2 && (
-            <>
-              <h1 className="font-display text-3xl font-bold">Add your first {t.siteNoun}</h1>
-              <p className="text-graphite/70">Each {t.siteNoun} gets its own QR poster and boundary for the on-site check.</p>
-              <Field label={`${Noun} name`} value={siteName} onChange={(e) => setSiteName(e.target.value)} placeholder={t.siteExample} error={errors.siteName} autoFocus />
-              <Field label="Address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder={t.addressExample} />
+              <h1 className="font-display text-3xl font-bold">Add your first site</h1>
+              <p className="text-graphite/70">Each site or location gets its own QR poster and boundary for the location check.</p>
+              <Field label="Site name" value={siteName} onChange={(e) => setSiteName(e.target.value)} placeholder="Main Street office" error={errors.siteName} autoFocus />
+              <Field label="Address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="1200 Main St, Vancouver, BC" />
               <div className="rounded-2xl border border-line bg-white p-4">
-                <p className="text-sm font-medium">{Noun} location</p>
+                <p className="text-sm font-medium">Site location</p>
                 <p className="mt-1 text-xs text-graphite/70">
-                  Standing at the {t.siteNoun}? Use your location to set the boundary centre. In the full product we&apos;ll look up the address instead.
+                  Standing at the site? Use your location to set the boundary centre. In the full product we&apos;ll look up the address instead.
                 </p>
                 <div className="mt-3 flex flex-wrap items-center gap-3">
                   <Button type="button" variant="outline" size="sm" onClick={locateMe}>
@@ -199,16 +152,15 @@ export default function SignupWizard() {
                   {locStatus && <span className="text-sm text-graphite/80">{locStatus}</span>}
                 </div>
               </div>
-              <Field label="Boundary radius (metres)" type="number" inputMode="numeric" value={radius} onChange={(e) => setRadius(e.target.value)} error={errors.radius} hint="Check-ins further away than this are flagged for review." />
+              <Field label="Boundary radius (metres)" type="number" inputMode="numeric" value={radius} onChange={(e) => setRadius(e.target.value)} error={errors.radius} hint="Clock-ins further away than this are flagged for review." />
             </>
           )}
 
-          {step === 3 && (
+          {step === 2 && (
             <>
               <h1 className="font-display text-3xl font-bold">Invite your team</h1>
               <p className="text-graphite/70">
-                Supervisors and safety staff get dashboard access. Workers, subcontractors and visitors don&apos;t need an
-                invite: they just scan the poster.
+                Supervisors and managers get dashboard access. Staff, contractors and visitors don&apos;t need an invite: they just scan the poster.
               </p>
               <div>
                 <label htmlFor="invites" className="mb-1.5 block text-sm font-medium">
@@ -235,14 +187,14 @@ export default function SignupWizard() {
             </>
           )}
 
-          {step === 4 && created && (
+          {step === 3 && created && (
             <div className="space-y-5">
               <h1 className="font-display text-3xl font-bold">{company} is ready</h1>
               <ul className="space-y-2 text-sm">
                 {[
-                  `${t.label} setup loaded: ${t.formName}, PPE check and visitor form`,
-                  "Safety dashboard with roster, reviews and muster list",
                   `${created.name} added with a ${radius} m boundary`,
+                  "Clock-in with selfie and location check, plus two starter forms you can edit or turn off in Forms",
+                  "Dashboard with who's in, hours, reviews and the emergency list",
                   emails().length ? `${emails().length} invite${emails().length > 1 ? "s" : ""} queued` : "Invite people any time from People",
                   "30-day free trial started. Choose a plan any time in Billing",
                 ].map((t) => (
@@ -261,13 +213,13 @@ export default function SignupWizard() {
                   Print poster
                 </Button>
                 <Link href={`/s/${created.slug}`} target="_blank" className="self-center text-sm underline underline-offset-4">
-                  Try a check-in
+                  Try clocking in
                 </Link>
               </div>
             </div>
           )}
 
-          {step < 4 && (
+          {step < 3 && (
             <div className="flex items-center justify-between pt-2">
               {step > 0 ? (
                 <Button type="button" variant="ghost" onClick={() => setStep((s) => s - 1)}>
@@ -277,7 +229,7 @@ export default function SignupWizard() {
                 <span />
               )}
               <Button type="submit" variant="volt">
-                {step === 3 ? (emails().length ? "Send invites and finish" : "Skip and finish") : "Continue"}
+                {step === 2 ? (emails().length ? "Send invites and finish" : "Skip and finish") : "Continue"}
               </Button>
             </div>
           )}

@@ -1,12 +1,11 @@
 "use client";
 
 import { useMemo, useSyncExternalStore } from "react";
-import { checkFailed, defaultPhotoRequired, templateFor, type IndustryId } from "@/lib/templates";
+import { flagsForResponse, starterForms, type FormDef, type FormResponse } from "@/lib/forms";
 
-// Prototype data layer. Everything lives in this browser's localStorage until Supabase
-// (founding document, step 2). The shapes mirror the planned database tables.
+// Prototype data layer. Everything lives in this browser's localStorage until Supabase is
+// connected. The shapes mirror the planned database tables.
 
-export type Industry = IndustryId;
 export type Plan = "trial" | "crew" | "company" | "enterprise";
 export type Role = "safety_manager" | "supervisor" | "worker" | "subcontractor" | "visitor";
 export type PhotoKind = "identity" | "presence" | "compliance";
@@ -23,7 +22,6 @@ export type Photo = {
 export type Company = {
   id: string;
   name: string;
-  industry: Industry;
   ownerName: string;
   ownerEmail: string;
   plan: Plan;
@@ -60,24 +58,7 @@ export type Presence = {
   reason: string;
 };
 
-export type SafetyAnswers = {
-  templateId: IndustryId;
-  task: string;
-  workArea: string;
-  supervisor: string;
-  readiness: Record<string, boolean>;
-  hazards: string[];
-  controls: Record<string, string[]>;
-  otherHazard: string;
-  checks: Record<string, { pass?: boolean; value?: number }>;
-  ppe: string[];
-};
-
 export type VisitorAnswers = { visiting: string; purpose: string; rulesAck: boolean };
-
-export type FormRecord =
-  | { kind: "safety"; answers: SafetyAnswers }
-  | { kind: "visitor"; answers: VisitorAnswers };
 
 export type CheckIn = {
   id: string;
@@ -85,12 +66,15 @@ export type CheckIn = {
   personId: string;
   inAt: string;
   outAt: string | null;
-  incidentReported: boolean | null;
   selfie: Photo;
   presence: Presence;
-  form: FormRecord;
-  photos: Photo[]; // compliance photos
-  signature: string;
+  /** Forms answered when clocking in (workers and subcontractors). */
+  forms: FormResponse[];
+  /** Forms answered when clocking out. */
+  outForms: FormResponse[];
+  visitor: VisitorAnswers | null;
+  photos: Photo[]; // photos taken inside forms
+  signature: string | null;
   review: {
     selfie: "pending" | "approved" | "mismatch";
     countersignedAt: string | null;
@@ -103,14 +87,14 @@ export type State = {
   sites: Site[];
   people: Person[];
   invites: Invite[];
+  forms: FormDef[];
   checkIns: CheckIn[];
-  photoRequired: Record<string, boolean>;
-  me: string | null; // the person who checks in on this device
+  me: string | null; // the person who clocks in on this device
 };
 
-export const CONSENT_VERSION = "2026-11-v1";
+export const CONSENT_VERSION = "2026-11-v2";
 
-const KEY = "musterpass.demo.v2"; // v2: industry templates (v1 data had the FLHA-only shape)
+const KEY = "musterpass.demo.v3"; // v3: general clock-in with company-built forms
 const CHANGE = "musterpass-change";
 
 export const EMPTY: State = {
@@ -118,8 +102,8 @@ export const EMPTY: State = {
   sites: [],
   people: [],
   invites: [],
+  forms: [],
   checkIns: [],
-  photoRequired: defaultPhotoRequired(templateFor("construction")),
   me: null,
 };
 
@@ -197,32 +181,30 @@ export function isToday(iso: string, now = Date.now()) {
   return new Date(iso).toDateString() === new Date(now).toDateString();
 }
 
+export function hoursWorked(c: CheckIn, now = Date.now()) {
+  const end = c.outAt ? new Date(c.outAt).getTime() : now;
+  return Math.max(0, (end - new Date(c.inAt).getTime()) / 3_600_000);
+}
+
 export function flagsFor(c: CheckIn): string[] {
   const flags: string[] = [];
   if (c.presence.status === "flagged") flags.push(`Location: ${c.presence.reason}`);
   if (c.review.selfie === "mismatch") flags.push("Selfie doesn't match");
-  if (c.form.kind === "safety") {
-    const a = c.form.answers;
-    const t = templateFor(a.templateId);
-    for (const q of t.readiness) if (q.id in a.readiness && a.readiness[q.id] !== q.expected) flags.push(q.alert);
-    for (const ch of t.checks) {
-      if (!checkFailed(t, ch.id, a.checks[ch.id]) || ch.kind === "photo") continue;
-      const v = a.checks[ch.id]?.value;
-      flags.push(ch.kind === "number" && v !== undefined ? `${ch.failAlert} (${v} ${ch.unit})` : ch.failAlert);
-    }
-    if (a.otherHazard.trim()) flags.push(`Other hazard: ${a.otherHazard.trim()}`);
-  }
-  if (c.incidentReported) flags.push("Incident or near miss reported at check-out");
+  for (const r of [...c.forms, ...c.outForms]) flags.push(...flagsForResponse(r));
   return flags;
 }
 
+export function needsCountersign(c: CheckIn) {
+  return !!c.signature && !c.review.countersignedAt;
+}
+
 export function needsReview(c: CheckIn) {
-  return c.review.selfie === "pending" || (c.form.kind === "safety" && !c.review.countersignedAt);
+  return c.review.selfie === "pending" || needsCountersign(c);
 }
 
 export function roleLabel(r: Role) {
   return {
-    safety_manager: "Safety manager",
+    safety_manager: "Manager",
     supervisor: "Supervisor",
     worker: "Worker",
     subcontractor: "Subcontractor",
@@ -250,7 +232,6 @@ export function distanceM(aLat: number, aLng: number, bLat: number, bLng: number
 
 export function createCompany(input: {
   name: string;
-  industry: Industry;
   ownerName: string;
   ownerEmail: string;
   site: Omit<Site, "id" | "slug">;
@@ -260,7 +241,6 @@ export function createCompany(input: {
   const company: Company = {
     id: uid(),
     name: input.name,
-    industry: input.industry,
     ownerName: input.ownerName,
     ownerEmail: input.ownerEmail,
     plan: "trial",
@@ -279,10 +259,10 @@ export function createCompany(input: {
   };
   update(() => ({
     ...EMPTY,
-    photoRequired: defaultPhotoRequired(templateFor(input.industry)),
     company,
     sites: [site],
     people: [owner],
+    forms: starterForms(),
     invites: input.invites.map((i) => ({ ...i, id: uid(), at: now.toISOString() })),
   }));
   return site;
@@ -304,8 +284,26 @@ export function setPlan(plan: Plan) {
   update((s) => (s.company ? { ...s, company: { ...s.company, plan } } : s));
 }
 
-export function setPhotoRequired(hazardId: string, required: boolean) {
-  update((s) => ({ ...s, photoRequired: { ...s.photoRequired, [hazardId]: required } }));
+export function saveForm(form: FormDef) {
+  update((s) => ({
+    ...s,
+    forms: s.forms.some((f) => f.id === form.id) ? s.forms.map((f) => (f.id === form.id ? form : f)) : [...s.forms, form],
+  }));
+}
+
+export function deleteForm(id: string) {
+  update((s) => ({ ...s, forms: s.forms.filter((f) => f.id !== id) }));
+}
+
+export function moveForm(id: string, dir: -1 | 1) {
+  update((s) => {
+    const i = s.forms.findIndex((f) => f.id === id);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= s.forms.length) return s;
+    const forms = [...s.forms];
+    [forms[i], forms[j]] = [forms[j], forms[i]];
+    return { ...s, forms };
+  });
 }
 
 export function reviewSelfie(checkInId: string, result: "approved" | "mismatch") {
@@ -331,9 +329,7 @@ export function upsertMe(p: Omit<Person, "id">, existingId: string | null) {
   update((s) => ({
     ...s,
     me: id,
-    people: existingId
-      ? s.people.map((x) => (x.id === id ? { ...x, ...p } : x))
-      : [...s.people, { ...p, id }],
+    people: existingId ? s.people.map((x) => (x.id === id ? { ...x, ...p } : x)) : [...s.people, { ...p, id }],
   }));
   return id;
 }
@@ -346,11 +342,11 @@ export function addCheckIn(c: CheckIn) {
   update((s) => ({ ...s, checkIns: [...s.checkIns, c] }));
 }
 
-export function checkOut(checkInId: string, incidentReported: boolean) {
+export function checkOut(checkInId: string, outForms: FormResponse[], photos: Photo[]) {
   update((s) => ({
     ...s,
     checkIns: s.checkIns.map((c) =>
-      c.id === checkInId ? { ...c, outAt: new Date().toISOString(), incidentReported } : c,
+      c.id === checkInId ? { ...c, outAt: new Date().toISOString(), outForms, photos: [...c.photos, ...photos] } : c,
     ),
   }));
 }

@@ -3,10 +3,11 @@
 
 import { useEffect, type ReactNode } from "react";
 import { Button, Pill } from "@/components/ui";
-import { checkFailed, hazardById, templateFor } from "@/lib/templates";
+import { answerText, isFlagged, type FormResponse } from "@/lib/forms";
 import {
   countersign,
   flagsFor,
+  hoursWorked,
   referenceSelfie,
   reviewSelfie,
   roleLabel,
@@ -34,7 +35,7 @@ export function SelfieReview({ s, c, compact = false }: { s: State; c: CheckIn; 
           <img src={ref.dataUrl} alt="Earlier selfie on file" className={`${size} rounded-2xl object-cover`} />
         ) : (
           <div className={`${size} flex items-center justify-center rounded-2xl border border-dashed border-line p-2 text-xs text-graphite/60`}>
-            First check-in
+            First clock-in
           </div>
         )}
         <figcaption className="mt-1 text-xs text-graphite/70">On file</figcaption>
@@ -63,9 +64,7 @@ function PhotoTile({ p }: { p: Photo }) {
       <img src={p.dataUrl} alt={p.label} className="aspect-square w-full rounded-xl object-cover" />
       <figcaption className="mt-1.5 space-y-0.5 text-xs">
         <p className="font-semibold">{p.label}</p>
-        <p className="text-graphite/70">
-          {p.kind} · {formatTime(p.capturedAt)}
-        </p>
+        <p className="text-graphite/70">{formatTime(p.capturedAt)}</p>
         <p className="truncate font-mono text-[10px] text-graphite/60" title={p.sha256 ?? undefined}>
           {p.sha256 ? `sha256 ${p.sha256.slice(0, 16)}…` : "hash needs https"}
         </p>
@@ -83,11 +82,36 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
+function Responses({ responses, photos }: { responses: FormResponse[]; photos: Photo[] }) {
+  return (
+    <div className="space-y-4">
+      {responses.map((r) => (
+        <div key={r.formId}>
+          <p className="mb-1.5 text-sm font-semibold">{r.name}</p>
+          <dl className="grid gap-x-4 gap-y-1.5 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            {r.questions.map((q) => {
+              const v = r.answers[q.id];
+              const photo = q.type === "photo" ? photos.find((p) => p.id === v) : undefined;
+              return (
+                <div key={q.id} className="contents">
+                  <dt className="text-graphite/70">{q.label}</dt>
+                  <dd className={isFlagged(q, v) ? "font-semibold text-pop-deep" : ""}>
+                    {photo ? <img src={photo.dataUrl} alt={q.label} className="h-20 w-20 rounded-xl object-cover" /> : answerText(q, v)}
+                  </dd>
+                </div>
+              );
+            })}
+          </dl>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function RecordDetail({ s, c, onClose }: { s: State; c: CheckIn; onClose: () => void }) {
   const person = personFor(s, c);
   const site = s.sites.find((x) => x.id === c.siteId);
   const flags = flagsFor(c);
-  const t = templateFor(c.form.kind === "safety" ? c.form.answers.templateId : s.company?.industry);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -100,7 +124,7 @@ export default function RecordDetail({ s, c, onClose }: { s: State; c: CheckIn; 
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={`Check-in record for ${person?.name}`}
+        aria-label={`Time record for ${person?.name}`}
         onClick={(e) => e.stopPropagation()}
         className="print-area h-full w-full max-w-2xl overflow-y-auto bg-bone p-6 text-ink"
       >
@@ -136,19 +160,18 @@ export default function RecordDetail({ s, c, onClose }: { s: State; c: CheckIn; 
             </div>
           )}
 
-          <Section title="Times">
+          <Section title="Time">
             <p className="text-sm">
-              Checked in {formatTime(c.inAt)}
-              {c.outAt ? ` · checked out ${formatTime(c.outAt)}` : " · still on site"}
-              {c.incidentReported !== null && ` · incident reported: ${c.incidentReported ? "yes" : "no"}`}
+              In {formatTime(c.inAt)}
+              {c.outAt ? ` · out ${formatTime(c.outAt)}` : " · still clocked in"} · {hoursWorked(c).toFixed(2)} h
             </p>
           </Section>
 
-          <Section title="1 · Identity (selfie)">
+          <Section title="Identity (selfie)">
             <SelfieReview s={s} c={c} />
           </Section>
 
-          <Section title="2 · Presence (site check)">
+          <Section title="Location check">
             <p className="text-sm">
               <Pill tone={c.presence.status === "verified" ? "ink" : "pop"}>{c.presence.status === "verified" ? "On site" : "Flagged"}</Pill>{" "}
               {c.presence.reason}
@@ -156,69 +179,29 @@ export default function RecordDetail({ s, c, onClose }: { s: State; c: CheckIn; 
             </p>
           </Section>
 
-          <Section title={c.form.kind === "safety" ? `3 · ${t.formName}` : "3 · Visitor form"}>
-            {c.form.kind === "safety" ? (
-              <dl className="grid gap-x-4 gap-y-1.5 text-sm sm:grid-cols-[9rem_1fr]">
-                <dt className="text-graphite/70">Task</dt>
-                <dd>{c.form.answers.task} {c.form.answers.workArea && `· ${c.form.answers.workArea}`}</dd>
-                <dt className="text-graphite/70">Supervisor</dt>
-                <dd>{c.form.answers.supervisor}</dd>
-                {t.readiness.map((q) => {
-                  const v = c.form.kind === "safety" ? c.form.answers.readiness[q.id] : undefined;
-                  return (
-                    <div key={q.id} className="contents">
-                      <dt className="text-graphite/70">{q.question}</dt>
-                      <dd>{v === q.expected ? (v ? "Yes" : "No") : <strong className="text-pop-deep">{v ? "Yes" : "No"}</strong>}</dd>
-                    </div>
-                  );
-                })}
-                <dt className="text-graphite/70">Hazards and controls</dt>
-                <dd>
-                  <ul className="space-y-0.5">
-                    {c.form.answers.hazards.map((id) => (
-                      <li key={id}>
-                        <strong>{hazardById(t, id)?.label ?? id}</strong>: {(c.form.kind === "safety" && c.form.answers.controls[id]?.join(", ")) || "—"}
-                      </li>
-                    ))}
-                    {c.form.answers.otherHazard && <li><strong>Other</strong>: {c.form.answers.otherHazard}</li>}
-                  </ul>
-                </dd>
-                {t.checks.length > 0 && (
-                  <>
-                    <dt className="text-graphite/70">{t.checksTitle}</dt>
-                    <dd>
-                      <ul className="space-y-0.5">
-                        {t.checks.map((ch) => {
-                          const a = c.form.kind === "safety" ? c.form.answers.checks[ch.id] : undefined;
-                          const bad = checkFailed(t, ch.id, a);
-                          const v = ch.kind === "number" ? `${a?.value ?? "—"} ${ch.unit}` : ch.kind === "passfail" ? (a?.pass ? "Pass" : "Fail") : "Photo taken";
-                          return (
-                            <li key={ch.id} className={bad ? "font-semibold text-pop-deep" : ""}>
-                              {ch.label}: {v}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </dd>
-                  </>
-                )}
-                <dt className="text-graphite/70">PPE</dt>
-                <dd>{c.form.answers.ppe.join(", ")}</dd>
-              </dl>
-            ) : (
-              <dl className="grid gap-x-4 gap-y-1.5 text-sm sm:grid-cols-[9rem_1fr]">
-                <dt className="text-graphite/70">Visiting</dt>
-                <dd>{c.form.answers.visiting}</dd>
-                <dt className="text-graphite/70">Purpose</dt>
-                <dd>{c.form.answers.purpose || "—"}</dd>
-                <dt className="text-graphite/70">Site rules</dt>
-                <dd>{c.form.answers.rulesAck ? "Acknowledged" : "Not acknowledged"}</dd>
-              </dl>
-            )}
-          </Section>
+          {c.visitor && (
+            <Section title="Visitor">
+              <p className="text-sm">
+                Visiting <strong>{c.visitor.visiting}</strong>
+                {c.visitor.purpose && ` · ${c.visitor.purpose}`} · site rules {c.visitor.rulesAck ? "acknowledged" : "not acknowledged"}
+              </p>
+            </Section>
+          )}
+
+          {c.forms.length > 0 && (
+            <Section title="Clock-in forms">
+              <Responses responses={c.forms} photos={c.photos} />
+            </Section>
+          )}
+
+          {c.outForms.length > 0 && (
+            <Section title="Clock-out forms">
+              <Responses responses={c.outForms} photos={c.photos} />
+            </Section>
+          )}
 
           {c.photos.length > 0 && (
-            <Section title="Compliance photos">
+            <Section title="Photo evidence">
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {c.photos.map((p) => (
                   <PhotoTile key={p.id} p={p} />
@@ -227,14 +210,14 @@ export default function RecordDetail({ s, c, onClose }: { s: State; c: CheckIn; 
             </Section>
           )}
 
-          <Section title="Signatures">
-            <div className="flex flex-wrap items-end gap-6">
-              <figure>
-                <img src={c.signature} alt="Worker signature" className="h-20 rounded-xl border border-line bg-white" />
-                <figcaption className="mt-1 text-xs text-graphite/70">Signed {formatTime(c.inAt)}</figcaption>
-              </figure>
-              {c.form.kind === "safety" &&
-                (c.review.countersignedAt ? (
+          {c.signature && (
+            <Section title="Signatures">
+              <div className="flex flex-wrap items-end gap-6">
+                <figure>
+                  <img src={c.signature} alt="Signature" className="h-20 rounded-xl border border-line bg-white" />
+                  <figcaption className="mt-1 text-xs text-graphite/70">Signed {formatTime(c.inAt)}</figcaption>
+                </figure>
+                {c.review.countersignedAt ? (
                   <p className="text-sm">
                     Countersigned by <strong>{c.review.countersignedBy}</strong> at {formatTime(c.review.countersignedAt)}
                   </p>
@@ -242,13 +225,12 @@ export default function RecordDetail({ s, c, onClose }: { s: State; c: CheckIn; 
                   <Button size="sm" variant="ink" className="no-print" onClick={() => countersign(c.id, s.company!.ownerName)}>
                     Countersign
                   </Button>
-                ))}
-            </div>
-          </Section>
+                )}
+              </div>
+            </Section>
+          )}
 
-          <p className="text-xs text-graphite/60">
-            Record {c.id} · Times are recorded by the server in the full product · Prototype data is stored in this browser.
-          </p>
+          <p className="text-xs text-graphite/60">Record {c.id} · Prototype data is stored in this browser.</p>
         </div>
       </div>
     </div>

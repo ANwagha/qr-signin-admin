@@ -7,8 +7,16 @@ import SignaturePad from "@/components/SignaturePad";
 import { Button, Choice, Field } from "@/components/ui";
 import Wordmark from "@/components/Wordmark";
 import { loadDemo } from "@/lib/demo-seed";
-import { CONSENT_TEXT } from "@/lib/flha";
-import { checkFailed, hazardById, templateFor } from "@/lib/templates";
+import {
+  CONSENT_TEXT,
+  flagsForResponse,
+  isAnswered,
+  isFlagged,
+  type AnswerValue,
+  type FormDef,
+  type FormResponse,
+  type Question,
+} from "@/lib/forms";
 import {
   CONSENT_VERSION,
   addCheckIn,
@@ -21,31 +29,13 @@ import {
   upsertMe,
   useStore,
   type CheckIn,
-  type SafetyAnswers,
   type Photo,
   type Presence,
   type Role,
   type Site,
   type State,
 } from "@/lib/store";
-import { formatTime, greeting, useNow } from "@/lib/time";
-
-type Step =
-  | "start"
-  | "identify"
-  | "selfie"
-  | "location"
-  | "job"
-  | "hazards"
-  | "checks"
-  | "ppe"
-  | "visitor"
-  | "sign"
-  | "done"
-  | "checkout"
-  | "checkedOut";
-
-const VISITOR_FLOW: Step[] = ["identify", "selfie", "location", "visitor", "sign"];
+import { formatDuration, formatTime, greeting, useNow } from "@/lib/time";
 
 export default function CheckInFlow({ slug }: { slug: string }) {
   const store = useStore();
@@ -86,7 +76,7 @@ function NotSetUp({ slug }: { slug: string }) {
       <div className="flex flex-1 flex-col justify-center gap-4 text-center">
         <h1 className="font-display text-3xl font-bold">This site isn&apos;t set up here</h1>
         <p className="text-smoke">
-          The prototype keeps companies in this browser. Load the Northshore Builders demo to try a check-in, or sign up your own company.
+          The prototype keeps companies in this browser. Load the demo company to try clocking in, or sign up your own company.
         </p>
         <Button
           variant="volt"
@@ -102,9 +92,7 @@ function NotSetUp({ slug }: { slug: string }) {
         <Link href="/signup" className="text-sm text-smoke underline underline-offset-4 hover:text-bone">
           Sign up a company instead
         </Link>
-        {slug !== "lonsdale-tower" && (
-          <p className="text-xs text-smoke">The demo&apos;s sites are lonsdale-tower and brentwood-yard.</p>
-        )}
+        {slug !== "lonsdale-tower" && <p className="text-xs text-smoke">The demo&apos;s sites are lonsdale-tower and brentwood-yard.</p>}
       </div>
     </Shell>
   );
@@ -139,7 +127,7 @@ function YesNo({ label, value, onChange }: { label: string; value: boolean | nul
             aria-pressed={value === v}
             onClick={() => onChange(v)}
             className={`min-h-14 rounded-2xl border font-display text-lg font-bold transition ${
-              value === v ? (v ? "border-bone bg-bone text-ink" : "border-pop bg-pop text-ink") : "border-graphite bg-graphite text-bone"
+              value === v ? "border-bone bg-bone text-ink" : "border-graphite bg-graphite text-bone"
             }`}
           >
             {v ? "Yes" : "No"}
@@ -150,90 +138,228 @@ function YesNo({ label, value, onChange }: { label: string; value: boolean | nul
   );
 }
 
+/** Number entry with a separate +/− button: iPhone's decimal keypad has no minus key. */
+function SignedNumber({ q, value, onChange }: { q: Question; value: AnswerValue; onChange: (v: number | null) => void }) {
+  const initialNeg = typeof value === "number" ? value < 0 : q.flag?.max !== undefined && q.flag.max < 0;
+  const [neg, setNeg] = useState(initialNeg);
+  const [text, setText] = useState(typeof value === "number" ? String(Math.abs(value)) : "");
+  const emit = (t: string, isNeg: boolean) => {
+    const clean = t.replace(",", ".").replace(/[-−]/g, "").trim();
+    const n = Number(clean);
+    onChange(clean === "" || Number.isNaN(n) ? null : isNeg ? -n : n);
+  };
+  const id = `q-${q.id}`;
+  return (
+    <div>
+      <label htmlFor={id} className="mb-1.5 block font-medium">
+        {q.label}
+        {q.unit && ` (${q.unit})`}
+        {!q.required && <span className="ml-1 text-sm font-normal text-smoke">(optional)</span>}
+      </label>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          aria-pressed={neg}
+          aria-label={neg ? "Below zero. Tap to make it above zero" : "Above zero. Tap to make it below zero"}
+          onClick={() => {
+            setNeg(!neg);
+            emit(text, !neg);
+          }}
+          className={`min-h-14 w-16 shrink-0 rounded-2xl border font-display text-2xl font-bold transition ${
+            neg ? "border-bone bg-bone text-ink" : "border-graphite bg-ink text-bone"
+          }`}
+        >
+          {neg ? "−" : "+"}
+        </button>
+        <input
+          id={id}
+          type="text"
+          inputMode="decimal"
+          autoComplete="off"
+          value={text}
+          onChange={(e) => {
+            const typedMinus = /[-−]/.test(e.target.value);
+            const isNeg = typedMinus ? true : neg;
+            if (typedMinus) setNeg(true);
+            const digits = e.target.value.replace(/[-−]/g, "");
+            setText(digits);
+            emit(digits, isNeg);
+          }}
+          className="min-h-14 w-full min-w-0 rounded-2xl border border-graphite bg-graphite px-4 text-lg text-bone outline-none placeholder:text-bone/55 focus:border-bone"
+        />
+      </div>
+      <p className="mt-1.5 text-xs text-bone/70">Tap {neg ? "−" : "+"} to switch between below and above zero.</p>
+    </div>
+  );
+}
+
+function QuestionField({
+  q,
+  value,
+  onChange,
+  photo,
+  onPhoto,
+}: {
+  q: Question;
+  value: AnswerValue;
+  onChange: (v: AnswerValue) => void;
+  photo: Photo | null;
+  onPhoto: (p: Photo | null) => void;
+}) {
+  const optional = !q.required && <span className="ml-1 text-sm font-normal text-smoke">(optional)</span>;
+  let field: ReactNode;
+  if (q.type === "yesno") field = <YesNo label={q.label} value={typeof value === "boolean" ? value : null} onChange={onChange} />;
+  else if (q.type === "choice" || q.type === "multi") {
+    const sel = q.type === "multi" ? ((value as string[] | null) ?? []) : value ? [String(value)] : [];
+    field = (
+      <fieldset>
+        <legend className="mb-2 font-medium">
+          {q.label}
+          {optional}
+          {q.type === "multi" && <span className="ml-1 text-sm font-normal text-smoke">(pick any)</span>}
+        </legend>
+        <div className="grid gap-2">
+          {(q.options ?? []).map((o) => (
+            <Choice
+              key={o}
+              selected={sel.includes(o)}
+              onClick={() =>
+                q.type === "multi" ? onChange(sel.includes(o) ? sel.filter((x) => x !== o) : [...sel, o]) : onChange(o)
+              }
+            >
+              {o}
+            </Choice>
+          ))}
+        </div>
+      </fieldset>
+    );
+  } else if (q.type === "number") field = <SignedNumber q={q} value={value} onChange={onChange} />;
+  else if (q.type === "photo")
+    field = (
+      <div>
+        <p className="mb-3 font-medium">
+          {q.label}
+          {optional}
+        </p>
+        <PhotoCapture kind="compliance" label={q.label} prompt={q.label} facing="environment" value={photo} onChange={(p) => {
+          onPhoto(p);
+          onChange(p ? p.id : null);
+        }} />
+      </div>
+    );
+  else
+    field = (
+      <div>
+        <label htmlFor={`q-${q.id}`} className="mb-1.5 block font-medium">
+          {q.label}
+          {optional}
+        </label>
+        <textarea
+          id={`q-${q.id}`}
+          rows={2}
+          value={typeof value === "string" ? value : ""}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full rounded-2xl border border-graphite bg-graphite px-4 py-3 text-base text-bone outline-none placeholder:text-bone/55 focus:border-bone"
+        />
+      </div>
+    );
+  return (
+    <div>
+      {field}
+      {isFlagged(q, value) && <p className="mt-2 text-sm text-pop">Your supervisor will be alerted.</p>}
+    </div>
+  );
+}
+
+type Answers = Record<string, Record<string, AnswerValue>>;
+
+/** Answers + photos for a set of forms, with validation. */
+function useFormState() {
+  const [answers, setAnswers] = useState<Answers>({});
+  const [photos, setPhotos] = useState<Record<string, Photo | null>>({});
+  const set = (formId: string, qid: string, v: AnswerValue) =>
+    setAnswers((a) => ({ ...a, [formId]: { ...a[formId], [qid]: v } }));
+  const missing = (f: FormDef) => f.questions.find((q) => q.required && !isAnswered(q, answers[f.id]?.[q.id]));
+  const response = (f: FormDef): FormResponse => ({ formId: f.id, name: f.name, questions: f.questions, answers: answers[f.id] ?? {} });
+  const photosFor = (fs: FormDef[]) =>
+    fs.flatMap((f) => f.questions.filter((q) => q.type === "photo").map((q) => photos[`${f.id}:${q.id}`])).filter((p): p is Photo => !!p);
+  return { answers, set, photos, setPhotos, missing, response, photosFor };
+}
+
+function FormFields({ form, st }: { form: FormDef; st: ReturnType<typeof useFormState> }) {
+  return (
+    <div className="space-y-6">
+      {form.questions.map((q) => (
+        <QuestionField
+          key={q.id}
+          q={q}
+          value={st.answers[form.id]?.[q.id] ?? null}
+          onChange={(v) => st.set(form.id, q.id, v)}
+          photo={st.photos[`${form.id}:${q.id}`] ?? null}
+          onPhoto={(p) => st.setPhotos((x) => ({ ...x, [`${form.id}:${q.id}`]: p }))}
+        />
+      ))}
+    </div>
+  );
+}
+
+type Step = "start" | "identify" | "selfie" | "location" | `form-${number}` | "visitor" | "finish" | "done" | "checkout" | "checkedOut";
+
 function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
   const company = store.company!;
-  const t = templateFor(company.industry);
   const me = store.people.find((p) => p.id === store.me) ?? null;
   const open = me
     ? store.checkIns.find((c) => c.personId === me.id && c.siteId === site.id && !c.outAt && isToday(c.inAt, now))
     : undefined;
+  const inForms = store.forms.filter((f) => f.active && f.when === "check-in");
+  const outForms = store.forms.filter((f) => f.active && f.when === "check-out");
 
   const [step, setStep] = useState<Step>("start");
   const [error, setError] = useState<string | null>(null);
 
-  // Identify
   const [name, setName] = useState(me?.name ?? "");
   const [employer, setEmployer] = useState(me?.employer ?? company.name);
   const [phone, setPhone] = useState(me?.phone ?? "");
   const [role, setRole] = useState<Role>(me && me.role !== "safety_manager" && me.role !== "supervisor" ? me.role : "worker");
   const [consent, setConsent] = useState(false);
 
-  // Evidence
   const [selfie, setSelfie] = useState<Photo | null>(null);
   const [presence, setPresence] = useState<Presence | null>(null);
   const [locating, setLocating] = useState(false);
 
-  // Safety form (industry template)
-  const supervisors = store.people.filter((p) => p.role === "supervisor" || p.role === "safety_manager");
-  const [flha, setFlha] = useState<SafetyAnswers>({
-    templateId: t.id,
-    task: "",
-    workArea: "",
-    supervisor: supervisors[0]?.name ?? "",
-    readiness: {},
-    hazards: [],
-    controls: {},
-    otherHazard: "",
-    checks: {},
-    ppe: [],
-  });
-  const [readiness, setReadiness] = useState<Record<string, boolean | null>>({});
-  const [hazardPhotos, setHazardPhotos] = useState<Record<string, Photo | null>>({});
-  const [checkPhotos, setCheckPhotos] = useState<Record<string, Photo | null>>({});
-  const [numText, setNumText] = useState<Record<string, string>>({});
-  const [negs, setNegs] = useState<Record<string, boolean>>({});
-  const [ppePhoto, setPpePhoto] = useState<Photo | null>(null);
+  const inState = useFormState();
+  const outState = useFormState();
 
-  // Visitor
   const [visiting, setVisiting] = useState("");
   const [purpose, setPurpose] = useState("");
   const [rulesAck, setRulesAck] = useState(false);
 
   const [signature, setSignature] = useState<string | null>(null);
   const [done, setDone] = useState<CheckIn | null>(null);
-  const [incident, setIncident] = useState<boolean | null>(null);
 
   const isVisitor = role === "visitor";
   const flow: Step[] = isVisitor
-    ? VISITOR_FLOW
-    : ["identify", "selfie", "location", "job", "hazards", ...(t.checks.length ? (["checks"] as Step[]) : []), "ppe", "sign"];
-  const formSteps = flow.filter((x) => ["job", "hazards", "checks", "ppe"].includes(x));
-  const partOf = (x: Step) => `${t.formName} · ${formSteps.indexOf(x) + 1} of ${formSteps.length}`;
+    ? ["identify", "selfie", "location", "visitor", "finish"]
+    : ["identify", "selfie", "location", ...inForms.map((_, i) => `form-${i}` as Step), "finish"];
   const idx = flow.indexOf(step);
   const progress = idx >= 0 ? (idx + 1) / (flow.length + 1) : undefined;
   const firstName = (me?.name ?? name).split(/\s+/)[0];
+  const needsSignature = !isVisitor && inForms.some((f) => f.signature);
 
   function go(s: Step) {
     setError(null);
     setStep(s);
     window.scrollTo(0, 0);
   }
-  function back() {
-    go(idx > 0 ? flow[idx - 1] : "start");
-  }
-  function forward() {
-    go(flow[idx + 1]);
-  }
+  const back = () => go(idx > 0 ? flow[idx - 1] : "start");
+  const forward = () => go(flow[idx + 1]);
 
   function submitIdentify() {
     if (!name.trim()) return setError("Add your full name.");
     if (!employer.trim()) return setError("Add the company you work for.");
     if (!phone.trim()) return setError("Add a phone number so the site can reach you in an emergency.");
-    if (!consent) return setError("Read and accept how your check-in is recorded to continue.");
-    upsertMe(
-      { name: name.trim(), employer: employer.trim(), phone: phone.trim(), role, consentVersion: CONSENT_VERSION },
-      me?.id ?? null,
-    );
+    if (!consent) return setError("Read and accept how your time and check-in are recorded to continue.");
+    upsertMe({ name: name.trim(), employer: employer.trim(), phone: phone.trim(), role, consentVersion: CONSENT_VERSION }, me?.id ?? null);
     go("selfie");
   }
 
@@ -255,12 +381,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
         setPresence(
           d <= allowed
             ? { status: "verified", distanceM: d, accuracyM: Math.round(p.coords.accuracy), reason: "Within the site boundary" }
-            : {
-                status: "flagged",
-                distanceM: d,
-                accuracyM: Math.round(p.coords.accuracy),
-                reason: `${d >= 1000 ? `${(d / 1000).toFixed(1)} km` : `${d} m`} from ${site.name}`,
-              },
+            : { status: "flagged", distanceM: d, accuracyM: Math.round(p.coords.accuracy), reason: `${d >= 1000 ? `${(d / 1000).toFixed(1)} km` : `${d} m`} from ${site.name}` },
         );
       },
       (err) => {
@@ -276,79 +397,28 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
     );
   }
 
-  function submitJob() {
-    if (!flha.task.trim()) return setError("Describe today's task.");
-    if (t.readiness.some((q) => readiness[q.id] === undefined || readiness[q.id] === null))
-      return setError("Answer every question.");
-    setFlha((f) => ({ ...f, readiness: readiness as Record<string, boolean> }));
+  function submitForm(f: FormDef) {
+    const q = inState.missing(f);
+    if (q) return setError(`Answer "${q.label}".`);
     forward();
   }
 
-  function submitHazards() {
-    for (const id of flha.hazards) {
-      const h = hazardById(t, id)!;
-      if (!(flha.controls[id]?.length > 0)) return setError(`Choose how "${h.label}" is controlled.`);
-      if (store.photoRequired[id] && !hazardPhotos[id]) return setError(`Add the photo for "${h.label}".`);
-    }
-    if (flha.hazards.length === 0 && !flha.otherHazard.trim())
-      return setError("Tick at least one hazard, or describe it under Other. Every task has some.");
-    forward();
-  }
-
-  function submitChecks() {
-    for (const c of t.checks) {
-      const a = flha.checks[c.id];
-      if (c.kind === "passfail") {
-        if (a?.pass === undefined) return setError(`Answer "${c.label}".`);
-        if (a.pass === false && c.photoOnFail && !checkPhotos[c.id]) return setError(`Add a photo of the problem with "${c.label}".`);
-      } else if (c.kind === "number") {
-        if (a?.value === undefined || Number.isNaN(a.value)) return setError(`Enter the reading for "${c.label}".`);
-      } else if (!checkPhotos[c.id]) {
-        return setError(`Add the photo for "${c.label}".`);
-      }
-    }
-    forward();
-  }
-
-  function setCheck(id: string, v: { pass?: boolean; value?: number }) {
-    setFlha((f) => ({ ...f, checks: { ...f.checks, [id]: v } }));
-  }
-
-  function submitPpe() {
-    if (flha.ppe.length === 0) return setError("Tick the PPE you're wearing.");
-    if (!ppePhoto) return setError("Add a photo of your PPE.");
-    forward();
-  }
-
-  function submitVisitor() {
-    if (!visiting.trim()) return setError("Who are you here to see?");
-    if (!rulesAck) return setError(`Confirm you'll follow the ${t.siteNoun} rules.`);
-    forward();
-  }
-
-  function sign() {
-    if (!signature) return setError("Sign with your finger to finish.");
-    const photos: Photo[] = isVisitor
-      ? []
-      : [
-          ...flha.hazards.map((id) => hazardPhotos[id]),
-          ...t.checks.map((c) => checkPhotos[c.id]),
-          ppePhoto,
-        ].filter((p): p is Photo => !!p);
+  function finish() {
+    if (needsSignature && !signature) return setError("Sign with your finger to finish.");
+    if (isVisitor && !rulesAck) return setError(`Confirm you'll follow the site rules.`);
     const record: CheckIn = {
       id: uid(),
       siteId: site.id,
       personId: store.me!,
       inAt: new Date().toISOString(),
       outAt: null,
-      incidentReported: null,
       selfie: selfie!,
       presence: presence!,
-      form: isVisitor
-        ? { kind: "visitor", answers: { visiting: visiting.trim(), purpose: purpose.trim(), rulesAck } }
-        : { kind: "safety", answers: { ...flha, task: flha.task.trim(), otherHazard: flha.otherHazard.trim() } },
-      photos,
-      signature,
+      forms: isVisitor ? [] : inForms.map(inState.response),
+      outForms: [],
+      visitor: isVisitor ? { visiting: visiting.trim(), purpose: purpose.trim(), rulesAck } : null,
+      photos: isVisitor ? [] : inState.photosFor(inForms),
+      signature: needsSignature ? signature : null,
       review: { selfie: "pending", countersignedAt: null, countersignedBy: null },
     };
     addCheckIn(record);
@@ -364,13 +434,13 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
         <Shell site={site.name}>
           <div className="flex flex-1 flex-col justify-center text-center">
             <p className="text-smoke">{greeting(now, firstName)}</p>
-            <h1 className="mt-2 font-display text-4xl font-bold">You&apos;re checked in</h1>
+            <h1 className="mt-2 font-display text-4xl font-bold">You&apos;re clocked in</h1>
             <p className="mt-2 text-smoke">
-              At {site.name} since {formatTime(open.inAt)}
+              At {site.name} since {formatTime(open.inAt)} · {formatDuration(new Date(open.inAt).getTime(), now)}
             </p>
             <div className="mt-10">
               <Button variant="danger" size="lg" onClick={() => go("checkout")}>
-                Check out
+                Clock out
               </Button>
             </div>
           </div>
@@ -381,16 +451,16 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
         <div className="flex flex-1 flex-col justify-center">
           <p className="text-sm uppercase tracking-[0.2em] text-smoke">{company.name}</p>
           <h1 className="mt-2 font-display text-5xl font-bold leading-[0.95]">
-            Check in at
+            Clock in at
             <br />
             {site.name}
           </h1>
           <p className="mt-4 text-smoke">
-            {me ? `${greeting(now, firstName)}. ` : ""}Selfie, site check and today&apos;s safety form. About a minute.
+            {me ? `${greeting(now, firstName)}. ` : ""}A selfie, a quick location check{inForms.length ? " and a short form" : ""}. Under a minute.
           </p>
           <div className="mt-10 space-y-3">
             <Button variant="volt" size="lg" onClick={() => go(me ? "selfie" : "identify")}>
-              {me ? "Check in" : "Start check-in"}
+              {me ? "Clock in" : "Start"}
             </Button>
             {me && (
               <button
@@ -403,7 +473,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
                 }}
                 className="min-h-11 w-full text-sm text-smoke hover:text-bone"
               >
-                Not {firstName}? Check in as someone else
+                Not {firstName}? Clock in as someone else
               </button>
             )}
           </div>
@@ -415,16 +485,16 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
   if (step === "identify")
     return (
       <Shell site={site.name} progress={progress} onBack={back}>
-        <Title sub="You only do this once on this phone.">Who&apos;s checking in?</Title>
+        <Title sub="You only do this once on this phone.">Who&apos;s clocking in?</Title>
         <div className="space-y-5">
           <fieldset>
             <legend className="mb-2 font-medium">I&apos;m here as</legend>
             <div className="grid gap-2">
               {(
                 [
-                  ["worker", `A worker for ${company.name}`],
-                  ["subcontractor", "A subcontractor"],
-                  ["visitor", "A visitor or inspector"],
+                  ["worker", `Staff at ${company.name}`],
+                  ["subcontractor", "A contractor"],
+                  ["visitor", "A visitor"],
                 ] as [Role, string][]
               ).map(([r, label]) => (
                 <Choice
@@ -487,9 +557,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
   if (step === "location")
     return (
       <Shell site={site.name} progress={progress} onBack={back}>
-        <Title sub={`We check your location once, right now, against the ${site.name} boundary. Never during your shift.`}>
-          Site check
-        </Title>
+        <Title sub={`We check your location once, right now, against the ${site.name} boundary. Never during your shift.`}>Location check</Title>
         {presence ? (
           <div className={`rounded-3xl p-6 ${presence.status === "verified" ? "bg-graphite" : "border border-pop bg-graphite"}`}>
             <p className="font-display text-2xl font-bold">{presence.status === "verified" ? "You're on site" : "Couldn't confirm you're on site"}</p>
@@ -497,9 +565,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
               {presence.reason}
               {presence.accuracyM !== null && ` · ±${presence.accuracyM} m`}
             </p>
-            {presence.status === "flagged" && (
-              <p className="mt-3 text-sm text-bone">You can still check in. Your supervisor will review it.</p>
-            )}
+            {presence.status === "flagged" && <p className="mt-3 text-sm text-bone">You can still clock in. Your supervisor will review it.</p>}
           </div>
         ) : (
           <div className="space-y-3">
@@ -523,307 +589,54 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
       </Shell>
     );
 
-  if (step === "job")
+  if (step.startsWith("form-")) {
+    const f = inForms[Number(step.slice(5))];
     return (
       <Shell site={site.name} progress={progress} onBack={back}>
-        <Title sub={partOf("job")}>Today&apos;s job</Title>
-        <div className="space-y-5">
-          <Field dark label="What are you doing today?" value={flha.task} onChange={(e) => setFlha({ ...flha, task: e.target.value })} placeholder={t.taskExample} />
-          <Field dark label={`Where in the ${t.siteNoun}?`} value={flha.workArea} onChange={(e) => setFlha({ ...flha, workArea: e.target.value })} placeholder="North side" />
-          <div>
-            <label htmlFor="sup" className="mb-1.5 block text-sm font-medium">
-              Your supervisor
-            </label>
-            <select
-              id="sup"
-              value={flha.supervisor}
-              onChange={(e) => setFlha({ ...flha, supervisor: e.target.value })}
-              className="min-h-14 w-full rounded-2xl border border-graphite bg-graphite px-4 text-base text-bone outline-none focus:border-bone"
-            >
-              {supervisors.map((s) => (
-                <option key={s.id}>{s.name}</option>
-              ))}
-              <option value="Other">Someone else</option>
-            </select>
-          </div>
-          {t.readiness.map((q) => (
-            <YesNo
-              key={q.id}
-              label={q.question}
-              value={readiness[q.id] ?? null}
-              onChange={(v) => setReadiness((r) => ({ ...r, [q.id]: v }))}
-            />
-          ))}
-          {t.readiness.some((q) => readiness[q.id] !== undefined && readiness[q.id] !== null && readiness[q.id] !== q.expected) && (
-            <p className="rounded-2xl border border-pop p-4 text-sm">Your supervisor will be alerted before you start work.</p>
-          )}
-        </div>
+        <Title sub={f.description || undefined}>{f.name}</Title>
+        <FormFields form={f} st={inState} />
         <Err>{error}</Err>
         <div className="mt-6">
-          <Button variant="volt" size="lg" onClick={submitJob}>
+          <Button variant="volt" size="lg" onClick={() => submitForm(f)}>
             Continue
           </Button>
         </div>
       </Shell>
     );
-
-  if (step === "hazards")
-    return (
-      <Shell site={site.name} progress={progress} onBack={back}>
-        <Title sub={`${partOf("hazards")}. Tick every hazard in today's work and how it's controlled.`}>
-          Hazards and controls
-        </Title>
-        <div className="space-y-2.5">
-          {t.hazards.map((h) => {
-            const on = flha.hazards.includes(h.id);
-            return (
-              <div key={h.id} className={on ? "rounded-3xl bg-graphite/60 p-2" : ""}>
-                <Choice
-                  selected={on}
-                  onClick={() =>
-                    setFlha({ ...flha, hazards: on ? flha.hazards.filter((x) => x !== h.id) : [...flha.hazards, h.id] })
-                  }
-                >
-                  {h.label}
-                  {store.photoRequired[h.id] && <span className="ml-2 text-xs opacity-70">Photo</span>}
-                </Choice>
-                {on && (
-                  <div className="space-y-3 px-2 pb-2 pt-3">
-                    <p className="text-sm text-bone/70">How is it controlled?</p>
-                    <div className="flex flex-wrap gap-2">
-                      {h.controls.map((c) => {
-                        const sel = flha.controls[h.id]?.includes(c) ?? false;
-                        return (
-                          <button
-                            key={c}
-                            type="button"
-                            aria-pressed={sel}
-                            onClick={() => {
-                              const cur = flha.controls[h.id] ?? [];
-                              setFlha({ ...flha, controls: { ...flha.controls, [h.id]: sel ? cur.filter((x) => x !== c) : [...cur, c] } });
-                            }}
-                            className={`min-h-11 rounded-full border px-4 text-sm font-medium ${sel ? "border-bone bg-bone text-ink" : "border-smoke/50 text-bone"}`}
-                          >
-                            {c}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {store.photoRequired[h.id] && (
-                      <div className="pt-2">
-                        <PhotoCapture
-                          kind="compliance"
-                          label={h.label}
-                          prompt={h.photoPrompt}
-                          facing="environment"
-                          value={hazardPhotos[h.id] ?? null}
-                          onChange={(p) => setHazardPhotos({ ...hazardPhotos, [h.id]: p })}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-          <Field dark label="Other hazard (optional)" value={flha.otherHazard} onChange={(e) => setFlha({ ...flha, otherHazard: e.target.value })} placeholder="Describe it" />
-        </div>
-        <Err>{error}</Err>
-        <div className="mt-6">
-          <Button variant="volt" size="lg" onClick={submitHazards}>
-            Continue
-          </Button>
-        </div>
-      </Shell>
-    );
-
-  if (step === "checks")
-    return (
-      <Shell site={site.name} progress={progress} onBack={back}>
-        <Title sub={partOf("checks")}>{t.checksTitle}</Title>
-        <div className="space-y-6">
-          {t.checks.map((c) => {
-            const a = flha.checks[c.id];
-            const failed = checkFailed(t, c.id, a);
-            return (
-              <div key={c.id} className={`rounded-3xl p-4 ${failed ? "border border-pop bg-graphite" : "bg-graphite/60"}`}>
-                {c.kind === "passfail" && (
-                  <>
-                    <p className="mb-2 font-medium">{c.label}</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {[true, false].map((v) => (
-                        <button
-                          key={String(v)}
-                          type="button"
-                          aria-pressed={a?.pass === v}
-                          onClick={() => setCheck(c.id, { pass: v })}
-                          className={`min-h-14 rounded-2xl border font-display text-lg font-bold transition ${
-                            a?.pass === v ? (v ? "border-bone bg-bone text-ink" : "border-pop bg-pop text-ink") : "border-graphite bg-ink text-bone"
-                          }`}
-                        >
-                          {v ? "Pass" : "Fail"}
-                        </button>
-                      ))}
-                    </div>
-                    {a?.pass === false && c.photoOnFail && (
-                      <div className="pt-4">
-                        <PhotoCapture
-                          kind="compliance"
-                          label={c.label}
-                          prompt="Photo of the problem"
-                          facing="environment"
-                          value={checkPhotos[c.id] ?? null}
-                          onChange={(ph) => setCheckPhotos({ ...checkPhotos, [c.id]: ph })}
-                        />
-                      </div>
-                    )}
-                  </>
-                )}
-                {c.kind === "number" &&
-                  (() => {
-                    // iPhone's decimal keypad has no minus key, so the sign is a separate button.
-                    const neg = negs[c.id] ?? (c.max !== undefined && c.max < 0);
-                    const emit = (text: string, isNeg: boolean) => {
-                      const clean = text.replace(",", ".").replace(/[-−]/g, "").trim();
-                      const n = Number(clean);
-                      setCheck(c.id, { value: clean === "" || Number.isNaN(n) ? undefined : isNeg ? -n : n });
-                    };
-                    const limit = c.max !== undefined ? c.max : c.min!;
-                    return (
-                      <div>
-                        <label htmlFor={`num-${c.id}`} className="mb-1.5 block text-sm font-medium text-bone">
-                          {c.label} ({c.unit})
-                        </label>
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            aria-pressed={neg}
-                            aria-label={neg ? "Below zero. Tap to make it above zero" : "Above zero. Tap to make it below zero"}
-                            onClick={() => {
-                              setNegs({ ...negs, [c.id]: !neg });
-                              emit(numText[c.id] ?? "", !neg);
-                            }}
-                            className={`min-h-14 w-16 shrink-0 rounded-2xl border font-display text-2xl font-bold transition ${
-                              neg ? "border-bone bg-bone text-ink" : "border-graphite bg-ink text-bone"
-                            }`}
-                          >
-                            {neg ? "−" : "+"}
-                          </button>
-                          <input
-                            id={`num-${c.id}`}
-                            type="text"
-                            inputMode="decimal"
-                            autoComplete="off"
-                            value={numText[c.id] ?? ""}
-                            onChange={(e) => {
-                              const raw = e.target.value;
-                              // Keyboards that do have a minus key still work: a typed "-" flips the sign button.
-                              const typedMinus = /[-−]/.test(raw);
-                              const isNeg = typedMinus ? true : neg;
-                              if (typedMinus) setNegs({ ...negs, [c.id]: true });
-                              const digits = raw.replace(/[-−]/g, "");
-                              setNumText({ ...numText, [c.id]: digits });
-                              emit(digits, isNeg);
-                            }}
-                            placeholder={String(Math.abs(limit))}
-                            className="min-h-14 w-full min-w-0 rounded-2xl border border-graphite bg-graphite px-4 text-lg text-bone outline-none placeholder:text-bone/55 focus:border-bone"
-                          />
-                        </div>
-                        <p className="mt-1.5 text-xs text-bone/70">
-                          {c.max !== undefined
-                            ? `Should be ${String(c.max).replace("-", "−")} ${c.unit} or lower`
-                            : `Should be ${String(c.min).replace("-", "−")} ${c.unit} or higher`}
-                          {` · Tap ${neg ? "−" : "+"} to switch between below and above zero`}
-                        </p>
-                      </div>
-                    );
-                  })()}
-                {c.kind === "photo" && (
-                  <>
-                    <p className="mb-3 font-medium">{c.label}</p>
-                    <PhotoCapture
-                      kind="compliance"
-                      label={c.label}
-                      prompt={c.photoPrompt}
-                      facing="environment"
-                      value={checkPhotos[c.id] ?? null}
-                      onChange={(ph) => setCheckPhotos({ ...checkPhotos, [c.id]: ph })}
-                    />
-                  </>
-                )}
-                {failed && c.kind !== "photo" && <p className="mt-3 text-sm text-pop">{c.failAlert}. Your supervisor will be alerted.</p>}
-              </div>
-            );
-          })}
-        </div>
-        <Err>{error}</Err>
-        <div className="mt-6">
-          <Button variant="volt" size="lg" onClick={submitChecks}>
-            Continue
-          </Button>
-        </div>
-      </Shell>
-    );
-
-  if (step === "ppe")
-    return (
-      <Shell site={site.name} progress={progress} onBack={back}>
-        <Title sub={partOf("ppe")}>PPE check</Title>
-        <div className="grid grid-cols-2 gap-2">
-          {t.ppe.map((p) => {
-            const on = flha.ppe.includes(p);
-            return (
-              <Choice key={p} selected={on} onClick={() => setFlha({ ...flha, ppe: on ? flha.ppe.filter((x) => x !== p) : [...flha.ppe, p] })}>
-                {p}
-              </Choice>
-            );
-          })}
-        </div>
-        <div className="mt-6">
-          <PhotoCapture kind="compliance" label="PPE" prompt={t.ppePhotoPrompt} facing="environment" value={ppePhoto} onChange={setPpePhoto} />
-        </div>
-        <Err>{error}</Err>
-        <div className="mt-6">
-          <Button variant="volt" size="lg" onClick={submitPpe}>
-            Continue
-          </Button>
-        </div>
-      </Shell>
-    );
+  }
 
   if (step === "visitor")
     return (
       <Shell site={site.name} progress={progress} onBack={back}>
-        <Title sub={`Visitors don't do the full ${t.formShort}, but you'll be on the muster list until you check out.`}>Visitor details</Title>
+        <Title sub="You'll be on the emergency list until you sign out.">Visitor details</Title>
         <div className="space-y-5">
           <Field dark label="Who are you here to see?" value={visiting} onChange={(e) => setVisiting(e.target.value)} placeholder="Priya Shah" />
-          <Field dark label="Purpose of visit (optional)" value={purpose} onChange={(e) => setPurpose(e.target.value)} placeholder="Inspection" />
+          <Field dark label="Purpose of visit (optional)" value={purpose} onChange={(e) => setPurpose(e.target.value)} placeholder="Meeting" />
           <div className="rounded-2xl bg-graphite p-4 text-sm text-bone/70">
-            {t.visitorRules}
+            Stay with your host, follow posted signs, and leave by the nearest exit if the alarm sounds.
             <div className="mt-3">
               <Choice selected={rulesAck} onClick={() => setRulesAck(!rulesAck)}>
-                I&apos;ll follow the {t.siteNoun} rules
+                I&apos;ll follow the site rules
               </Choice>
             </div>
           </div>
         </div>
         <Err>{error}</Err>
         <div className="mt-6">
-          <Button variant="volt" size="lg" onClick={submitVisitor}>
+          <Button variant="volt" size="lg" onClick={() => (visiting.trim() ? forward() : setError("Who are you here to see?"))}>
             Continue
           </Button>
         </div>
       </Shell>
     );
 
-  if (step === "sign") {
-    const hazards = flha.hazards.map((id) => hazardById(t, id)!.label);
-    const failedChecks = t.checks.filter((c) => checkFailed(t, c.id, flha.checks[c.id])).map((c) => c.label);
-    const photoCount =
-      1 + [...flha.hazards.map((id) => hazardPhotos[id]), ...t.checks.map((c) => checkPhotos[c.id]), ppePhoto].filter(Boolean).length;
+  if (step === "finish") {
+    const flags = isVisitor ? [] : inForms.flatMap((f) => flagsForResponse(inState.response(f)));
     return (
       <Shell site={site.name} progress={progress} onBack={back}>
-        <Title sub="Check your answers, then sign.">Sign and check in</Title>
+        <Title sub={needsSignature ? "Check your answers, then sign." : "Check your details."}>
+          {isVisitor ? "Sign in" : "Clock in"}
+        </Title>
         <dl className="space-y-3 rounded-3xl bg-graphite p-5 text-sm">
           <Row k="Name">{me?.name ?? name}</Row>
           <Row k="Site">{site.name}</Row>
@@ -831,24 +644,23 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
           {isVisitor ? (
             <Row k="Visiting">{visiting}</Row>
           ) : (
-            <>
-              <Row k="Task">{flha.task}</Row>
-              <Row k="Hazards">{[...hazards, flha.otherHazard.trim()].filter(Boolean).join(", ") || "None"}</Row>
-              {t.checks.length > 0 && (
-                <Row k="Checks">{failedChecks.length ? <span className="text-pop">Failed: {failedChecks.join(", ")}</span> : "All passed"}</Row>
-              )}
-              <Row k="PPE">{flha.ppe.join(", ")}</Row>
-              <Row k="Photos">{photoCount} taken</Row>
-            </>
+            inForms.length > 0 && <Row k="Forms">{inForms.map((f) => f.name).join(", ")}</Row>
+          )}
+          {flags.length > 0 && (
+            <Row k="Alerts">
+              <span className="text-pop">{flags.length} answer{flags.length > 1 ? "s" : ""} for your supervisor</span>
+            </Row>
           )}
         </dl>
-        <div className="mt-5">
-          <SignaturePad onChange={setSignature} />
-        </div>
+        {needsSignature && (
+          <div className="mt-5">
+            <SignaturePad onChange={setSignature} />
+          </div>
+        )}
         <Err>{error}</Err>
         <div className="mt-6">
-          <Button variant="volt" size="lg" onClick={sign}>
-            Sign and check in
+          <Button variant="volt" size="lg" onClick={finish}>
+            {isVisitor ? "Sign in" : needsSignature ? "Sign and clock in" : "Clock in"}
           </Button>
         </div>
       </Shell>
@@ -865,21 +677,21 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
               <path d="m5 12.5 4.5 4.5L19 7.5" />
             </svg>
           </div>
-          <h1 className="mt-6 font-display text-4xl font-bold">You&apos;re checked in</h1>
+          <h1 className="mt-6 font-display text-4xl font-bold">{isVisitor ? "You're signed in" : "You're clocked in"}</h1>
           <p className="mt-2 text-lg">
-            {site.name} · {formatTime(done.inAt)}. Work safe, {firstName}.
+            {site.name} · {formatTime(done.inAt)}. Have a good one, {firstName}.
           </p>
           {flags.length > 0 && (
             <div className="mt-6 rounded-2xl border border-pop p-4 text-left text-sm">
               <p className="font-semibold">Your supervisor will review:</p>
-              <ul className="mt-1 list-disc pl-5 text-smoke">
+              <ul className="mt-1 list-disc pl-5 text-bone/70">
                 {flags.map((f) => (
                   <li key={f}>{f}</li>
                 ))}
               </ul>
             </div>
           )}
-          <p className="mt-8 text-sm text-smoke">Scan the poster again when you leave to check out.</p>
+          <p className="mt-8 text-sm text-smoke">Scan the poster again when you leave to clock out.</p>
         </div>
       </Shell>
     );
@@ -888,21 +700,33 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
   if (step === "checkout" && open)
     return (
       <Shell site={site.name} onBack={() => go("start")}>
-        <Title sub={`Checked in since ${formatTime(open.inAt)}.`}>Check out</Title>
-        <YesNo label="Any incidents or near misses today?" value={incident} onChange={setIncident} />
-        {incident && <p className="mt-3 text-sm text-smoke">Thanks. Your supervisor will follow up with you.</p>}
+        <Title sub={`Clocked in since ${formatTime(open.inAt)} · ${formatDuration(new Date(open.inAt).getTime(), now)}.`}>Clock out</Title>
+        {open.visitor === null && (
+          <div className="space-y-8">
+            {outForms.map((f) => (
+              <section key={f.id}>
+                {outForms.length > 1 && <h2 className="mb-3 font-display text-lg font-bold">{f.name}</h2>}
+                <FormFields form={f} st={outState} />
+              </section>
+            ))}
+          </div>
+        )}
         <Err>{error}</Err>
         <div className="mt-auto pt-8">
           <Button
             variant="danger"
             size="lg"
             onClick={() => {
-              if (incident === null) return setError("Answer the question to check out.");
-              checkOut(open.id, incident);
+              const forms = open.visitor === null ? outForms : [];
+              for (const f of forms) {
+                const q = outState.missing(f);
+                if (q) return setError(`Answer "${q.label}".`);
+              }
+              checkOut(open.id, forms.map(outState.response), outState.photosFor(forms));
               go("checkedOut");
             }}
           >
-            Check out
+            {open.visitor ? "Sign out" : "Clock out"}
           </Button>
         </div>
       </Shell>
@@ -911,7 +735,7 @@ function Flow({ store, site, now }: { store: State; site: Site; now: number }) {
   return (
     <Shell site={site.name}>
       <div className="flex flex-1 flex-col justify-center text-center">
-        <h1 className="font-display text-4xl font-bold">You&apos;re checked out</h1>
+        <h1 className="font-display text-4xl font-bold">You&apos;re clocked out</h1>
         <p className="mt-2 text-lg text-smoke">
           {formatTime(now)}. Thanks, {firstName}. Get home safe.
         </p>

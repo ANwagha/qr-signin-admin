@@ -12,11 +12,11 @@ export default function SitePoster({ site, companyName, origin }: { site: Site; 
       <Wordmark tone="volt" className="text-3xl" />
       <p className="mt-6 text-sm uppercase tracking-[0.2em] text-smoke">{companyName}</p>
       <h2 className="mt-1 font-display text-4xl font-bold leading-tight">{site.name}</h2>
-      <p className="mt-2 text-lg text-smoke">Everyone checks in here: workers, subs and visitors</p>
+      <p className="mt-2 text-lg text-smoke">Scan to clock in or out. Visitors sign in here too.</p>
       <div className="my-8 rounded-3xl bg-bone p-5">
         <QRCodeSVG value={url} size={220} level="M" bgColor="#F5F5F0" fgColor="#141414" />
       </div>
-      <p className="font-display text-xl font-semibold">Scan in. Sign off. Work safe.</p>
+      <p className="font-display text-xl font-semibold">Scan in. Clock in. Done.</p>
       <p className="mt-6 break-all text-xs text-smoke">{url}</p>
     </div>
   );
