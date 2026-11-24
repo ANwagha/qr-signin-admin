@@ -23,7 +23,11 @@ export default function SignaturePad({ onChange }: { onChange: (dataUrl: string 
     ctx.beginPath();
     ctx.moveTo(p.x, p.y);
     drawing.current = true;
-    canvas.current!.setPointerCapture(e.pointerId);
+    try {
+      canvas.current!.setPointerCapture(e.pointerId);
+    } catch {
+      /* synthetic pointers (tester bot) can't be captured; drawing still works */
+    }
   }
 
   function move(e: React.PointerEvent<HTMLCanvasElement>) {

@@ -54,6 +54,23 @@ The app follows the device's light or dark setting, and a sun/moon switch in the
 
 Admin → Branding sets a company's logo, brand colour and a short welcome message. Workers see them on the clock-in screens and the gate posters; the admin dashboard stays in Musterpass colours. The main button text switches to black or white automatically, whichever is easier to read, and the page warns when a colour would blend into the light or dark background. The logo is shrunk to a PNG of at most 320 px and kept with the company (in this browser until Supabase).
 
+## Command center
+
+Log in → Admin login opens `/command`, for the Musterpass team.
+
+- **Versions:** every production deploy from Vercel, which one is live, and **Roll back** (puts the live site back to an earlier version for everyone). After a rollback Vercel stops releasing new pushes until you press **Undo** (or **Make live** on a newer version). On Vercel's Hobby plan you can only roll back one version.
+- **Tester bot:** clocks a worker in and out inside an on-page phone frame, then checks the dashboard and records. It runs on the demo company and restores this browser's data afterwards.
+- **Companies:** this browser's company until Supabase is connected.
+
+Versions and rollback need these environment variables in Vercel (Project → Settings → Environment Variables). Never commit them:
+
+| Variable | What it is |
+|---|---|
+| `COMMAND_KEY` | A long secret phrase that unlocks Versions. |
+| `VERCEL_TOKEN` | A Vercel access token that can manage this project. |
+| `VERCEL_PROJECT_ID` | Project → Settings → General → Project ID. |
+| `VERCEL_TEAM_ID` | Only if the project belongs to a Vercel team. |
+
 ## Brand tokens
 
 Defined in `app/globals.css` as Tailwind classes (`bg-ink`, `text-volt`, …): `ink` #141414, `volt` #C6F432 (the one primary action per screen; ink text on it), `bone` #F5F5F0, `pop` #CA2A30 (alert red: flags, clock-out, alert borders; white text on it), `pop-deep` #CA2A30 (red text on light backgrounds; #FF6369 in dark mode), `graphite` #2A2A2A, `smoke` #8A8A85, `line` #DDDCD3.
